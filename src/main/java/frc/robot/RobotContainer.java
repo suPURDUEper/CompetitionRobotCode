@@ -6,9 +6,12 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.DriveForwardTimed;
 import frc.robot.commands.ExtendClimber;
 import frc.robot.commands.FreeClimb;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Pneumatics;
 
 /**
@@ -18,34 +21,40 @@ import frc.robot.subsystems.Pneumatics;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // Controllers
-  public static XboxController driverJoyStick;
-  public static XboxController operatorJoyStick;
-  // Subsystem Declares
+  //subsystem declare
+  private final DriveTrain driveTrain;
   private final Climber climber;
   private final Pneumatics pneumatics;
-  // Command Declares
-  private final ExtendClimber extend;
+  //command declare
+  private final DriveForwardTimed driveForwardTimed;
   private final FreeClimb freeClimb;
-
-
-
+  private final ExtendClimber extendClimber;
+  //controller declare
+  public static XboxController driverJoyStick;
+  public static XboxController operatorJoyStick;
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    driverJoyStick = new XboxController(Constants.DRIVE_JOYSTICK_NUMBER);
-    operatorJoyStick = new XboxController(Constants.OPERATOR_JOYSTICK_NUMBER);
+    driverJoyStick = new XboxController(Constants.DriveJoystickNumber);
+    operatorJoyStick = new XboxController(Constants.OperatorJoystickNumber);
     climber = new Climber();
     pneumatics = new Pneumatics();
 
     // Set the default command settings
-    extend = new ExtendClimber(pneumatics);
-    extend.addRequirements(pneumatics);
-    pneumatics.setDefaultCommand(extend);
+    extendClimber = new ExtendClimber(pneumatics);
+    extendClimber.addRequirements(pneumatics);
+    pneumatics.setDefaultCommand(extendClimber);
 
     freeClimb = new FreeClimb(climber);
     freeClimb.addRequirements(climber);
     climber.setDefaultCommand(freeClimb);
-
+    //set values for controllers
+    driverJoyStick = new XboxController(Constants.DriveJoystickNumber);
+    operatorJoyStick = new XboxController(Constants.OperatorJoystickNumber);
+    //set values for subsystems
+    driveTrain = new DriveTrain();
+    //set values for commands and set default commands
+    driveForwardTimed = new DriveForwardTimed(driveTrain);
+    driveForwardTimed.addRequirements(driveTrain);
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -65,6 +74,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return driveForwardTimed;
   }
 }
