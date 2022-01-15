@@ -6,9 +6,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.ExtendClimber;
+import frc.robot.commands.FreeClimb;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Pneumatics;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -17,13 +18,34 @@ import edu.wpi.first.wpilibj2.command.Command;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  // Controllers
+  public static XboxController driverJoyStick;
+  public static XboxController operatorJoyStick;
+  // Subsystem Declares
+  private final Climber climber;
+  private final Pneumatics pneumatics;
+  // Command Declares
+  private final ExtendClimber extend;
+  private final FreeClimb freeClimb;
 
-  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    driverJoyStick = new XboxController(Constants.DRIVE_JOYSTICK_NUMBER);
+    operatorJoyStick = new XboxController(Constants.OPERATOR_JOYSTICK_NUMBER);
+    climber = new Climber();
+    pneumatics = new Pneumatics();
+
+    // Set the default command settings
+    extend = new ExtendClimber(pneumatics);
+    extend.addRequirements(pneumatics);
+    pneumatics.setDefaultCommand(extend);
+
+    freeClimb = new FreeClimb(climber);
+    freeClimb.addRequirements(climber);
+    climber.setDefaultCommand(freeClimb);
+
     // Configure the button bindings
     configureButtonBindings();
   }
