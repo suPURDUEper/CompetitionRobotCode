@@ -15,12 +15,12 @@ package frc.robot;
 public final class Constants {
     public static final int leftClimbMotor = 0;
     public static final int rightClimbMotor = 1;
+    public static final int IntakeMotor = 0;
     //PWM's for wiring
     public static final int LeftFront = 1;
     public static final int LeftBack = 2;
     public static final int RightFront = 3;
     public static final int RightBack = 4;
-    public static final int ClimbMotor = 3;
     //Controller axis
     public static final int XboxLeftYAxis = 1;
     public static final int XboxRightXAxis = 4;
