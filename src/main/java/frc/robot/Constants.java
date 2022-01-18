@@ -52,7 +52,7 @@ public final class Constants {
     public static final double FlywheelkI = 0;
     public static final double FlywheelkF = 0.05;
     public static final double FlywheelkP = 4;
-    public static int kPIDLoopIdx = 0;
-    public static int kTimeoutMs = 30;
+    public static final int kPIDLoopIdx = 0;
+    public static final int kTimeoutMs = 30;
     
 }
