@@ -13,11 +13,10 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-
+    //PWM's for wiring
     public static final int leftClimbMotor = 8;
     public static final int rightClimbMotor = 9;
     public static final int IntakeMotor = 0;
-    //PWM's for wiring
     public static final int LeftFront = 1;
     public static final int LeftBack = 2;
     public static final int RightFront = 3;
@@ -25,6 +24,8 @@ public final class Constants {
     public static final int IndexerMotor1 = 5;
     public static final int IndexerMotor2 = 6;
     public static final int IndexerMotor3 = 7;
+    public static final int LeftFlywheel = 0;
+    public static final int RightFlywheel = 1;
 
     //Controller axis
     public static final int XboxLeftYAxis = 1;
@@ -45,4 +46,13 @@ public final class Constants {
     public static final double DriveTrainSpeed = 0.7;
     // Servo
     public static final int HOOD_SERVO_CHANNEL = 1;
+    //flywheel variables
+    public static final int FlywheelSpeed = 5700;
+    public static final double FlywheelkD = 1;
+    public static final double FlywheelkI = 0;
+    public static final double FlywheelkF = 0.05;
+    public static final double FlywheelkP = 4;
+    public static int kPIDLoopIdx = 0;
+    public static int kTimeoutMs = 30;
+    
 }
