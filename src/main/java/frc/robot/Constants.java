@@ -43,4 +43,6 @@ public final class Constants {
     public static final double DeadZone = 0.05;
     public static final double BaseVelocity = 0.14;
     public static final double DriveTrainSpeed = 0.7;
+    // Servo
+    public static final int HOOD_SERVO_CHANNEL = 1;
 }
