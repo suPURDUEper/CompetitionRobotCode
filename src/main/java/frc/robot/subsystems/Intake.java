@@ -29,20 +29,20 @@ import frc.robot.Constants;
  */
 public class Intake extends SubsystemBase {
   /** Indexer motors */
-  CANSparkMax indexerMoter1;
-  CANSparkMax indexerMotor2;
-  CANSparkMax indexerMotor3;
+  private final CANSparkMax indexerMoter1;
+  private final CANSparkMax indexerMotor2;
+  private final CANSparkMax indexerMotor3;
   /** Intake Motor */
-  CANSparkMax intakeMotor;
+  private final CANSparkMax intakeMotor;
   /** Color Sensor and I2C setup */
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
-  ColorSensorV3 colorSensor;
-  ColorMatch mColorMatcher;
+  private final ColorSensorV3 colorSensor;
+  private final ColorMatch mColorMatcher;
   /** Create the colors to store in the colormatcher to compare the ball color against */
-  Color kBlueTarget = new Color(0.143, 0.427, 0.429);
-  Color kGreenTarget = new Color(0.197, 0.561, 0.240);
-  Color kRedTarget = new Color(0.561, 0.232, 0.114);
-  Color kYellowTarget = new Color(0.361, 0.524, 0.113);
+  private final Color kBlueTarget = new Color(0.143, 0.427, 0.429);
+  private final Color kGreenTarget = new Color(0.197, 0.561, 0.240);
+  private final Color kRedTarget = new Color(0.561, 0.232, 0.114);
+  private final Color kYellowTarget = new Color(0.361, 0.524, 0.113);
   /** Make A Detected Color Variable which is reset every Period */
   private Color detectedColor;
 
