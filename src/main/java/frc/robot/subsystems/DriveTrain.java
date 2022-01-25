@@ -41,7 +41,8 @@ public class DriveTrain extends SubsystemBase {
     // This method will be called once per scheduler run
   }
   public void driveWithJoysticks(XboxController Controller, double speed){
-    if (Constants.DeadZone * -1 < Controller.getRawAxis(Constants.XboxLeftYAxis) * -1 && Controller.getRawAxis(Constants.XboxLeftYAxis)* -1 < Constants.DeadZone) {
+    double LeftYAxis = Controller.getRawAxis(Constants.XboxLeftYAxis) * -1;
+    if (Constants.DeadZone * -1 <  LeftYAxis && LeftYAxis < Constants.DeadZone) {
       driveTrainSpeed = 0;
     } else{
       if (Controller.getRawAxis(Constants.XboxLeftYAxis) * -1 > Constants.DeadZone) {
