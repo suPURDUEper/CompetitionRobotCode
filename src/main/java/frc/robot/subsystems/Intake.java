@@ -10,7 +10,10 @@ import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -28,6 +31,9 @@ import frc.robot.Constants;
  * Once two blue balls fill the intake, we shut down the ability to use the intake except for in the case of shooting.
  */
 public class Intake extends SubsystemBase {
+  /** Pneumatics */
+  private final DoubleSolenoid leftIntakeSolenoid;
+  private final DoubleSolenoid rightIntakeSolenoid;
   /** Indexer motors */
   private final CANSparkMax indexerMoter1;
   private final CANSparkMax indexerMotor2;
@@ -64,8 +70,17 @@ public class Intake extends SubsystemBase {
     indexerMotor2.setInverted(false);
     indexerMotor3 = new CANSparkMax(Constants.IndexerMotor3, MotorType.kBrushless);
     indexerMotor3.setInverted(false);
+    // Pneumatics
+    leftIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
+    rightIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
+    leftIntakeSolenoid.set(DoubleSolenoid.Value.kForward);
+    rightIntakeSolenoid.set(DoubleSolenoid.Value.kForward);
   }
 
+  /**
+   * Check if a red ball is in the intake.
+   * @return boolean 
+   */
   public boolean HasRedBall() {
     ColorMatchResult match = mColorMatcher.matchColor(detectedColor);
     // if the value is no where close to the desired
@@ -78,6 +93,10 @@ public class Intake extends SubsystemBase {
     return false;
   }
 
+  /**
+   * Check if the blue ball is in the intake
+   * @return boolean
+   */
   public boolean HasBlueBall() {
     ColorMatchResult match = mColorMatcher.matchColor(detectedColor);
     // if the value is no where close to the desired
@@ -88,6 +107,17 @@ public class Intake extends SubsystemBase {
       }
     }
     return false;
+  }
+
+  /**
+   * Toggles the intake between either in -> out or out -> in
+   * @param controller the operator controller
+   */
+  public void ToggleIntake(XboxController controller) {
+    if (controller.getBButton()) {
+      leftIntakeSolenoid.toggle();
+      rightIntakeSolenoid.toggle();
+    }
   }
 
   @Override
