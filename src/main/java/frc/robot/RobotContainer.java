@@ -9,12 +9,15 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DriveForwardTimed;
+import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.ExtendClimber;
 import frc.robot.commands.FreeClimb;
+import frc.robot.commands.LimelightAim;
 import frc.robot.commands.ToggleIntakeOutIn;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Vision;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -30,11 +33,14 @@ public class RobotContainer {
   private final DriveTrain driveTrain;
   private final Climber climber;
   private final Intake intake;
+  private final Vision vision;
   // command declare
   private final DriveForwardTimed driveForwardTimed;
+  private final DriveWithJoysticks driveWithJoysticks;
   private final FreeClimb freeClimb;
   private final ExtendClimber extendClimber;
   private final ToggleIntakeOutIn toggleIntake;
+  private final LimelightAim limelightAim;
   // controller declare
   public static XboxController driverJoyStick;
   public static XboxController operatorJoyStick;
@@ -49,20 +55,30 @@ public class RobotContainer {
     driveTrain = new DriveTrain();
     climber = new Climber();
     intake = new Intake();
-
-
+    vision = new Vision();
     // Set the default command settings
+    driveWithJoysticks = new DriveWithJoysticks(driveTrain);
+    driveWithJoysticks.addRequirements(driveTrain);
+    driveTrain.setDefaultCommand(driveWithJoysticks);
+
     extendClimber = new ExtendClimber(climber);
     extendClimber.addRequirements(climber);
     climber.setDefaultCommand(extendClimber);
+
     freeClimb = new FreeClimb(climber);
     freeClimb.addRequirements(climber);
     climber.setDefaultCommand(freeClimb);
+
     // set values for commands and set default commands
     driveForwardTimed = new DriveForwardTimed(driveTrain);
     driveForwardTimed.addRequirements(driveTrain);
+
     toggleIntake = new ToggleIntakeOutIn(intake);
     toggleIntake.addRequirements(intake);
+
+    limelightAim = new LimelightAim(driveTrain, vision);
+    limelightAim.addRequirements(driveTrain, vision);
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -78,6 +94,9 @@ public class RobotContainer {
   private void configureButtonBindings() {
     JoystickButton toggleIntakeButton_B = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
     toggleIntakeButton_B.whenPressed(toggleIntake);
+
+    JoystickButton limelightAim_A = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);
+    limelightAim_A.whileHeld(limelightAim);
   }
 
   /**
