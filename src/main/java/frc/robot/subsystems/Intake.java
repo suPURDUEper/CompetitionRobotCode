@@ -40,7 +40,6 @@ import frc.robot.Constants;
  */
 public class Intake extends SubsystemBase {
   private final ShuffleboardTab intakeTab;
-
   private final NetworkTableEntry kRed, kGreen, kBlue, kColorDetection;
   /** Pneumatics */
   private final DoubleSolenoid leftIntakeSolenoid;
@@ -79,6 +78,9 @@ public class Intake extends SubsystemBase {
     // These are the defaul RGB values given for the color red from rev robotics
     // example
     mColorMatcher.addColorMatch(kRedTarget);
+    mColorMatcher.addColorMatch(kBlueTarget);
+    mColorMatcher.addColorMatch(kGreenTarget);
+    mColorMatcher.addColorMatch(kYellowTarget);
     // Init detected color
     detectedColor = colorSensor.getColor();
     // intake motor
@@ -103,33 +105,18 @@ public class Intake extends SubsystemBase {
    * 
    * @return boolean
    */
-  public boolean HasRedBall() {
+  public String getDetectedColor() {
     ColorMatchResult match = mColorMatcher.matchColor(detectedColor);
     // if the value is no where close to the desired
     // then null will be returned
-    if (match.color != null) {
+    if (match != null) {
       if (match.color == kRedTarget) {
-        return true;
+        return "Red";
+      } else if (match.color == kBlueTarget) {
+        return "Blue";
       }
     }
-    return false;
-  }
-
-  /**
-   * Check if the blue ball is in the intake
-   * 
-   * @return boolean
-   */
-  public boolean HasBlueBall() {
-    ColorMatchResult match = mColorMatcher.matchColor(detectedColor);
-    // if the value is no where close to the desired
-    // then null will be returned
-    if (match.color != null) {
-      if (match.color == kBlueTarget) {
-        return true;
-      }
-    }
-    return false;
+    return "NULL";
   }
 
   /**
@@ -149,7 +136,7 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
     // update the detected color every period
     detectedColor = colorSensor.getColor();
-    kColorDetection.forceSetBoolean(HasBlueBall());
+    kColorDetection.forceSetString(getDetectedColor());
     kRed.forceSetDouble(detectedColor.red);
     kGreen.forceSetDouble(detectedColor.green);
     kBlue.forceSetDouble(detectedColor.blue);

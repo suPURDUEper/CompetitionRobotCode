@@ -30,6 +30,7 @@ import frc.robot.subsystems.Vision;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  private SendableChooser<String> kAllianceChooser;
   // subsystem declare
   private final DriveTrain driveTrain;
   private final Climber climber;
@@ -50,6 +51,11 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    kAllianceChooser = new SendableChooser<String>();
+    kAllianceChooser.addOption("Blue Team", "Blue");
+    kAllianceChooser.addOption("Red Team", "Red");
+    ShuffleboardInfo.getInstance().addAllianceChooser(kAllianceChooser);
+
     driverJoyStick = new XboxController(Constants.DriveJoystickNumber);
     operatorJoyStick = new XboxController(Constants.OperatorJoystickNumber);
     // set values for subsystems
@@ -102,12 +108,16 @@ public class RobotContainer {
   }
 
   private void setupShuffleBoard(){
-    SendableChooser<String> kAlliances = new SendableChooser<String>();
-    kAlliances.addOption("Blue Team", "Blue");
-    kAlliances.addOption("Red Team", "Red");
     ShuffleboardInfo.getInstance();
-    ShuffleboardInfo.getInstance().addAllianceChooser(kAlliances);
     // ShuffleboardInfo.getInstance().addAutoChooser(mAutoChooser);
+  }
+
+  /**
+   * Returns the color of the alliance
+   * @return "Blue" or "Red"
+   */
+  public String getAllianceColor() {
+    return kAllianceChooser.getSelected();
   }
 
   /**
