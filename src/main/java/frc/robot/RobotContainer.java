@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DriveForwardTimed;
@@ -79,6 +80,7 @@ public class RobotContainer {
     limelightAim = new LimelightAim(driveTrain, vision);
     limelightAim.addRequirements(driveTrain, vision);
 
+    setupShuffleBoard();
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -97,6 +99,15 @@ public class RobotContainer {
 
     JoystickButton limelightAim_A = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);
     limelightAim_A.whileHeld(limelightAim);
+  }
+
+  private void setupShuffleBoard(){
+    SendableChooser<String> kAlliances = new SendableChooser<String>();
+    kAlliances.addOption("Blue Team", "Blue");
+    kAlliances.addOption("Red Team", "Red");
+    ShuffleboardInfo.getInstance();
+    ShuffleboardInfo.getInstance().addAllianceChooser(kAlliances);
+    // ShuffleboardInfo.getInstance().addAutoChooser(mAutoChooser);
   }
 
   /**

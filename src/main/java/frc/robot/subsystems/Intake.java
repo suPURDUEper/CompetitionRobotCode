@@ -10,27 +10,38 @@ import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 /**
- * The intake class envelops the 4 motors which run the intake as well as the color sensor to sense the color of ball.
- * We also use break beams to determine whether or not the clip is fully loaded. In 2022's game a fully loaded clip is 2 balls.
+ * The intake class envelops the 4 motors which run the intake as well as the
+ * color sensor to sense the color of ball.
+ * We also use break beams to determine whether or not the clip is fully loaded.
+ * In 2022's game a fully loaded clip is 2 balls.
  * 
- * If a red ball comes into the intake, we sense the color and if that is red then we reverse the indexer motor and send it flying
+ * If a red ball comes into the intake, we sense the color and if that is red
+ * then we reverse the indexer motor and send it flying
  * out the 'pooper'. Blue balls get to pass freely through.
  * 
- * If a blue ball comes before a red ball, then it get stored up in the top most part of the intake/conveyor. This allows red balls
+ * If a blue ball comes before a red ball, then it get stored up in the top most
+ * part of the intake/conveyor. This allows red balls
  * to still be pooped out.
  * 
- * Once two blue balls fill the intake, we shut down the ability to use the intake except for in the case of shooting.
+ * Once two blue balls fill the intake, we shut down the ability to use the
+ * intake except for in the case of shooting.
  */
 public class Intake extends SubsystemBase {
+  private final ShuffleboardTab intakeTab;
+
+  private final NetworkTableEntry kRed, kGreen, kBlue, kColorDetection;
   /** Pneumatics */
   private final DoubleSolenoid leftIntakeSolenoid;
   private final DoubleSolenoid rightIntakeSolenoid;
@@ -44,15 +55,24 @@ public class Intake extends SubsystemBase {
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   private final ColorSensorV3 colorSensor;
   private final ColorMatch mColorMatcher;
-  /** Create the colors to store in the colormatcher to compare the ball color against */
+  /**
+   * Create the colors to store in the colormatcher to compare the ball color
+   * against
+   */
   private final Color kBlueTarget = new Color(0.143, 0.427, 0.429);
   private final Color kGreenTarget = new Color(0.197, 0.561, 0.240);
-  private final Color kRedTarget = new Color(0.561, 0.232, 0.114);
+  private final Color kRedTarget = new Color(0.563, 0.336, 0.101);
   private final Color kYellowTarget = new Color(0.361, 0.524, 0.113);
   /** Make A Detected Color Variable which is reset every Period */
   private Color detectedColor;
 
   public Intake() {
+    // Shuffleboard setup for RGB
+    intakeTab = Shuffleboard.getTab("Intake");
+    kColorDetection = Shuffleboard.getTab("Intake").add("Detected Color", "No Color Detected").getEntry();
+    kRed = Shuffleboard.getTab("Intake").add("R", 0.000).getEntry();
+    kGreen = Shuffleboard.getTab("Intake").add("G", 0.000).getEntry();
+    kBlue = Shuffleboard.getTab("Intake").add("B", 0.000).getEntry();
     // Color Sensor and Macther
     colorSensor = new ColorSensorV3(i2cPort);
     mColorMatcher = new ColorMatch();
@@ -75,11 +95,13 @@ public class Intake extends SubsystemBase {
     rightIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
     leftIntakeSolenoid.set(DoubleSolenoid.Value.kForward);
     rightIntakeSolenoid.set(DoubleSolenoid.Value.kForward);
+
   }
 
   /**
    * Check if a red ball is in the intake.
-   * @return boolean 
+   * 
+   * @return boolean
    */
   public boolean HasRedBall() {
     ColorMatchResult match = mColorMatcher.matchColor(detectedColor);
@@ -95,6 +117,7 @@ public class Intake extends SubsystemBase {
 
   /**
    * Check if the blue ball is in the intake
+   * 
    * @return boolean
    */
   public boolean HasBlueBall() {
@@ -111,6 +134,7 @@ public class Intake extends SubsystemBase {
 
   /**
    * Toggles the intake between either in -> out or out -> in
+   * 
    * @param controller the operator controller
    */
   public void ToggleIntake(XboxController controller) {
@@ -125,5 +149,9 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
     // update the detected color every period
     detectedColor = colorSensor.getColor();
+    kColorDetection.forceSetBoolean(HasBlueBall());
+    kRed.forceSetDouble(detectedColor.red);
+    kGreen.forceSetDouble(detectedColor.green);
+    kBlue.forceSetDouble(detectedColor.blue);
   }
 }
