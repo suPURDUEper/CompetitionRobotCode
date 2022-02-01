@@ -17,6 +17,11 @@ public class LimelightAim extends CommandBase {
   // Constants
   private double mSteeringKp = 0.05;
   private double mDriveKp = 0.80;
+  private double steeringAdjust = 0.0;
+  private double mTx = 0.0;
+  private double headingError = 0.0;
+  private double minCommand = 0.05;
+  private double leftCommand, rightCommand = 0.0;
   // Network Table Entries
   NetworkTableEntry mKpSteer, mMinTa, mDrive_Kp;
   /** Creates a new LimelightAim. */
@@ -35,11 +40,24 @@ public class LimelightAim extends CommandBase {
   public void initialize() {
     mSteeringKp = mKpSteer.getDouble(0);
     mDriveKp = mDrive_Kp.getDouble(0);
+    steeringAdjust = 0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    mTx = mVision.getTx();
+    headingError = -mTx;
+    if (mTx > 1.0) {
+      steeringAdjust = mSteeringKp * headingError - minCommand;
+    } else if (mTx < 1.0) {
+      steeringAdjust = mSteeringKp * headingError + minCommand;
+    }
+    leftCommand += steeringAdjust;
+    rightCommand -= steeringAdjust;
+
+    mDriveTrain.tankDrive(leftCommand, rightCommand);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
