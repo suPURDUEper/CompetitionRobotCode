@@ -24,6 +24,7 @@ public class LimelightAim extends CommandBase {
   private double leftCommand, rightCommand = 0.0;
   // Network Table Entries
   NetworkTableEntry mKpSteer, mMinTa, mDrive_Kp;
+
   /** Creates a new LimelightAim. */
   public LimelightAim(DriveTrain dt, Vision v) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -46,22 +47,25 @@ public class LimelightAim extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    mTx = mVision.getTx();
-    headingError = -mTx;
-    if (mTx > 1.0) {
-      steeringAdjust = mSteeringKp * headingError - minCommand;
-    } else if (mTx < 1.0) {
-      steeringAdjust = mSteeringKp * headingError + minCommand;
-    }
-    leftCommand += steeringAdjust;
-    rightCommand -= steeringAdjust;
+    if (mVision.isTargetValid()) {
+      mTx = mVision.getTx();
+      headingError = -mTx;
+      if (mTx > 1.0) {
+        steeringAdjust = mSteeringKp * headingError - minCommand;
+      } else if (mTx < 1.0) {
+        steeringAdjust = mSteeringKp * headingError + minCommand;
+      }
+      leftCommand += steeringAdjust;
+      rightCommand -= steeringAdjust;
 
-    mDriveTrain.tankDrive(leftCommand, rightCommand);
+      mDriveTrain.tankDrive(leftCommand, rightCommand);
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override
