@@ -20,7 +20,7 @@ public class LimelightAim extends CommandBase {
   private double steeringAdjust;
   private double mTx;
   private double headingError;
-  private double minCommand = 0.05;
+  private double minCommand = 0.0;
   private double leftCommand, rightCommand;
   // Network Table Entries
   NetworkTableEntry mKpSteer, mMinTa, mDrive_Kp;
@@ -41,8 +41,6 @@ public class LimelightAim extends CommandBase {
   public void initialize() {
     mSteeringKp = mKpSteer.getDouble(0);
     mDriveKp = mDrive_Kp.getDouble(0);
-    leftCommand = 0.0;
-    rightCommand = 0.0;
     steeringAdjust = 0;
   }
 
@@ -51,11 +49,18 @@ public class LimelightAim extends CommandBase {
   public void execute() {
     if (mVision.isTargetValid()) {
       mTx = mVision.getTx();
-      headingError = -mTx;
-      if (mTx > 1.0) {
+      leftCommand = 0.0;
+      rightCommand = 0.0;
+      steeringAdjust = 0;
+      headingError = 
+      mTx;
+      if (mTx < -0.5) {
         steeringAdjust = mSteeringKp * headingError - minCommand;
-      } else if (mTx < 1.0) {
+      } else if (mTx > 0.5) {
         steeringAdjust = mSteeringKp * headingError + minCommand;
+      } else if (mTx < 0.5 && mTx > -0.5) {
+        leftCommand = 0;
+        rightCommand = 0;
       }
       leftCommand -= steeringAdjust;
       rightCommand += steeringAdjust;
