@@ -41,8 +41,8 @@ public class Intake extends SubsystemBase {
   /** Intake Motor */
   private final CANSparkMax intakeMotor;
   /** Color Sensor and I2C setup */
-  private final I2C.Port i2cPort = I2C.Port.kOnboard;
-  private final ColorSensorV3 colorSensor;
+  // private final I2C.Port i2cPort = I2C.Port.kOnboard;
+  // private final ColorSensorV3 colorSensor;
   private final ColorMatch mColorMatcher;
   /** Create the colors to store in the colormatcher to compare the ball color against */
   private final Color kBlueTarget = new Color(0.143, 0.427, 0.429);
@@ -54,13 +54,13 @@ public class Intake extends SubsystemBase {
 
   public Intake() {
     // Color Sensor and Macther
-    colorSensor = new ColorSensorV3(i2cPort);
+    // colorSensor = new ColorSensorV3(i2cPort);
     mColorMatcher = new ColorMatch();
     // These are the defaul RGB values given for the color red from rev robotics
     // example
     mColorMatcher.addColorMatch(kRedTarget);
     // Init detected color
-    detectedColor = colorSensor.getColor();
+    // detectedColor = colorSensor.getColor();
     // intake motor
     intakeMotor = new CANSparkMax(Constants.IntakeMotor, MotorType.kBrushless);
     // index motors
@@ -124,6 +124,6 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // update the detected color every period
-    detectedColor = colorSensor.getColor();
+    // detectedColor = colorSensor.getColor();
   }
 }

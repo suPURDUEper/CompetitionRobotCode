@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.ShuffleboardInfo;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Vision;
@@ -48,22 +49,21 @@ public class LimelightAim extends CommandBase {
   @Override
   public void execute() {
     if (mVision.isTargetValid()) {
+      double throttle = RobotContainer.driverJoyStick.getLeftY();
       mTx = mVision.getTx();
       leftCommand = 0.0;
       rightCommand = 0.0;
       steeringAdjust = 0;
-      headingError = 
-      mTx;
+      headingError = mTx;
       if (mTx < -0.5) {
         steeringAdjust = mSteeringKp * headingError - minCommand;
       } else if (mTx > 0.5) {
         steeringAdjust = mSteeringKp * headingError + minCommand;
       } else if (mTx < 0.5 && mTx > -0.5) {
-        leftCommand = 0;
-        rightCommand = 0;
+        steeringAdjust = 0;
       }
-      leftCommand -= steeringAdjust;
-      rightCommand += steeringAdjust;
+      leftCommand = throttle - steeringAdjust;
+      rightCommand = steeringAdjust + throttle;
 
       mDriveTrain.tankDrive(leftCommand, rightCommand);
     }

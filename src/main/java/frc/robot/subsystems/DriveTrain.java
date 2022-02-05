@@ -18,68 +18,84 @@ public class DriveTrain extends SubsystemBase {
   CANSparkMax leftBack;
   CANSparkMax rightBack;
   DifferentialDrive drive;
-  public double driveTrainSpeed;
   public double DriveTrainTurn;
   public static double boost = Constants.BoostInactive;
+
   public DriveTrain() {
-    leftFront = new CANSparkMax(Constants.LeftFront,MotorType.kBrushless);
+    leftFront = new CANSparkMax(Constants.LeftFront, MotorType.kBrushless);
     leftFront.setInverted(false);
-    leftBack = new CANSparkMax(Constants.LeftBack,MotorType.kBrushless);
-    rightFront = new CANSparkMax(Constants.RightFront,MotorType.kBrushless);
+    leftBack = new CANSparkMax(Constants.LeftBack, MotorType.kBrushless);
+    rightFront = new CANSparkMax(Constants.RightFront, MotorType.kBrushless);
     rightFront.setInverted(true);
-    rightBack = new CANSparkMax(Constants.RightBack,MotorType.kBrushless);
-    
+    rightBack = new CANSparkMax(Constants.RightBack, MotorType.kBrushless);
 
     leftBack.follow(leftFront);
     rightBack.follow(rightFront);
-    drive = new DifferentialDrive(leftFront,rightFront);
+    drive = new DifferentialDrive(leftFront, rightFront);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
-  public void driveWithJoysticks(XboxController Controller, double speed){
+
+  public void driveWithJoysticks(XboxController Controller, double speed) {
     double LeftYAxis = Controller.getRawAxis(Constants.XboxLeftYAxis) * -1;
     double RightXAxis = Controller.getRawAxis(Constants.XboxRightXAxis);
-    if (Constants.DeadZone * -1 <  LeftYAxis && LeftYAxis < Constants.DeadZone) {
-      driveTrainSpeed = 0;
-    } else{
-      if (LeftYAxis > Constants.DeadZone) {
-        driveTrainSpeed = boost*(Constants.DriveTrainCurve*(1-Constants.BaseVelocity)
-        *Controller.getRawAxis(Constants.XboxLeftYAxis)*-1+(1-Constants.DriveTrainCurve)
-        *(1-Constants.BaseVelocity)*Math.pow(Controller.getRawAxis(Constants.XboxLeftYAxis)*-1, 5))
-        +Constants.BaseVelocity;
+    double driveTrainSpeed = getThrottleMap(LeftYAxis);
+    if (Constants.DeadZone * -1 < RightXAxis && RightXAxis < Constants.DeadZone) {
+      DriveTrainTurn = 0;
+    } else {
+      if (RightXAxis > Constants.DeadZone) {
+        DriveTrainTurn = boost * (Constants.DriveTrainCurve * (1 - Constants.BaseVelocity)
+            * Controller.getRawAxis(Constants.XboxRightXAxis)
+            + (1 - Constants.DriveTrainCurve) * (1 - Constants.BaseVelocity)
+                * Math.pow(Controller.getRawAxis(Constants.XboxRightXAxis), 5))
+            + Constants.BaseVelocity;
       }
-      if (LeftYAxis < Constants.DeadZone*-1) {
-        driveTrainSpeed = boost*(Constants.DriveTrainCurve*(1-Constants.BaseVelocity)
-        *Controller.getRawAxis(Constants.XboxLeftYAxis)*-1+(1-Constants.DriveTrainCurve)
-        *(1-Constants.BaseVelocity)*Math.pow(Controller.getRawAxis(Constants.XboxLeftYAxis)*-1, 5))
-        -Constants.BaseVelocity;
+      if (RightXAxis < Constants.DeadZone * -1) {
+        DriveTrainTurn = boost * (Constants.DriveTrainCurve * (1 - Constants.BaseVelocity)
+            * Controller.getRawAxis(Constants.XboxRightXAxis)
+            + (1 - Constants.DriveTrainCurve)
+                * (1 - Constants.BaseVelocity) * Math.pow(Controller.getRawAxis(Constants.XboxRightXAxis), 5))
+            - Constants.BaseVelocity;
       }
-      }
-      if (Constants.DeadZone * -1 < RightXAxis && RightXAxis < Constants.DeadZone) {
-        DriveTrainTurn = 0;
-      } else{
-        if (RightXAxis > Constants.DeadZone) {
-          DriveTrainTurn = boost*(Constants.DriveTrainCurve*(1-Constants.BaseVelocity)*Controller.getRawAxis(Constants.XboxRightXAxis)+(1-Constants.DriveTrainCurve)*(1-Constants.BaseVelocity)*Math.pow(Controller.getRawAxis(Constants.XboxRightXAxis), 5))+Constants.BaseVelocity;
-        }
-        if  (RightXAxis < Constants.DeadZone*-1) {
-          DriveTrainTurn = boost*(Constants.DriveTrainCurve*(1-Constants.BaseVelocity)
-          *Controller.getRawAxis(Constants.XboxRightXAxis)+(1-Constants.DriveTrainCurve)
-          *(1-Constants.BaseVelocity)*Math.pow(Controller.getRawAxis(Constants.XboxRightXAxis), 5))
-          -Constants.BaseVelocity;
-        }
-        }
+    }
     drive.arcadeDrive(driveTrainSpeed, DriveTrainTurn);
-    //drive.arcadeDrive(xSpeed, zRotation);
+    // drive.arcadeDrive(xSpeed, zRotation);
   }
-  public void driveForward(double speed){
-    drive.tankDrive(speed,speed);
+
+  public void driveForward(double speed) {
+    drive.tankDrive(speed, speed);
   }
-  public void tankDrive(double left, double right) {
-    drive.tankDrive(left, right);
+
+  public void arcadeDrive(double throttle, double turn) {
+    drive.arcadeDrive(throttle, turn);
   }
+
+  public double getThrottleMap(double LeftYAxis) {
+    double driveTrainSpeed = 0;
+    if (Constants.DeadZone * -1 < LeftYAxis && LeftYAxis < Constants.DeadZone) {
+      driveTrainSpeed = 0;
+    } else {
+      if (LeftYAxis > Constants.DeadZone) {
+        driveTrainSpeed = boost * (Constants.DriveTrainCurve * (1 - Constants.BaseVelocity)
+            * LeftYAxis * -1
+            + (1 - Constants.DriveTrainCurve)
+                * (1 - Constants.BaseVelocity) * Math.pow(LeftYAxis * -1, 5))
+            + Constants.BaseVelocity;
+      }
+      if (LeftYAxis < Constants.DeadZone * -1) {
+        driveTrainSpeed = boost * (Constants.DriveTrainCurve * (1 - Constants.BaseVelocity)
+            * LeftYAxis * -1
+            + (1 - Constants.DriveTrainCurve)
+                * (1 - Constants.BaseVelocity) * Math.pow(LeftYAxis * -1, 5))
+            - Constants.BaseVelocity;
+      }
+    }
+    return driveTrainSpeed;
+  }
+
   public void stop() {
     drive.stopMotor();
   }
