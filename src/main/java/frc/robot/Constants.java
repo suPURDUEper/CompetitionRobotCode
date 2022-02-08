@@ -17,6 +17,7 @@ public final class Constants {
     public static final int leftClimbMotor = 8;
     public static final int rightClimbMotor = 9;
     public static final int IntakeMotor = 0;
+    // Drivetrain motor sparkMax ids
     public static final int LeftFront = 1;
     public static final int LeftBack = 2;
     public static final int RightFront = 3;
@@ -52,6 +53,11 @@ public final class Constants {
     public static final double FlywheelkI = 0;
     public static final double FlywheelkF = 0.05;
     public static final double FlywheelkP = 4;
+    public static final int LowConMotor = 0;
+    public static final int PooperMotor = 0;
+    /** Break Beams */
+    public static final int LowConBreakBeam = 0;
+    public static final int PooperBreakBeam = 0;
     public static int kPIDLoopIdx = 0;
     public static int kTimeoutMs = 30;
     

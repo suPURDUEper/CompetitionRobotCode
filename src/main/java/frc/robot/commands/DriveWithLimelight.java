@@ -11,7 +11,7 @@ import frc.robot.ShuffleboardInfo;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Vision;
 
-public class LimelightAim extends CommandBase {
+public class DriveWithLimelight extends CommandBase {
   private final DriveTrain mDriveTrain;
   private final Vision mVision;
 
@@ -22,12 +22,12 @@ public class LimelightAim extends CommandBase {
   private double mTx;
   private double headingError;
   private double minCommand = 0.0;
-  private double leftCommand, rightCommand;
+  private double turnCommand;
   // Network Table Entries
   NetworkTableEntry mKpSteer, mMinTa, mDrive_Kp;
 
   /** Creates a new LimelightAim. */
-  public LimelightAim(DriveTrain dt, Vision v) {
+  public DriveWithLimelight(DriveTrain dt, Vision v) {
     // Use addRequirements() here to declare subsystem dependencies.
     mDriveTrain = dt;
     mVision = v;
@@ -51,21 +51,20 @@ public class LimelightAim extends CommandBase {
     if (mVision.isTargetValid()) {
       double throttle = RobotContainer.driverJoyStick.getLeftY();
       mTx = mVision.getTx();
-      leftCommand = 0.0;
-      rightCommand = 0.0;
       steeringAdjust = 0;
+      turnCommand = 0;
       headingError = mTx;
       if (mTx < -0.5) {
-        steeringAdjust = mSteeringKp * headingError - minCommand;
+        turnCommand = mSteeringKp * headingError - minCommand;
       } else if (mTx > 0.5) {
-        steeringAdjust = mSteeringKp * headingError + minCommand;
+        turnCommand = mSteeringKp * headingError + minCommand;
       } else if (mTx < 0.5 && mTx > -0.5) {
-        steeringAdjust = 0;
+        turnCommand = 0;
       }
-      leftCommand = throttle - steeringAdjust;
-      rightCommand = steeringAdjust + throttle;
 
-      mDriveTrain.tankDrive(leftCommand, rightCommand);
+      
+
+      
     }
   }
 

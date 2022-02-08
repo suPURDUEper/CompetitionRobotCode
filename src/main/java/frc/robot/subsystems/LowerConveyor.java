@@ -33,6 +33,7 @@ public class LowerConveyor extends SubsystemBase {
   private final Color kYellowTarget = new Color(0.361, 0.524, 0.113);
   /** Make A Detected Color Variable which is reset every Period */
   private Color detectedColor;
+
   public LowerConveyor() {
     // Color Sensor and Macther
     colorSensor = new ColorSensorV3(i2cPort);
@@ -44,8 +45,9 @@ public class LowerConveyor extends SubsystemBase {
     mColorMatcher.addColorMatch(kRedTarget);
     lowConMotor = new CANSparkMax(Constants.LowConMotor, MotorType.kBrushless);
     pooperMotor = new CANSparkMax(Constants.PooperMotor, MotorType.kBrushless);
+    
     lowConBreakBeam = new DigitalInput(Constants.LowConBreakBeam);
-    pooperBreakBeam = new DigitalInput(Constants.LowConBreakBeam);
+    pooperBreakBeam = new DigitalInput(Constants.PooperBreakBeam);
   }
 
   public boolean HasRedBall() {
