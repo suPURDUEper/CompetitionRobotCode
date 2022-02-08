@@ -6,9 +6,9 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class LowerConveyer extends SubsystemBase {
-  /** Creates a new LowerConveyer. */
-  public LowerConveyer() {}
+public class UpperConveyer extends SubsystemBase {
+  /** Creates a new UpperConveyer. */
+  public UpperConveyer() {}
 
   @Override
   public void periodic() {
