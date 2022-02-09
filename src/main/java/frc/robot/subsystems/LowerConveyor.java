@@ -83,6 +83,6 @@ public class LowerConveyor extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    detectedColor = colorSensor.getColor();
+    // detectedColor = colorSensor.getColor();
   }
 }

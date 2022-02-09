@@ -34,9 +34,6 @@ public class Intake extends SubsystemBase {
   /** Pneumatics */
   private final DoubleSolenoid leftIntakeSolenoid;
   private final DoubleSolenoid rightIntakeSolenoid;
-  /** Indexer motors */
-  private final CANSparkMax indexerMoter1;
-  private final CANSparkMax indexerMotor2;
   private final CANSparkMax indexerMotor3;
   /** Intake Motor */
   private final CANSparkMax intakeMotor;
@@ -64,10 +61,6 @@ public class Intake extends SubsystemBase {
     // intake motor
     intakeMotor = new CANSparkMax(Constants.IntakeMotor, MotorType.kBrushless);
     // index motors
-    indexerMoter1 = new CANSparkMax(Constants.IndexerMotor1, MotorType.kBrushless);
-    indexerMoter1.setInverted(false);
-    indexerMotor2 = new CANSparkMax(Constants.IndexerMotor2, MotorType.kBrushless);
-    indexerMotor2.setInverted(false);
     indexerMotor3 = new CANSparkMax(Constants.IndexerMotor3, MotorType.kBrushless);
     indexerMotor3.setInverted(false);
     // Pneumatics

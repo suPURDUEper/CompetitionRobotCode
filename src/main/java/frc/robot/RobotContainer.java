@@ -17,6 +17,7 @@ import frc.robot.commands.ToggleIntakeOutIn;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LowerConveyor;
 import frc.robot.subsystems.Vision;
 
 /**
@@ -33,7 +34,8 @@ public class RobotContainer {
   private final DriveTrain driveTrain;
   // private final Climber climber;
   //private final Intake intake;
-  //private final Vision vision;
+  private final LowerConveyor lowerConveyor;
+  private final Vision vision;
   // command declare
   private final DriveForwardTimed driveForwardTimed;
   private final DriveWithJoysticks driveWithJoysticks;
@@ -53,9 +55,10 @@ public class RobotContainer {
     operatorJoyStick = new XboxController(Constants.OperatorJoystickNumber);
     // set values for subsystems
     driveTrain = new DriveTrain();
+    lowerConveyor = new LowerConveyor();
     // climber = new Climber();
     //intake = new Intake();
-    //vision = new Vision();
+    vision = new Vision();
     // Set the default command settings
     driveWithJoysticks = new DriveWithJoysticks(driveTrain);
     driveWithJoysticks.addRequirements(driveTrain);
@@ -75,9 +78,6 @@ public class RobotContainer {
 
     //toggleIntake = new ToggleIntakeOutIn(intake);
     //toggleIntake.addRequirements(intake);
-
-    //limelightAim = new LimelightAim(driveTrain, vision);
-    //limelightAim.addRequirements(driveTrain, vision);
 
     // Configure the button bindings
     configureButtonBindings();

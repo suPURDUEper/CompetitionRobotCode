@@ -22,8 +22,8 @@ public final class Constants {
     public static final int LeftBack = 2;
     public static final int RightFront = 3;
     public static final int RightBack = 4;
-    public static final int IndexerMotor1 = 5;
-    public static final int IndexerMotor2 = 6;
+    public static final int LowConMotor = 5;
+    public static final int PooperMotor = 6;
     public static final int IndexerMotor3 = 7;
     public static final int LeftFlywheel = 0;
     public static final int RightFlywheel = 1;
@@ -53,11 +53,9 @@ public final class Constants {
     public static final double FlywheelkI = 0;
     public static final double FlywheelkF = 0.05;
     public static final double FlywheelkP = 4;
-    public static final int LowConMotor = 0;
-    public static final int PooperMotor = 0;
-    /** Break Beams */
+    /** DIO */
     public static final int LowConBreakBeam = 0;
-    public static final int PooperBreakBeam = 0;
+    public static final int PooperBreakBeam = 1;
     public static int kPIDLoopIdx = 0;
     public static int kTimeoutMs = 30;
     
