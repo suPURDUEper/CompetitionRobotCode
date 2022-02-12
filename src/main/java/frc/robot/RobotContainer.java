@@ -10,16 +10,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DriveForwardTimed;
 import frc.robot.commands.DriveWithJoysticks;
-import frc.robot.commands.ExtendClimber;
-import frc.robot.commands.FreeClimb;
 import frc.robot.commands.RevUpFlywheel;
-import frc.robot.commands.DriveWithLimelight;
-import frc.robot.commands.ToggleIntakeOutIn;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Vision;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -80,6 +73,7 @@ public class RobotContainer {
 
     revFlywheel = new RevUpFlywheel(shooter);
     revFlywheel.addRequirements(shooter);
+    shooter.setDefaultCommand(revFlywheel);
 
     // toggleIntake = new ToggleIntakeOutIn(intake);
     // toggleIntake.addRequirements(intake);
