@@ -33,9 +33,11 @@ public class DriveWithJoysticks extends CommandBase {
     double speed = Constants.DriveTrain.BoostInactive;
     if (RobotContainer.driverJoyStick.getRightBumper())
       speed = Constants.DriveTrain.BoostActive;
-    driveTrain.driveWithJoysticks(
-        DriveController.getThrottleMap(RobotContainer.driverJoyStick.getLeftY(), speed),
-        DriveController.getTurnMap(RobotContainer.driverJoyStick.getRightX(), speed));
+      // drive math currently not working
+    // driveTrain.driveWithJoysticks(
+    //     DriveController.getThrottleMap(RobotContainer.driverJoyStick.getLeftY(), speed),
+    //     DriveController.getTurnMap(RobotContainer.driverJoyStick.getRightX(), speed));
+    driveTrain.driveWithJoysticks(Math.pow(speed * -1 * RobotContainer.driverJoyStick.getLeftY(), 3), Math.pow(speed * RobotContainer.driverJoyStick.getRightX(), 3));
   }
 
   // Called once the command ends or is interrupted.
