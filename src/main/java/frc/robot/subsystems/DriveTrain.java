@@ -18,15 +18,15 @@ public class DriveTrain extends SubsystemBase {
   CANSparkMax leftBack;
   CANSparkMax rightBack;
   DifferentialDrive drive;
-  public static double boost = Constants.BoostInactive;
+  public static double boost = Constants.DriveTrain.BoostInactive;
 
   public DriveTrain() {
-    leftFront = new CANSparkMax(Constants.LeftFront, MotorType.kBrushless);
+    leftFront = new CANSparkMax(Constants.DriveTrain.LeftFront, MotorType.kBrushless);
     leftFront.setInverted(false);
-    leftBack = new CANSparkMax(Constants.LeftBack, MotorType.kBrushless);
-    rightFront = new CANSparkMax(Constants.RightFront, MotorType.kBrushless);
+    leftBack = new CANSparkMax(Constants.DriveTrain.LeftBack, MotorType.kBrushless);
+    rightFront = new CANSparkMax(Constants.DriveTrain.RightFront, MotorType.kBrushless);
     rightFront.setInverted(true);
-    rightBack = new CANSparkMax(Constants.RightBack, MotorType.kBrushless);
+    rightBack = new CANSparkMax(Constants.DriveTrain.RightBack, MotorType.kBrushless);
 
     leftBack.follow(leftFront);
     rightBack.follow(rightFront);
@@ -39,8 +39,8 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void driveWithJoysticks(XboxController Controller, double speed) {
-    double LeftYAxis = Controller.getRawAxis(Constants.XboxLeftYAxis) * -1;
-    double RightXAxis = Controller.getRawAxis(Constants.XboxRightXAxis);
+    double LeftYAxis = Controller.getRawAxis(Constants.Controller.XboxLeftYAxis) * -1;
+    double RightXAxis = Controller.getRawAxis(Constants.Controller.XboxRightXAxis);
     double driveTrainSpeed = getThrottleMap(LeftYAxis);
     double DriveTrainTurn = getTurnMap(RightXAxis);
 
@@ -58,44 +58,44 @@ public class DriveTrain extends SubsystemBase {
 
   public double getThrottleMap(double LeftYAxis) {
     double driveTrainSpeed = 0;
-    if (Constants.DeadZone * -1 < LeftYAxis && LeftYAxis < Constants.DeadZone) {
+    if (Constants.Controller.DeadZone * -1 < LeftYAxis && LeftYAxis < Constants.Controller.DeadZone) {
       driveTrainSpeed = 0;
     } else {
-      if (LeftYAxis > Constants.DeadZone) {
-        driveTrainSpeed = boost * (Constants.DriveTrainCurve * (1 - Constants.BaseVelocity)
+      if (LeftYAxis > Constants.Controller.DeadZone) {
+        driveTrainSpeed = boost * (Constants.DriveTrain.DriveTrainCurve * (1 - Constants.DriveTrain.BaseVelocity)
             * LeftYAxis * -1
-            + (1 - Constants.DriveTrainCurve)
-                * (1 - Constants.BaseVelocity) * Math.pow(LeftYAxis * -1, 5))
-            + Constants.BaseVelocity;
+            + (1 - Constants.DriveTrain.DriveTrainCurve)
+                * (1 - Constants.DriveTrain.BaseVelocity) * Math.pow(LeftYAxis * -1, 5))
+            + Constants.DriveTrain.BaseVelocity;
       }
-      if (LeftYAxis < Constants.DeadZone * -1) {
-        driveTrainSpeed = boost * (Constants.DriveTrainCurve * (1 - Constants.BaseVelocity)
+      if (LeftYAxis < Constants.Controller.DeadZone * -1) {
+        driveTrainSpeed = boost * (Constants.DriveTrain.DriveTrainCurve * (1 - Constants.DriveTrain.BaseVelocity)
             * LeftYAxis * -1
-            + (1 - Constants.DriveTrainCurve)
-                * (1 - Constants.BaseVelocity) * Math.pow(LeftYAxis * -1, 5))
-            - Constants.BaseVelocity;
+            + (1 - Constants.DriveTrain.DriveTrainCurve)
+                * (1 - Constants.DriveTrain.BaseVelocity) * Math.pow(LeftYAxis * -1, 5))
+            - Constants.DriveTrain.BaseVelocity;
       }
     }
     return driveTrainSpeed;
   }
   public double getTurnMap(double RightXAxis) {
     double DriveTrainTurn = 0;
-    if (Constants.DeadZone * -1 < RightXAxis && RightXAxis < Constants.DeadZone) {
+    if (Constants.Controller.DeadZone * -1 < RightXAxis && RightXAxis < Constants.Controller.DeadZone) {
       DriveTrainTurn = 0;
     } else {
-      if (RightXAxis > Constants.DeadZone) {
-        DriveTrainTurn = boost * (Constants.DriveTrainCurve * (1 - Constants.BaseVelocity)
+      if (RightXAxis > Constants.Controller.DeadZone) {
+        DriveTrainTurn = boost * (Constants.DriveTrain.DriveTrainCurve * (1 - Constants.DriveTrain.BaseVelocity)
             * RightXAxis
-            + (1 - Constants.DriveTrainCurve) * (1 - Constants.BaseVelocity)
+            + (1 - Constants.DriveTrain.DriveTrainCurve) * (1 - Constants.DriveTrain.BaseVelocity)
                 * Math.pow(RightXAxis, 5))
-            + Constants.BaseVelocity;
+            + Constants.DriveTrain.BaseVelocity;
       }
-      if (RightXAxis < Constants.DeadZone * -1) {
-        DriveTrainTurn = boost * (Constants.DriveTrainCurve * (1 - Constants.BaseVelocity)
+      if (RightXAxis < Constants.Controller.DeadZone * -1) {
+        DriveTrainTurn = boost * (Constants.DriveTrain.DriveTrainCurve * (1 - Constants.DriveTrain.BaseVelocity)
             * RightXAxis)
-            + (1 - Constants.DriveTrainCurve)
-                * (1 - Constants.BaseVelocity) * Math.pow(RightXAxis, 5)
-            - Constants.BaseVelocity;
+            + (1 - Constants.DriveTrain.DriveTrainCurve)
+                * (1 - Constants.DriveTrain.BaseVelocity) * Math.pow(RightXAxis, 5)
+            - Constants.DriveTrain.BaseVelocity;
       }
     }
     return DriveTrainTurn;

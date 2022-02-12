@@ -43,11 +43,11 @@ public class LowerConveyor extends SubsystemBase {
     // Init detected color
     detectedColor = colorSensor.getColor();
     mColorMatcher.addColorMatch(kRedTarget);
-    lowConMotor = new CANSparkMax(Constants.LowConMotor, MotorType.kBrushless);
-    pooperMotor = new CANSparkMax(Constants.PooperMotor, MotorType.kBrushless);
+    lowConMotor = new CANSparkMax(Constants.lowerCon.LowConMotor, MotorType.kBrushless);
+    pooperMotor = new CANSparkMax(Constants.lowerCon.PooperMotor, MotorType.kBrushless);
     
-    lowConBreakBeam = new DigitalInput(Constants.LowConBreakBeam);
-    pooperBreakBeam = new DigitalInput(Constants.PooperBreakBeam);
+    lowConBreakBeam = new DigitalInput(Constants.lowerCon.LowConBreakBeam);
+    pooperBreakBeam = new DigitalInput(Constants.lowerCon.PooperBreakBeam);
   }
 
   public boolean HasRedBall() {

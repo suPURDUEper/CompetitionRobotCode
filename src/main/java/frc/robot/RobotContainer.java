@@ -49,8 +49,8 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    driverJoyStick = new XboxController(Constants.DriveJoystickNumber);
-    operatorJoyStick = new XboxController(Constants.OperatorJoystickNumber);
+    driverJoyStick = new XboxController(Constants.Controller.DriveJoystickNumber);
+    operatorJoyStick = new XboxController(Constants.Controller.OperatorJoystickNumber);
     // set values for subsystems
     driveTrain = new DriveTrain();
     // climber = new Climber();

@@ -25,14 +25,14 @@ public class DriveWithBoost extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    DriveTrain.boost = Constants.BoostActive;
-    driveTrain.driveWithJoysticks(RobotContainer.driverJoyStick, Constants.DriveTrainSpeed);
+    DriveTrain.boost = Constants.DriveTrain.BoostActive;
+    driveTrain.driveWithJoysticks(RobotContainer.driverJoyStick, Constants.DriveTrain.DriveTrainSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    DriveTrain.boost = Constants.BoostInactive;
+    DriveTrain.boost = Constants.DriveTrain.BoostInactive;
   }
 
   // Returns true when the command should end.
