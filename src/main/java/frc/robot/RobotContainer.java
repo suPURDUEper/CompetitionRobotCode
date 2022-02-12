@@ -32,15 +32,15 @@ public class RobotContainer {
   // subsystem declare
   private final DriveTrain driveTrain;
   // private final Climber climber;
-  //private final Intake intake;
-  //private final Vision vision;
+  // private final Intake intake;
+  // private final Vision vision;
   // command declare
   private final DriveForwardTimed driveForwardTimed;
   private final DriveWithJoysticks driveWithJoysticks;
   // private final FreeClimb freeClimb;
   // private final ExtendClimber extendClimber;
-  //private final ToggleIntakeOutIn toggleIntake;
-  //private final LimelightAim limelightAim;
+  // private final ToggleIntakeOutIn toggleIntake;
+  // private final LimelightAim limelightAim;
   // controller declare
   public static XboxController driverJoyStick;
   public static XboxController operatorJoyStick;
@@ -54,8 +54,8 @@ public class RobotContainer {
     // set values for subsystems
     driveTrain = new DriveTrain();
     // climber = new Climber();
-    //intake = new Intake();
-    //vision = new Vision();
+    // intake = new Intake();
+    // vision = new Vision();
     // Set the default command settings
     driveWithJoysticks = new DriveWithJoysticks(driveTrain);
     driveWithJoysticks.addRequirements(driveTrain);
@@ -73,11 +73,11 @@ public class RobotContainer {
     driveForwardTimed = new DriveForwardTimed(driveTrain);
     driveForwardTimed.addRequirements(driveTrain);
 
-    //toggleIntake = new ToggleIntakeOutIn(intake);
-    //toggleIntake.addRequirements(intake);
+    // toggleIntake = new ToggleIntakeOutIn(intake);
+    // toggleIntake.addRequirements(intake);
 
-    //limelightAim = new LimelightAim(driveTrain, vision);
-    //limelightAim.addRequirements(driveTrain, vision);
+    // limelightAim = new LimelightAim(driveTrain, vision);
+    // limelightAim.addRequirements(driveTrain, vision);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -92,7 +92,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // JoystickButton toggleIntakeButton_B = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
+    // JoystickButton toggleIntakeButton_B = new JoystickButton(operatorJoyStick,
+    // XboxController.Button.kB.value);
     // toggleIntakeButton_B.whenPressed(toggleIntake);
 
     JoystickButton limelightAim_A = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);

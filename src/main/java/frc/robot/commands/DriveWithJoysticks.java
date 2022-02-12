@@ -6,11 +6,15 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.DriveController;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveTrain;
 
 public class DriveWithJoysticks extends CommandBase {
+  private double mLeftYAxis, mRightXAxis;
+  private boolean mBoost;
   private final DriveTrain driveTrain;
+
   /** Creates a new DriveWithJoysticks. */
   public DriveWithJoysticks(DriveTrain dt) {
     driveTrain = dt;
@@ -20,17 +24,24 @@ public class DriveWithJoysticks extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveTrain.driveWithJoysticks(RobotContainer.driverJoyStick, Constants.DriveTrain.DriveTrainSpeed);
+    double speed = Constants.DriveTrain.BoostInactive;
+    if (RobotContainer.driverJoyStick.getRightBumper())
+      speed = Constants.DriveTrain.BoostActive;
+    driveTrain.driveWithJoysticks(
+        DriveController.getThrottleMap(RobotContainer.driverJoyStick.getLeftY(), speed),
+        DriveController.getTurnMap(RobotContainer.driverJoyStick.getRightX(), speed));
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override
