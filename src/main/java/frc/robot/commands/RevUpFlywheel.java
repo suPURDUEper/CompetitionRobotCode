@@ -23,13 +23,13 @@ public class RevUpFlywheel extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    shooter.setFlywheelSpeed(5000);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
       // shooter.setFlywheelSpeed(ShuffleboardInfo.getInstance().getFlywheelSpeed().getDouble(0.0));
-      shooter.setFlywheelSpeed(5000);
   }
 
   // Called once the command ends or is interrupted.

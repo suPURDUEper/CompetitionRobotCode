@@ -5,16 +5,21 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -29,14 +34,15 @@ public class Shooter extends SubsystemBase {
   // Servo class
   private final DoubleSolenoid hood;
   // Flywheel Falcon
-  private final TalonFX leftFlywheelMotor;
-  private final TalonFX rightFlywheelMotor;
-  private final TalonFX acceleratorWheelMotor;
+  private final WPI_TalonFX leftFlywheelMotor;
+  private final WPI_TalonFX rightFlywheelMotor;
+  private final WPI_TalonFX acceleratorWheelMotor;
 
   // Simulator
   private FlywheelSim flywheelSim;
   private TalonFXSimCollection flywheelLeftMotorSim;
   private TalonFXSimCollection flywheelRightMotorSim;
+  private BatterySim batterySim;
 
 
   /**
@@ -47,9 +53,9 @@ public class Shooter extends SubsystemBase {
     hood = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.IDs.HOOD_SOLENOID_FWD_ID, Constants.IDs.HOOD_SOLENOID_REV_ID);
     
     // Motor defines
-    leftFlywheelMotor = new TalonFX(Constants.Shooter.LEFT_FLYWHEEL_CAN_ID);
-    rightFlywheelMotor = new TalonFX(Constants.Shooter.RIGHT_FLYWHEEL_CAN_ID);
-    acceleratorWheelMotor = new TalonFX(Constants.Shooter.ACCELERATOR_CAN_ID);
+    leftFlywheelMotor = new WPI_TalonFX(Constants.Shooter.LEFT_FLYWHEEL_CAN_ID);
+    rightFlywheelMotor = new WPI_TalonFX(Constants.Shooter.RIGHT_FLYWHEEL_CAN_ID);
+    acceleratorWheelMotor = new WPI_TalonFX(Constants.Shooter.ACCELERATOR_CAN_ID);
 
     //Setup left shooter motor
     reinitTalonFx(leftFlywheelMotor);
@@ -67,9 +73,10 @@ public class Shooter extends SubsystemBase {
     setTalonFXPidGains(acceleratorWheelMotor);
 
     // Simulate
-    flywheelSim = new FlywheelSim(DCMotor.getFalcon500(2), 1.0, 0.000678);
+    flywheelSim = new FlywheelSim(DCMotor.getFalcon500(2), 1.0, 0.001463);
     flywheelLeftMotorSim = leftFlywheelMotor.getSimCollection();
     flywheelRightMotorSim = rightFlywheelMotor.getSimCollection();
+
   }
 
   /**
@@ -108,6 +115,7 @@ public class Shooter extends SubsystemBase {
    */
   public void setAcceleratorRPM(double rpm) {
     acceleratorWheelMotor.set(ControlMode.Velocity, rpmToTalonFXUnits(rpm));
+
   }
 
   /**
@@ -120,13 +128,20 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-    flywheelLeftMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
-    flywheelRightMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
-
-    flywheelSim.setInputVoltage(flywheelLeftMotorSim.getMotorOutputLeadVoltage());
+    double vBat = BatterySim.calculateDefaultBatteryLoadedVoltage(leftFlywheelMotor.getSupplyCurrent(), rightFlywheelMotor.getSupplyCurrent());
+    flywheelLeftMotorSim.setBusVoltage(vBat);
+    SmartDashboard.putNumber("Battery Voltage", vBat);
+    SmartDashboard.putNumber("Flywheel Target RPM", talonFXUnitsToRpm(leftFlywheelMotor.getClosedLoopTarget()));
+    SmartDashboard.putNumber("Flywheel Motor Error", talonFXUnitsToRpm(leftFlywheelMotor.getClosedLoopError()));
+    SmartDashboard.putNumber("Flywheel Motor Current", rightFlywheelMotor.getSupplyCurrent());
+    double vMotor = flywheelLeftMotorSim.getMotorOutputLeadVoltage();
+    flywheelSim.setInputVoltage(vMotor);
+    SmartDashboard.putNumber("Flywheel Motor Voltage", vMotor);
     flywheelSim.update(0.02);
-    
-    flywheelLeftMotorSim.setIntegratedSensorVelocity((int) talonFXUnitsToRpm(flywheelSim.getAngularVelocityRPM()));
+    flywheelLeftMotorSim.setIntegratedSensorVelocity((int) rpmToTalonFXUnits(flywheelSim.getAngularVelocityRPM()));
+    flywheelLeftMotorSim.setSupplyCurrent(flywheelSim.getCurrentDrawAmps() * -1);
+    flywheelRightMotorSim.setSupplyCurrent(flywheelSim.getCurrentDrawAmps() * -1);
+    SmartDashboard.putNumber("Flywheel Speed", flywheelSim.getAngularVelocityRPM());
   }
 
   @Override
@@ -140,12 +155,14 @@ public class Shooter extends SubsystemBase {
   }
 
   private double talonFXUnitsToRpm(double talonFXUnit) {
-    return talonFXUnit * 600 / 2048;
+    return (talonFXUnit / 2048) * 10 * 60;
   }
 
   private void reinitTalonFx(TalonFX talonFX) {
     talonFX.configFactoryDefault();
     talonFX.configNeutralDeadband(0.001);
+    talonFX.setNeutralMode(NeutralMode.Coast);
+    talonFX.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40, 45, 1));
     talonFX.configSelectedFeedbackSensor(
       TalonFXFeedbackDevice.IntegratedSensor,
       Constants.Shooter.kPIDLoopIdx, 

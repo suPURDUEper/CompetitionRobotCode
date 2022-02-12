@@ -50,8 +50,8 @@ public final class Constants {
         public static final int FlywheelSpeed = 5700;
         public static final double FLYWHEEL_KD = 0;
         public static final double FLYWHEEL_KI = 0;
-        public static final double FLYWHEEL_KF = 1023.0/20660.0; // 1023 is max talon internal output units, 20660 is talon max internal velocity sensor units
-        public static final double FLYWHEEL_KP = 1023.0/20660.0;
+        public static final double FLYWHEEL_KF = 1023.0/21777.0; // 1023 is max talon internal output units, 20660 is talon max internal velocity sensor units
+        public static final double FLYWHEEL_KP = 1023.0/21777.0;
         public static int kPIDLoopIdx = 0;
         public static int kTimeoutMs = 30;
         public static final int LEFT_FLYWHEEL_CAN_ID = 0;
