@@ -11,8 +11,6 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveTrain;
 
 public class DriveWithJoysticks extends CommandBase {
-  private double mLeftYAxis, mRightXAxis;
-  private boolean mBoost;
   private final DriveTrain driveTrain;
 
   /** Creates a new DriveWithJoysticks. */
@@ -37,7 +35,7 @@ public class DriveWithJoysticks extends CommandBase {
     // driveTrain.driveWithJoysticks(
     //     DriveController.getThrottleMap(RobotContainer.driverJoyStick.getLeftY(), speed),
     //     DriveController.getTurnMap(RobotContainer.driverJoyStick.getRightX(), speed));
-    driveTrain.driveWithJoysticks(speed * Math.pow(-1 * RobotContainer.driverJoyStick.getLeftY(), 3), speed * Math.pow(RobotContainer.driverJoyStick.getRightX(), 3));
+    driveTrain.driveWithJoysticks(speed * RobotContainer.driverJoyStick.getLeftY(), speed * RobotContainer.driverJoyStick.getRightX());
   }
 
   // Called once the command ends or is interrupted.
