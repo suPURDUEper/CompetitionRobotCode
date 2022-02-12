@@ -48,7 +48,8 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void arcadeDrive(double throttle, double turn) {
-    drive.arcadeDrive(throttle, turn);
+    // false as 3rd is to disable wpilibs squaring of the inputs
+    drive.arcadeDrive(throttle, turn, false);
   }
 
   public void stop() {

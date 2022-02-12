@@ -50,8 +50,8 @@ public class DriveController {
                 + Constants.DriveTrain.BaseVelocity;
           }
           if (input < Constants.Controller.DeadZone * -1) {
-            DriveTrainTurn = speed * (Constants.DriveTrain.DriveTrainCurve * (1 - Constants.DriveTrain.BaseVelocity)
-                * input)
+            DriveTrainTurn = speed * 
+            (Constants.DriveTrain.DriveTrainCurve * (1 - Constants.DriveTrain.BaseVelocity) * input)
                 + (1 - Constants.DriveTrain.DriveTrainCurve)
                     * (1 - Constants.DriveTrain.BaseVelocity) * Math.pow(input, 5)
                 - Constants.DriveTrain.BaseVelocity;
