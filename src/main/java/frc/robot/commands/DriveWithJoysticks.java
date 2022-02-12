@@ -37,7 +37,7 @@ public class DriveWithJoysticks extends CommandBase {
     // driveTrain.driveWithJoysticks(
     //     DriveController.getThrottleMap(RobotContainer.driverJoyStick.getLeftY(), speed),
     //     DriveController.getTurnMap(RobotContainer.driverJoyStick.getRightX(), speed));
-    driveTrain.driveWithJoysticks(Math.pow(speed * -1 * RobotContainer.driverJoyStick.getLeftY(), 3), Math.pow(speed * RobotContainer.driverJoyStick.getRightX(), 3));
+    driveTrain.driveWithJoysticks(speed * Math.pow(-1 * RobotContainer.driverJoyStick.getLeftY(), 3), speed * Math.pow(RobotContainer.driverJoyStick.getRightX(), 3));
   }
 
   // Called once the command ends or is interrupted.
