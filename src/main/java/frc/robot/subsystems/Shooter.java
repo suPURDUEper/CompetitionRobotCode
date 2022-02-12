@@ -35,20 +35,20 @@ public class Shooter extends SubsystemBase {
    */
   public Shooter() {
     // Hood Servo defines
-    hoodServo = new Servo(Constants.HOOD_SERVO_CHANNEL);
+    hoodServo = new Servo(Constants.Shooter.HOOD_SERVO_CHANNEL);
     hoodServo.setBounds(max, deadbandMax, center, deadbandMin, min);
     // Motor defines
-    leftFlywheelMotor = new TalonFX(Constants.LeftFlywheel);
+    leftFlywheelMotor = new TalonFX(Constants.Shooter.LeftFlywheel);
     leftFlywheelMotor.setInverted(false);
-    rightFlywheelMotor = new TalonFX(Constants.RightFlywheel);
+    rightFlywheelMotor = new TalonFX(Constants.Shooter.RightFlywheel);
     // this is opposite the left flywheel so we need it to be inverted to go the correct direction
     rightFlywheelMotor.setInverted(true);
     rightFlywheelMotor.follow(leftFlywheelMotor);
     // PID setting for the flywheel, this gets applied to both motors since the right follow the left
-    leftFlywheelMotor.config_kF(Constants.kPIDLoopIdx, Constants.FlywheelkF, Constants.kTimeoutMs);
-		leftFlywheelMotor.config_kP(Constants.kPIDLoopIdx, Constants.FlywheelkP, Constants.kTimeoutMs);
-		leftFlywheelMotor.config_kI(Constants.kPIDLoopIdx, Constants.FlywheelkI, Constants.kTimeoutMs);
-		leftFlywheelMotor.config_kD(Constants.kPIDLoopIdx, Constants.FlywheelkD, Constants.kTimeoutMs);
+    leftFlywheelMotor.config_kF(Constants.Shooter.kPIDLoopIdx, Constants.Shooter.FlywheelkF, Constants.Shooter.kTimeoutMs);
+		leftFlywheelMotor.config_kP(Constants.Shooter.kPIDLoopIdx, Constants.Shooter.FlywheelkP, Constants.Shooter.kTimeoutMs);
+		leftFlywheelMotor.config_kI(Constants.Shooter.kPIDLoopIdx, Constants.Shooter.FlywheelkI, Constants.Shooter.kTimeoutMs);
+		leftFlywheelMotor.config_kD(Constants.Shooter.kPIDLoopIdx, Constants.Shooter.FlywheelkD, Constants.Shooter.kTimeoutMs);
   }
 
   /**

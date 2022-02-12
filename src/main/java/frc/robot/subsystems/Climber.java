@@ -26,10 +26,10 @@ public class Climber extends SubsystemBase {
     // double acting solenoid
     // double acting cylinder
 
-    masterClimbMotor = new TalonFX(Constants.leftClimbMotor);
+    masterClimbMotor = new TalonFX(Constants.Climber.leftClimbMotor);
     masterClimbMotor.setInverted(false);
 
-    followerClimbMotor = new TalonFX(Constants.rightClimbMotor);
+    followerClimbMotor = new TalonFX(Constants.Climber.rightClimbMotor);
     // any command give to the master climb motor is now also passed to the follower
     followerClimbMotor.follow(followerClimbMotor);
     climberSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);

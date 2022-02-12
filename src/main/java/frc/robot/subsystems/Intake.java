@@ -35,11 +35,9 @@ public class Intake extends SubsystemBase {
   private final DoubleSolenoid leftIntakeSolenoid;
   private final DoubleSolenoid rightIntakeSolenoid;
   /** Indexer motors */
-  private final CANSparkMax indexerMoter1;
-  private final CANSparkMax indexerMotor2;
-  private final CANSparkMax indexerMotor3;
+  // private final CANSparkMax indexerMoter1;
   /** Intake Motor */
-  private final CANSparkMax intakeMotor;
+  // private final CANSparkMax intakeMotor;
   /** Color Sensor and I2C setup */
   // private final I2C.Port i2cPort = I2C.Port.kOnboard;
   // private final ColorSensorV3 colorSensor;
@@ -62,14 +60,8 @@ public class Intake extends SubsystemBase {
     // Init detected color
     // detectedColor = colorSensor.getColor();
     // intake motor
-    intakeMotor = new CANSparkMax(Constants.IntakeMotor, MotorType.kBrushless);
+    // intakeMotor = new CANSparkMax(Constants.IntakeConstants.IntakeMotor, MotorType.kBrushless);
     // index motors
-    indexerMoter1 = new CANSparkMax(Constants.IndexerMotor1, MotorType.kBrushless);
-    indexerMoter1.setInverted(false);
-    indexerMotor2 = new CANSparkMax(Constants.IndexerMotor2, MotorType.kBrushless);
-    indexerMotor2.setInverted(false);
-    indexerMotor3 = new CANSparkMax(Constants.IndexerMotor3, MotorType.kBrushless);
-    indexerMotor3.setInverted(false);
     // Pneumatics
     leftIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
     rightIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
