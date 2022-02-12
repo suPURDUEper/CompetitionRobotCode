@@ -18,7 +18,7 @@ package frc.robot;
  */
 public final class Constants {
     public static class DriveTrain {
-        public static final double BoostActive = 0.9;
+        public static final double BoostActive = 1.0;
         public static final double BoostInactive = 0.7;
         public static final double DriveTrainCurve = 0.15;
         public static final double BaseVelocity = 0.14;
