@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
@@ -35,7 +36,8 @@ public class Intake extends SubsystemBase {
   private final DoubleSolenoid leftIntakeSolenoid;
   private final DoubleSolenoid rightIntakeSolenoid;
   /** Indexer motors */
-  // private final CANSparkMax indexerMoter1;
+  private final CANSparkMax indexerMotorLeft, indexerMotorRight;
+  private final WPI_TalonFX intakeMotor;
   /** Intake Motor */
   // private final CANSparkMax intakeMotor;
   /** Color Sensor and I2C setup */
@@ -59,9 +61,13 @@ public class Intake extends SubsystemBase {
     mColorMatcher.addColorMatch(kRedTarget);
     // Init detected color
     // detectedColor = colorSensor.getColor();
-    // intake motor
-    // intakeMotor = new CANSparkMax(Constants.IntakeConstants.IntakeMotor, MotorType.kBrushless);
+    // indexer motors
+    indexerMotorLeft = new CANSparkMax(Constants.Intake.INDEXER_MOTOR_LEFT_ID, MotorType.kBrushless);
+    indexerMotorRight = new CANSparkMax(Constants.Intake.INDEXER_MOTOR_RIGHT_ID, MotorType.kBrushless);
+    indexerMotorLeft.follow(indexerMotorRight);
     // index motors
+    intakeMotor = new WPI_TalonFX(Constants.Intake.INTAKE_MOTOR_TALON_ID);
+    intakeMotor.configFactoryDefault();
     // Pneumatics
     leftIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
     rightIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
@@ -110,6 +116,14 @@ public class Intake extends SubsystemBase {
       leftIntakeSolenoid.toggle();
       rightIntakeSolenoid.toggle();
     }
+  }
+
+  public void IndexerMotorSet(double speed) {
+    indexerMotorRight.set(speed);
+  }
+
+  public void IntakeMotorSet(double speed) {
+    intakeMotor.set(speed);
   }
 
   @Override
