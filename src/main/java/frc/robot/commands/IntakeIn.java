@@ -4,16 +4,16 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.Intake;
 
-public class ToggleIntakeOutIn extends CommandBase {
-  Intake mIntake;
-  /** Creates a new ToggleIntakeOutIn. */
-  public ToggleIntakeOutIn(Intake intake) {
+public class IntakeIn extends CommandBase {
+  private final Intake intake;
+  /** Creates a new IntakeIn. */
+  public IntakeIn(Intake mIntake) {
     // Use addRequirements() here to declare subsystem dependencies.
-    mIntake = intake;
+    intake = mIntake;
     addRequirements(intake);
   }
 
@@ -24,7 +24,7 @@ public class ToggleIntakeOutIn extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    mIntake.ToggleIntake(RobotContainer.operatorJoyStick);
+    intake.IntakeSet(DoubleSolenoid.Value.kReverse);
   }
 
   // Called once the command ends or is interrupted.
