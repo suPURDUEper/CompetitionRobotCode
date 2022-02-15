@@ -15,10 +15,11 @@ public class UpperConveyor extends SubsystemBase {
   CANSparkMax ConveyorMotor;
   DigitalInput UpperConveyorSensor;
   public static final int mUpperConveyorSensor = 0;
+
   /** Creates a new UpperConveyer. */
   public UpperConveyor() {
-    ConveyorMotor = new CANSparkMax(Constants.UpperConveyor, MotorType.kBrushless);
-UpperConveyorSensor = new DigitalInput(mUpperConveyorSensor);
+    ConveyorMotor = new CANSparkMax(Constants.UpperCon.UpperConMotor, MotorType.kBrushless);
+    UpperConveyorSensor = new DigitalInput(mUpperConveyorSensor);
   }
 
   @Override
@@ -26,10 +27,10 @@ UpperConveyorSensor = new DigitalInput(mUpperConveyorSensor);
     // This method will be called once per scheduler run
   }
 
-public void FowardBackward(double speed) {
+  public void FowardBackward(double speed) {
 
-ConveyorMotor.set(speed);
-}
+    ConveyorMotor.set(speed);
+  }
 
   public boolean IsUpperConveyorOpen() {
     return !UpperConveyorSensor.get();
