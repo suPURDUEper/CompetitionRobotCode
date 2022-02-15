@@ -11,7 +11,7 @@ import frc.robot.ShuffleboardInfo;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Vision;
 
-public class LimelightAim extends CommandBase {
+public class DriveWithLimelight extends CommandBase {
   private final DriveTrain mDriveTrain;
   private final Vision mVision;
 
@@ -27,7 +27,7 @@ public class LimelightAim extends CommandBase {
   NetworkTableEntry mKpSteer, mMinTa, mDrive_Kp;
 
   /** Creates a new LimelightAim. */
-  public LimelightAim(DriveTrain dt, Vision v) {
+  public DriveWithLimelight(DriveTrain dt, Vision v) {
     // Use addRequirements() here to declare subsystem dependencies.
     mDriveTrain = dt;
     mVision = v;
