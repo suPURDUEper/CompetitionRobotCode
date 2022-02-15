@@ -52,8 +52,8 @@ public final class Constants {
         public static final double FLYWHEEL_KI = 0;
         public static final double FLYWHEEL_KF = 1023.0/21777.0; // 1023 is max talon internal output units, 20660 is talon max internal velocity sensor units
         public static final double FLYWHEEL_KP = 1023.0/21777.0;
-        public static int kPIDLoopIdx = 0;
-        public static int kTimeoutMs = 30;
+        public static final int PID_LOOP_INDEX = 0;
+        public static final int SHOOTER_CURRENT_LIMIT = 40;
         public static final int LEFT_FLYWHEEL_CAN_ID = 0;
         public static final int RIGHT_FLYWHEEL_CAN_ID = 1;
         public static final int ACCELERATOR_CAN_ID = 2;
@@ -67,6 +67,7 @@ public final class Constants {
     public static class Intake {
         public static final int INDEXER_MOTOR_ID = 0;
         public static final int INTAKE_MOTOR_TALON_ID = 2;
+        public static final int INTAKE_CURRENT_LIMIT_AMPS = 40;
     }
 
     public static class Autonomous {
@@ -81,5 +82,9 @@ public final class Constants {
         public static final int DriveJoystickNumber = 0;
         public static final int OperatorJoystickNumber = 1;
         public static final double DeadZone = 0.05;
+    }
+
+    public static class Talon {
+        public static final double DEFAULT_DEADBAND = 0.04;
     }
 }

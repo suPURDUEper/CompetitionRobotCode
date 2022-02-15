@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import static frc.robot.Constants.Shooter.*;
 
 
 /**
@@ -46,12 +46,12 @@ public class Shooter extends SubsystemBase {
    */
   public Shooter() {
     // Hood defines
-    hood = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.IDs.HOOD_SOLENOID_FWD_ID, Constants.IDs.HOOD_SOLENOID_REV_ID);
+    hood = new DoubleSolenoid(PneumaticsModuleType.REVPH, HOOD_SOLENOID_FWD_ID, HOOD_SOLENOID_REV_ID);
     
     // Motor defines
-    leftFlywheelMotor = new WPI_TalonFX(Constants.Shooter.LEFT_FLYWHEEL_CAN_ID);
-    rightFlywheelMotor = new WPI_TalonFX(Constants.Shooter.RIGHT_FLYWHEEL_CAN_ID);
-    acceleratorWheelMotor = new WPI_TalonFX(Constants.Shooter.ACCELERATOR_CAN_ID);
+    leftFlywheelMotor = new WPI_TalonFX(LEFT_FLYWHEEL_CAN_ID);
+    rightFlywheelMotor = new WPI_TalonFX(RIGHT_FLYWHEEL_CAN_ID);
+    acceleratorWheelMotor = new WPI_TalonFX(ACCELERATOR_CAN_ID);
 
     //Setup left shooter motor
     reinitTalonFx(leftFlywheelMotor);
@@ -93,15 +93,14 @@ public class Shooter extends SubsystemBase {
    * Set the flywheel speed
    * @param speed taken in units of RPM
    */
-  public void setFlywheelSpeed(double rpm) {
+  public void setFlywheelRPM(double rpm) {
     leftFlywheelMotor.set(ControlMode.Velocity, rpmToTalonFXUnits(rpm));
   }
 
   /**
-   * NOT YET IMPLEMENTED
    * @return the speed of the motor in units of RPM
    */
-  public double getFlywheelSpeed() {
+  public double getFlywheelRPM() {
     return talonFXUnitsToRpm(leftFlywheelMotor.getClosedLoopTarget());
   }
 
@@ -115,7 +114,6 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * NOT YET IMPLEMENTED
    * @return the speed of the motor in units of RPM
    */
   public double getAcceleratorRPM() {
@@ -158,21 +156,18 @@ public class Shooter extends SubsystemBase {
     talonFX.configFactoryDefault();
     talonFX.configNeutralDeadband(0.001);
     talonFX.setNeutralMode(NeutralMode.Coast);
-    talonFX.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40, 45, 1));
-    talonFX.configSelectedFeedbackSensor(
-      TalonFXFeedbackDevice.IntegratedSensor,
-      Constants.Shooter.kPIDLoopIdx, 
-      Constants.Shooter.kTimeoutMs
-    );
-    talonFX.configNominalOutputReverse(0, Constants.Shooter.kTimeoutMs);
-    talonFX.configPeakOutputForward(1, Constants.Shooter.kTimeoutMs);
-    talonFX.configPeakOutputReverse(-1, Constants.Shooter.kTimeoutMs);
+    talonFX.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 
+      SHOOTER_CURRENT_LIMIT_AMPS, SHOOTER_CURRENT_LIMIT_AMPS + 5, 1));
+    talonFX.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, PID_LOOP_INDEX, 30);
+    talonFX.configNominalOutputReverse(0, 30);
+    talonFX.configPeakOutputForward(1, 30);
+    talonFX.configPeakOutputReverse(-1, 30);
   }
 
   private void setTalonFXPidGains(TalonFX talonFX) {
-    talonFX.config_kF(Constants.Shooter.kPIDLoopIdx, Constants.Shooter.FLYWHEEL_KF, Constants.Shooter.kTimeoutMs);
-    talonFX.config_kP(Constants.Shooter.kPIDLoopIdx, Constants.Shooter.FLYWHEEL_KP, Constants.Shooter.kTimeoutMs);
-    talonFX.config_kI(Constants.Shooter.kPIDLoopIdx, Constants.Shooter.FLYWHEEL_KI, Constants.Shooter.kTimeoutMs);
-    talonFX.config_kD(Constants.Shooter.kPIDLoopIdx, Constants.Shooter.FLYWHEEL_KD, Constants.Shooter.kTimeoutMs);
+    talonFX.config_kF(PID_LOOP_INDEX, FLYWHEEL_KF, 30);
+    talonFX.config_kP(PID_LOOP_INDEX, FLYWHEEL_KP, 30);
+    talonFX.config_kI(PID_LOOP_INDEX, FLYWHEEL_KI, 30);
+    talonFX.config_kD(PID_LOOP_INDEX, FLYWHEEL_KD, 30);
   }
 }
