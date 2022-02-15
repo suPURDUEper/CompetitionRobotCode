@@ -30,15 +30,13 @@ public class Intake extends SubsystemBase {
   private final DoubleSolenoid leftIntakeSolenoid;
   private final DoubleSolenoid rightIntakeSolenoid;
   /** Indexer motors */
-  private final CANSparkMax indexerMotorLeft, indexerMotorRight;
+  private final CANSparkMax indexerMotor;
   /** Intake Motor */
   private final WPI_TalonFX intakeMotor;
 
   public Intake() {
     // indexer motors
-    indexerMotorLeft = new CANSparkMax(Constants.Intake.INDEXER_MOTOR_LEFT_ID, MotorType.kBrushless);
-    indexerMotorRight = new CANSparkMax(Constants.Intake.INDEXER_MOTOR_RIGHT_ID, MotorType.kBrushless);
-    indexerMotorLeft.follow(indexerMotorRight);
+    indexerMotor = new CANSparkMax(Constants.Intake.INDEXER_MOTOR_ID, MotorType.kBrushless);
     // index motors
     intakeMotor = new WPI_TalonFX(Constants.Intake.INTAKE_MOTOR_TALON_ID);
     intakeMotor.configFactoryDefault();
@@ -65,7 +63,7 @@ public class Intake extends SubsystemBase {
   public void IndexerMotorSet(double speed) {
     /// no need to set left indexer
     /// left indexer follows right indexer
-    indexerMotorRight.set(speed);
+    indexerMotor.set(speed);
   }
 
   /**

@@ -60,8 +60,7 @@ public final class Constants {
     }
 
     public static class Intake {
-        public static final int INDEXER_MOTOR_LEFT_ID = 8;
-        public static final int INDEXER_MOTOR_RIGHT_ID = 9;
+        public static final int INDEXER_MOTOR_ID = 0;
         public static final int INTAKE_MOTOR_TALON_ID = 2;
     }
 
