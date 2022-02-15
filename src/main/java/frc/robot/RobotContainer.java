@@ -11,6 +11,10 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DriveForwardTimed;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.RevUpFlywheel;
+import frc.robot.commands.ExtendClimber;
+import frc.robot.commands.FreeClimb;
+import frc.robot.commands.DriveWithLimelight;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Shooter;
 

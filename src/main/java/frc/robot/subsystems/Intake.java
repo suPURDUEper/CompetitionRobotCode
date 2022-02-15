@@ -6,11 +6,12 @@ package frc.robot.subsystems;
 
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -30,33 +31,16 @@ public class Intake extends SubsystemBase {
   private final DoubleSolenoid leftIntakeSolenoid;
   private final DoubleSolenoid rightIntakeSolenoid;
   /** Indexer motors */
-  // private final CANSparkMax indexerMoter1;
+  private final CANSparkMax indexerMotor;
   /** Intake Motor */
-  // private final CANSparkMax intakeMotor;
-  /** Color Sensor and I2C setup */
-  // private final I2C.Port i2cPort = I2C.Port.kOnboard;
-  // private final ColorSensorV3 colorSensor;
-  private final ColorMatch mColorMatcher;
-  /** Create the colors to store in the colormatcher to compare the ball color against */
-  private final Color kBlueTarget = new Color(0.143, 0.427, 0.429);
-  private final Color kGreenTarget = new Color(0.197, 0.561, 0.240);
-  private final Color kRedTarget = new Color(0.561, 0.232, 0.114);
-  private final Color kYellowTarget = new Color(0.361, 0.524, 0.113);
-  /** Make A Detected Color Variable which is reset every Period */
-  private Color detectedColor;
+  private final WPI_TalonFX intakeMotor;
 
   public Intake() {
-    // Color Sensor and Macther
-    // colorSensor = new ColorSensorV3(i2cPort);
-    mColorMatcher = new ColorMatch();
-    // These are the defaul RGB values given for the color red from rev robotics
-    // example
-    mColorMatcher.addColorMatch(kRedTarget);
-    // Init detected color
-    // detectedColor = colorSensor.getColor();
-    // intake motor
-    // intakeMotor = new CANSparkMax(Constants.IntakeConstants.IntakeMotor, MotorType.kBrushless);
+    // indexer motors
+    indexerMotor = new CANSparkMax(Constants.Intake.INDEXER_MOTOR_ID, MotorType.kBrushless);
     // index motors
+    intakeMotor = new WPI_TalonFX(Constants.Intake.INTAKE_MOTOR_TALON_ID);
+    intakeMotor.configFactoryDefault();
     // Pneumatics
     leftIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
     rightIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
@@ -65,46 +49,30 @@ public class Intake extends SubsystemBase {
   }
 
   /**
-   * Check if a red ball is in the intake.
-   * @return boolean 
+   * Expects kFoward, kReverse or False from DoubleSolenoid.Value Enum
+   * @param value DoubleSolenoid.Value type
    */
-  public boolean HasRedBall() {
-    ColorMatchResult match = mColorMatcher.matchColor(detectedColor);
-    // if the value is no where close to the desired
-    // then null will be returned
-    if (match.color != null) {
-      if (match.color == kRedTarget) {
-        return true;
-      }
-    }
-    return false;
+  public void IntakeSet(DoubleSolenoid.Value value) {
+    leftIntakeSolenoid.set(value);
+    rightIntakeSolenoid.set(value);
   }
 
   /**
-   * Check if the blue ball is in the intake
-   * @return boolean
+   * 1.0 is full forward, -1.0 is full backward
+   * @param speed -1.0 to 1.0
    */
-  public boolean HasBlueBall() {
-    ColorMatchResult match = mColorMatcher.matchColor(detectedColor);
-    // if the value is no where close to the desired
-    // then null will be returned
-    if (match.color != null) {
-      if (match.color == kBlueTarget) {
-        return true;
-      }
-    }
-    return false;
+  public void IndexerMotorSet(double speed) {
+    /// no need to set left indexer
+    /// left indexer follows right indexer
+    indexerMotor.set(speed);
   }
 
   /**
-   * Toggles the intake between either in -> out or out -> in
-   * @param controller the operator controller
+   * 1.0 if full forward, -1.0 is full backward
+   * @param speed -1.0 to 1.0
    */
-  public void ToggleIntake(XboxController controller) {
-    if (controller.getBButton()) {
-      leftIntakeSolenoid.toggle();
-      rightIntakeSolenoid.toggle();
-    }
+  public void IntakeMotorSet(double speed) {
+    intakeMotor.set(speed);
   }
 
   @Override

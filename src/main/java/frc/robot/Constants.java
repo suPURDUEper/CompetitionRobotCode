@@ -65,7 +65,8 @@ public final class Constants {
     }
 
     public static class Intake {
-        public static final int IntakeMotor = 0;
+        public static final int INDEXER_MOTOR_ID = 0;
+        public static final int INTAKE_MOTOR_TALON_ID = 2;
     }
 
     public static class Autonomous {
