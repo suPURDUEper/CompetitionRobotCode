@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.BallUpConveyor;
 import frc.robot.commands.DriveForwardTimed;
 import frc.robot.commands.DriveWithJoysticks;
+import frc.robot.commands.RevUpFlywheel;
 import frc.robot.commands.ExtendClimber;
 import frc.robot.commands.FreeClimb;
 import frc.robot.commands.LowerConveyorIntake;
@@ -21,6 +22,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LowerConveyor;
 import frc.robot.subsystems.UpperConveyor;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -34,6 +36,7 @@ import frc.robot.subsystems.Vision;
 public class RobotContainer {
   // subsystem declare
   private final DriveTrain driveTrain;
+  private final Shooter shooter;
   // private final Climber climber;
   private final Intake intake;
   private final LowerConveyor lowCon;
@@ -44,6 +47,7 @@ public class RobotContainer {
   private final DriveWithJoysticks driveWithJoysticks;
   private final LowerConveyorIntake lowConIntake;
   private final BallUpConveyor ballUpConveyor;
+  private final RevUpFlywheel revFlywheel;
   // private final FreeClimb freeClimb;
   // private final ExtendClimber extendClimber;
   // private final ToggleIntakeOutIn toggleIntake;
@@ -60,6 +64,7 @@ public class RobotContainer {
     operatorJoyStick = new XboxController(Constants.Controller.OperatorJoystickNumber);
     // set values for subsystems
     driveTrain = new DriveTrain();
+    shooter = new Shooter();
     // climber = new Climber();
     intake = new Intake();
     lowCon = new LowerConveyor();
@@ -87,6 +92,9 @@ public class RobotContainer {
 
     ballUpConveyor = new BallUpConveyor(upperCon);
     ballUpConveyor.addRequirements(upperCon);
+    revFlywheel = new RevUpFlywheel(shooter);
+    revFlywheel.addRequirements(shooter);
+    shooter.setDefaultCommand(revFlywheel);
 
     // toggleIntake = new ToggleIntakeOutIn(intake);
     // toggleIntake.addRequirements(intake);
@@ -111,11 +119,16 @@ public class RobotContainer {
     JoystickButton intakeOutButton_B = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
     intakeOutButton_B.whileHeld(lowConIntake);
 
-    JoystickButton ballUpConveyor_X = new JoystickButton(operatorJoyStick, XboxController.Button.kX.value);
-    ballUpConveyor_X.whileHeld(ballUpConveyor);
+    JoystickButton ballUpConveyor_Y = new JoystickButton(operatorJoyStick, XboxController.Button.kY.value);
+    ballUpConveyor_Y.whileHeld(ballUpConveyor);
 
     //JoystickButton limelightAim_A = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);
     //limelightAim_A.whileHeld(limelightAim);
+    JoystickButton limelightAim_A = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);
+    // limelightAim_A.whileHeld(limelightAim);
+
+    JoystickButton revFlywheel_X = new JoystickButton(operatorJoyStick, XboxController.Button.kX.value);
+    revFlywheel_X.whileHeld(revFlywheel);
   }
 
   /**
