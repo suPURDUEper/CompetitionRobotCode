@@ -17,10 +17,6 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static class IDs {
-        public static final int HOOD_SOLENOID_FWD_ID = 10; // TODO: Change
-        public static final int HOOD_SOLENOID_REV_ID = 11; // TODO: Change
-    }
     public static class DriveTrain {
         public static final double BoostActive = 1.0;
         public static final double BoostInactive = 0.7;
@@ -46,6 +42,8 @@ public final class Constants {
     }
 
     public static class Shooter {
+        public static final int HOOD_SOLENOID_FWD_ID = 10;
+        public static final int HOOD_SOLENOID_REV_ID = 11;
         public static final int HOOD_SERVO_CHANNEL = 1;
         public static final int FlywheelSpeed = 5700;
         public static final double FLYWHEEL_KD = 0;

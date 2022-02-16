@@ -48,7 +48,9 @@ public class LowerConveyor extends SubsystemBase {
     detectedColor = colorSensor.getColor();
     mColorMatcher.addColorMatch(kRedTarget);
     lowConMotor = new CANSparkMax(Constants.lowerCon.LowConMotor, MotorType.kBrushless);
+    lowConMotor.enableVoltageCompensation(12.0);
     pooperMotor = new CANSparkMax(Constants.lowerCon.PooperMotor, MotorType.kBrushless);
+    pooperMotor.enableVoltageCompensation(12.0);
 
     lowConBreakBeam = new DigitalInput(Constants.lowerCon.LowConBreakBeam);
     pooperBreakBeam = new DigitalInput(Constants.lowerCon.PooperBreakBeam);

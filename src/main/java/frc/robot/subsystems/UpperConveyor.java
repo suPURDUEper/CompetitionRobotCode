@@ -19,6 +19,7 @@ public class UpperConveyor extends SubsystemBase {
   /** Creates a new UpperConveyer. */
   public UpperConveyor() {
     ConveyorMotor = new CANSparkMax(Constants.UpperCon.UpperConMotor, MotorType.kBrushless);
+    ConveyorMotor.enableVoltageCompensation(12.0);
     UpperConveyorSensor = new DigitalInput(mUpperConveyorSensor);
   }
 
