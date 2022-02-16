@@ -34,7 +34,7 @@ public class DriveWithJoysticks extends CommandBase {
     // driveTrain.driveWithJoysticks(
     //     DriveController.getThrottleMap(RobotContainer.driverJoyStick.getLeftY(), speed),
     //     DriveController.getTurnMap(RobotContainer.driverJoyStick.getRightX(), speed));
-    driveTrain.driveWithJoysticks(speed * squareJoystick(RobotContainer.driverJoyStick.getLeftY()), speed * squareJoystick(RobotContainer.driverJoyStick.getRightX()));
+    driveTrain.arcadeDrive(speed * squareJoystick(RobotContainer.driverJoyStick.getLeftY()), speed * squareJoystick(RobotContainer.driverJoyStick.getRightX()));
   }
 
   private double squareJoystick(double original) {

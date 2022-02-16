@@ -19,20 +19,20 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static class IDs {
-        public static final int HOOD_SOLENOID_FWD_ID = 10; // TODO: Change
-        public static final int HOOD_SOLENOID_REV_ID = 11; // TODO: Change
-    }
     public static class DriveTrain {
         public static final double BoostActive = 1.0;
         public static final double BoostInactive = 0.7;
         public static final double DriveTrainCurve = 0.15;
         public static final double BaseVelocity = 0.14;
         public static final double DriveTrainSpeed = 0.7;
-        public static final int LeftFront = 1;
-        public static final int LeftBack = 2;
-        public static final int RightFront = 3;
-        public static final int RightBack = 4;
+        public static final int LEFT_FRONT_CAN_ID = 1;
+        public static final int LEFT_BACK_CAN_ID = 2;
+        public static final int RIGHT_FRONT_CAN_ID = 3;
+        public static final int RIGHT_BACK_CAN_ID = 4;
+        public static final double TRACK_WIDTH_INCHES = 12;
+        public static final double WHEEL_DIAMETER_INCHES = 4;
+        public static final int ENCODER_RESOLUTION = 42;
+        public static final double GEARBOX_RATIO = 8.42;
         // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
         // These characterization values MUST be determined either experimentally or theoretically
         // for *your* robot's drive.
@@ -76,10 +76,12 @@ public final class Constants {
         public static final double FLYWHEEL_KF = 1023.0/21777.0; // 1023 is max talon internal output units, 20660 is talon max internal velocity sensor units
         public static final double FLYWHEEL_KP = 1023.0/21777.0;
         public static final int PID_LOOP_INDEX = 0;
-        public static final int SHOOTER_CURRENT_LIMIT = 40;
+        public static final int SHOOTER_CURRENT_LIMIT_AMPS = 40;
         public static final int LEFT_FLYWHEEL_CAN_ID = 0;
         public static final int RIGHT_FLYWHEEL_CAN_ID = 1;
         public static final int ACCELERATOR_CAN_ID = 2;
+        public static final int HOOD_SOLENOID_FWD_ID = 10; // TODO: Change
+        public static final int HOOD_SOLENOID_REV_ID = 11; // TODO: Change
     }
 
     public static class UpperCon {

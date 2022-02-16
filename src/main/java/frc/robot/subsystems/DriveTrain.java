@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 
+import static frc.robot.Constants.DriveTrain.*;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -18,16 +20,17 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
 public class DriveTrain extends SubsystemBase {
 
@@ -38,31 +41,38 @@ public class DriveTrain extends SubsystemBase {
   private final AHRS gyro;
   private final DifferentialDrive drive;
   private final DifferentialDriveOdometry odometry;
-  public double boost = Constants.DriveTrain.BoostInactive;
-  private final Field2d fieldDashboardWidget = new Field2d();
+
 
   // Simulation classes help us simulate our robot
-  private final AnalogGyroSim m_gyroSim = new AnalogGyroSim(gyro);
-  private final EncoderSim m_leftEncoderSim = new EncoderSim(m_leftEncoder);
-  private final EncoderSim m_rightEncoderSim = new EncoderSim(m_rightEncoder);
-  private final Field2d m_fieldSim = new Field2d();
+  private final Encoder leftFrontMockEncoder = new Encoder(0, 1);
+  private final Encoder rightFrontMockEncoder = new Encoder(2, 3);
+  private final EncoderSim m_leftEncoderSim = new EncoderSim(leftFrontMockEncoder);
+  private final EncoderSim m_rightEncoderSim = new EncoderSim(rightFrontMockEncoder);
+  private final Field2d fieldDashboardWidget = new Field2d();
   private final LinearSystem<N2, N2, N2> m_drivetrainSystem =
-      LinearSystemId.identifyDrivetrainSystem(1.98, 0.2, 1.5, 0.3);
-  private final DifferentialDrivetrainSim m_drivetrainSimulator =
-      new DifferentialDrivetrainSim(
-          m_drivetrainSystem, DCMotor.getNEO(2), 12.76, Constants.DriveTrain.kTrackwidthMeters, Constants.DriveTrain.kWheelRadiusMeters, null);
-
+    LinearSystemId.identifyDrivetrainSystem(1.98, 0.2, 1.5, 0.3);
+  private final DifferentialDrivetrainSim m_drivetrainSimulator = new DifferentialDrivetrainSim(
+    m_drivetrainSystem, DCMotor.getNEO(2), GEARBOX_RATIO, Units.inchesToMeters(TRACK_WIDTH_INCHES), 
+    Units.inchesToMeters(WHEEL_DIAMETER_INCHES/2), null);
 
   public DriveTrain() {
-    leftFront = new CANSparkMax(Constants.DriveTrain.LeftFront, MotorType.kBrushless);
+    // Setup drive motors
+    leftFront = new CANSparkMax(LEFT_FRONT_CAN_ID, MotorType.kBrushless);
     leftFront.setInverted(false);
-    leftBack = new CANSparkMax(Constants.DriveTrain.LeftBack, MotorType.kBrushless);
-    rightFront = new CANSparkMax(Constants.DriveTrain.RightFront, MotorType.kBrushless);
+    leftBack = new CANSparkMax(LEFT_BACK_CAN_ID, MotorType.kBrushless);
+    rightFront = new CANSparkMax(RIGHT_FRONT_CAN_ID, MotorType.kBrushless);
     rightFront.setInverted(true);
-    rightBack = new CANSparkMax(Constants.DriveTrain.RightBack, MotorType.kBrushless);
+    rightBack = new CANSparkMax(RIGHT_BACK_CAN_ID, MotorType.kBrushless);
     leftBack.follow(leftFront);
     rightBack.follow(rightFront);
     drive = new DifferentialDrive(leftFront, rightFront);
+
+    // Setup odometry
+    double metersPerPulse = Units.inchesToMeters(Math.PI * WHEEL_DIAMETER_INCHES) / (double) ENCODER_RESOLUTION;
+    leftFrontMockEncoder.setDistancePerPulse(metersPerPulse);
+    rightFrontMockEncoder.setDistancePerPulse(metersPerPulse);
+    leftFront.getEncoder().setPositionConversionFactor(metersPerPulse);
+    rightFront.getEncoder().setPositionConversionFactor(metersPerPulse);
     gyro = new AHRS(SerialPort.Port.kMXP);
     odometry = new DifferentialDriveOdometry(gyro.getRotation2d());
     SmartDashboard.putData("Field", fieldDashboardWidget);
@@ -70,13 +80,12 @@ public class DriveTrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    odometry.update(gyro.getRotation2d(), leftFront.getEncoder().getPosition(), rightFront.getEncoder().getPosition());
+    if (RobotBase.isReal()) {
+      odometry.update(gyro.getRotation2d(), leftFront.getEncoder().getPosition(), rightFront.getEncoder().getPosition());
+    } else {
+      odometry.update(gyro.getRotation2d(), leftFrontMockEncoder.getDistance(), rightFrontMockEncoder.getDistance());
+    }
     fieldDashboardWidget.setRobotPose(odometry.getPoseMeters());
-  }
-
-  public void driveWithJoysticks(double throttle, double turn) {
-    arcadeDrive(throttle, turn);
-    // drive.arcadeDrive(xSpeed, zRotation);
   }
 
   public void driveForward(double speed) {
@@ -169,6 +178,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /** Update our simulation. This should be run every robot loop in simulation. */
+  @Override
   public void simulationPeriodic() {
     // To update our simulation, we set motor voltage inputs, update the
     // simulation, and write the simulated positions and velocities to our
@@ -183,10 +193,10 @@ public class DriveTrain extends SubsystemBase {
     m_leftEncoderSim.setRate(m_drivetrainSimulator.getLeftVelocityMetersPerSecond());
     m_rightEncoderSim.setDistance(m_drivetrainSimulator.getRightPositionMeters());
     m_rightEncoderSim.setRate(m_drivetrainSimulator.getRightVelocityMetersPerSecond());
+
     // m_gyroSim.setAngle(-m_drivetrainSimulator.getHeading().getDegrees());
     int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
     SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Yaw"));
     angle.set(-m_drivetrainSimulator.getHeading().getDegrees());
   }
-
 }
