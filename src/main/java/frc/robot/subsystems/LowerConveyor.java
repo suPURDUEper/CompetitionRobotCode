@@ -72,6 +72,12 @@ public class LowerConveyor extends SubsystemBase {
     return false;
   }
 
+  public boolean ColorSensorHasTarget() {
+    ColorMatchResult match = mColorMatcher.matchColor(detectedColor);
+    if (match.color != null) return true;
+    return false;
+  }
+
   /**
    * 1.0 is intaking, -1.0 is pooping
    * @param speed

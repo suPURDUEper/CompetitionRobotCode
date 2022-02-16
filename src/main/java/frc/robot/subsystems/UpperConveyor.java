@@ -27,7 +27,11 @@ public class UpperConveyor extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void FowardBackward(double speed) {
+  public boolean getUpperConBreakBeam() {
+    return !UpperConveyorSensor.get();
+  }
+
+  public void ConveyorMotorSet(double speed) {
 
     ConveyorMotor.set(speed);
   }
