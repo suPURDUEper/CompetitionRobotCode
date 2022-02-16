@@ -55,6 +55,7 @@ public final class Constants {
         public static final int LEFT_FLYWHEEL_CAN_ID = 0;
         public static final int RIGHT_FLYWHEEL_CAN_ID = 1;
         public static final int ACCELERATOR_CAN_ID = 2;
+        public static final int SHOOTER_CURRENT_LIMIT_AMPS = 40;
     }
 
     public static class UpperCon {
