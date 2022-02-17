@@ -14,13 +14,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class UpperConveyor extends SubsystemBase {
   CANSparkMax ConveyorMotor;
   DigitalInput UpperConveyorSensor;
-  public static final int mUpperConveyorSensor = 0;
 
   /** Creates a new UpperConveyer. */
   public UpperConveyor() {
     ConveyorMotor = new CANSparkMax(Constants.UpperCon.UpperConMotor, MotorType.kBrushless);
     ConveyorMotor.enableVoltageCompensation(12.0);
-    UpperConveyorSensor = new DigitalInput(mUpperConveyorSensor);
+    UpperConveyorSensor = new DigitalInput(Constants.UpperCon.UpperConBreakBeam);
   }
 
   @Override
