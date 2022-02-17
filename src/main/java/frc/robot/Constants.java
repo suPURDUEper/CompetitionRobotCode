@@ -69,6 +69,8 @@ public final class Constants {
     }
 
     public static class Shooter {
+        public static final int HOOD_SOLENOID_FWD_ID = 10;
+        public static final int HOOD_SOLENOID_REV_ID = 11;
         public static final int HOOD_SERVO_CHANNEL = 1;
         public static final int FlywheelSpeed = 5700;
         public static final double FLYWHEEL_KD = 0;
@@ -80,8 +82,6 @@ public final class Constants {
         public static final int LEFT_FLYWHEEL_CAN_ID = 0;
         public static final int RIGHT_FLYWHEEL_CAN_ID = 1;
         public static final int ACCELERATOR_CAN_ID = 2;
-        public static final int HOOD_SOLENOID_FWD_ID = 10; // TODO: Change
-        public static final int HOOD_SOLENOID_REV_ID = 11; // TODO: Change
     }
 
     public static class UpperCon {
