@@ -44,8 +44,8 @@ public class DriveTrain extends SubsystemBase {
 
 
   // Simulation classes help us simulate our robot
-  private final Encoder leftFrontMockEncoder = new Encoder(0, 1);
-  private final Encoder rightFrontMockEncoder = new Encoder(2, 3);
+  private final Encoder leftFrontMockEncoder = new Encoder(3, 4);
+  private final Encoder rightFrontMockEncoder = new Encoder(5, 6);
   private final EncoderSim m_leftEncoderSim = new EncoderSim(leftFrontMockEncoder);
   private final EncoderSim m_rightEncoderSim = new EncoderSim(rightFrontMockEncoder);
   private final Field2d fieldDashboardWidget = new Field2d();
