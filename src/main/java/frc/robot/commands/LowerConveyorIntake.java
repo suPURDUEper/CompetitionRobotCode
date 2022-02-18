@@ -35,6 +35,9 @@ public class LowerConveyorIntake extends CommandBase {
       } else {
         lowCon.PooperMotorSet(-1.0);
       }
+      
+    } else {
+      lowCon.PooperMotorSet(1.0);
     }
 
 
