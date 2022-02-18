@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -29,10 +30,10 @@ public final class Constants {
         public static final int LEFT_BACK_CAN_ID = 2;
         public static final int RIGHT_FRONT_CAN_ID = 3;
         public static final int RIGHT_BACK_CAN_ID = 4;
-        public static final double TRACK_WIDTH_INCHES = 12;
-        public static final double WHEEL_DIAMETER_INCHES = 4;
+        public static final double TRACK_WIDTH_INCHES = 12.0;
+        public static final double WHEEL_DIAMETER_INCHES = 4.0;
         public static final int ENCODER_RESOLUTION = 42;
-        public static final double GEARBOX_RATIO = 8.42;
+        public static final double GEARBOX_RATIO = 8.45;
         // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
         // These characterization values MUST be determined either experimentally or theoretically
         // for *your* robot's drive.
@@ -46,7 +47,7 @@ public final class Constants {
         public static final double kPDriveVel = 8.5;
 
         public static final double kTrackwidthMeters = 0.69;
-        public static final double kWheelRadiusMeters = 0.0508;
+        public static final double kWheelRadiusMeters = Units.inchesToMeters(WHEEL_DIAMETER_INCHES / 2.0);
 
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
         public static final double kMaxSpeedMetersPerSecond = 3;

@@ -5,7 +5,13 @@
 package frc.robot.subsystems;
 
 
-import static frc.robot.Constants.DriveTrain.*;
+import static frc.robot.Constants.DriveTrain.ENCODER_RESOLUTION;
+import static frc.robot.Constants.DriveTrain.GEARBOX_RATIO;
+import static frc.robot.Constants.DriveTrain.LEFT_BACK_CAN_ID;
+import static frc.robot.Constants.DriveTrain.LEFT_FRONT_CAN_ID;
+import static frc.robot.Constants.DriveTrain.RIGHT_BACK_CAN_ID;
+import static frc.robot.Constants.DriveTrain.RIGHT_FRONT_CAN_ID;
+import static frc.robot.Constants.DriveTrain.WHEEL_DIAMETER_INCHES;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
@@ -16,11 +22,9 @@ import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.math.numbers.N2;
-import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
@@ -49,12 +53,8 @@ public class DriveTrain extends SubsystemBase {
   private final EncoderSim m_leftEncoderSim = new EncoderSim(leftFrontMockEncoder);
   private final EncoderSim m_rightEncoderSim = new EncoderSim(rightFrontMockEncoder);
   private final Field2d fieldDashboardWidget = new Field2d();
-  private final LinearSystem<N2, N2, N2> m_drivetrainSystem =
-    LinearSystemId.identifyDrivetrainSystem(1.98, 0.2, 1.5, 0.3);
-  private final DifferentialDrivetrainSim m_drivetrainSimulator = new DifferentialDrivetrainSim(
-    m_drivetrainSystem, DCMotor.getNEO(2), GEARBOX_RATIO, Units.inchesToMeters(TRACK_WIDTH_INCHES), 
-    Units.inchesToMeters(WHEEL_DIAMETER_INCHES/2), null);
-
+  private final DifferentialDrivetrainSim m_drivetrainSimulator = createDrivetrainSim();
+  
   public DriveTrain() {
     // Setup drive motors
     leftFront = new CANSparkMax(LEFT_FRONT_CAN_ID, MotorType.kBrushless);
@@ -78,6 +78,22 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putData("Field", fieldDashboardWidget);
   }
 
+  private DifferentialDrivetrainSim createDrivetrainSim() {
+    // MOI estimation -- note that I = m r^2 for point masses
+    var batteryMoi = 12.5 / 2.2 * Math.pow(Units.inchesToMeters(10), 2);
+    var gearboxMoi =
+        (2.8 /* CIM motor */ * 2 / 2.2 + 2.0 /* Toughbox Mini- ish */)
+            * Math.pow(Units.inchesToMeters(26.0 / 2.0), 2);
+    return new DifferentialDrivetrainSim(
+      DCMotor.getNEO(2),
+      GEARBOX_RATIO,
+      batteryMoi + gearboxMoi,
+      Units.lbsToKilograms(125 + 12 + 10),
+      Units.inchesToMeters(WHEEL_DIAMETER_INCHES / 2),
+      Units.inchesToMeters(25),
+      null);
+  }
+
   @Override
   public void periodic() {
     if (RobotBase.isReal()) {
@@ -99,6 +115,12 @@ public class DriveTrain extends SubsystemBase {
 
   public void stop() {
     drive.stopMotor();
+  }
+
+  public void setDriveMotorVoltage(double leftVoltage, double rightVoltage) {
+    leftFront.setVoltage(leftVoltage);
+    rightFront.setVoltage(rightVoltage);
+    drive.feedWatchdog();
   }
 
   /**
@@ -184,9 +206,16 @@ public class DriveTrain extends SubsystemBase {
     // simulation, and write the simulated positions and velocities to our
     // simulated encoder and gyro. We negate the right side so that positive
     // voltages make the right side move forward.
-    m_drivetrainSimulator.setInputs(
+    if (DriverStation.isTeleop()) {
+      m_drivetrainSimulator.setInputs(
         leftFront.get() * RobotController.getInputVoltage(),
         rightFront.get() * RobotController.getInputVoltage());
+    } else {
+      m_drivetrainSimulator.setInputs(
+        leftFront.getAppliedOutput() * RobotController.getInputVoltage(),
+        rightFront.getAppliedOutput() * RobotController.getInputVoltage());
+    }
+
     m_drivetrainSimulator.update(0.02);
 
     m_leftEncoderSim.setDistance(m_drivetrainSimulator.getLeftPositionMeters());
