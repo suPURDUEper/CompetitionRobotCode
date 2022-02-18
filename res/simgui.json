@@ -30,13 +30,6 @@
         }
       },
       "/SmartDashboard/Field": {
-        "bottom": 900,
-        "height": 8.229599952697754,
-        "image": "C:\\Users\\knufi\\Documents\\CompetitionRobotCode\\res\\2022-field.png",
-        "left": 74,
-        "right": 1774,
-        "top": 50,
-        "width": 16.459199905395508,
         "window": {
           "visible": true
         }
@@ -44,6 +37,9 @@
     }
   },
   "NetworkTables": {
+    "LiveWindow": {
+      "open": true
+    },
     "SmartDashboard": {
       "open": true
     }
