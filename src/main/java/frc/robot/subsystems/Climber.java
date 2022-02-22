@@ -5,7 +5,7 @@ package frc.robot.subsystems;
 
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
@@ -17,8 +17,8 @@ import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
   private final DoubleSolenoid climberSolenoid;
-  private final TalonFX masterClimbMotor;
-  private final TalonFX followerClimbMotor;
+  private final WPI_TalonFX masterClimbMotor;
+  private final WPI_TalonFX followerClimbMotor;
   /**
    * Creates a new climber object.
    */
@@ -26,10 +26,10 @@ public class Climber extends SubsystemBase {
     // double acting solenoid
     // double acting cylinder
 
-    masterClimbMotor = new TalonFX(Constants.Climber.leftClimbMotor);
+    masterClimbMotor = new WPI_TalonFX(Constants.Climber.leftClimbMotor);
     masterClimbMotor.setInverted(false);
 
-    followerClimbMotor = new TalonFX(Constants.Climber.rightClimbMotor);
+    followerClimbMotor = new WPI_TalonFX(Constants.Climber.rightClimbMotor);
     // any command give to the master climb motor is now also passed to the follower
     followerClimbMotor.follow(followerClimbMotor);
     climberSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);

@@ -4,6 +4,11 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.ColorMatch;
+import com.revrobotics.ColorMatchResult;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -12,6 +17,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+
+import static frc.robot.Constants.Intake.*;
 
 /**
  * The intake class envelops the 4 motors which run the intake as well as the color sensor to sense the color of ball.
@@ -30,18 +37,16 @@ public class Intake extends SubsystemBase {
   private final DoubleSolenoid leftIntakeSolenoid;
   private final DoubleSolenoid rightIntakeSolenoid;
   /** Indexer motors */
-  private final CANSparkMax indexerMotorLeft, indexerMotorRight;
+  private final CANSparkMax indexerMotor;
   /** Intake Motor */
   private final WPI_TalonFX intakeMotor;
 
   public Intake() {
     // indexer motors
-    indexerMotorLeft = new CANSparkMax(Constants.Intake.INDEXER_MOTOR_LEFT_ID, MotorType.kBrushless);
-    indexerMotorRight = new CANSparkMax(Constants.Intake.INDEXER_MOTOR_RIGHT_ID, MotorType.kBrushless);
-    indexerMotorLeft.follow(indexerMotorRight);
+    indexerMotor = new CANSparkMax(Constants.Intake.INDEXER_MOTOR_ID, MotorType.kBrushless);
     // index motors
     intakeMotor = new WPI_TalonFX(Constants.Intake.INTAKE_MOTOR_TALON_ID);
-    intakeMotor.configFactoryDefault();
+    reinitTalonFx(intakeMotor);
     // Pneumatics
     leftIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
     rightIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
@@ -65,7 +70,7 @@ public class Intake extends SubsystemBase {
   public void IndexerMotorSet(double speed) {
     /// no need to set left indexer
     /// left indexer follows right indexer
-    indexerMotorRight.set(speed);
+    indexerMotor.set(speed);
   }
 
   /**
@@ -81,5 +86,16 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
     // update the detected color every period
     // detectedColor = colorSensor.getColor();
+  }
+
+  private void reinitTalonFx(WPI_TalonFX talonFX) {
+    talonFX.configFactoryDefault();
+    talonFX.configNeutralDeadband(Constants.Talon.DEFAULT_DEADBAND);
+    talonFX.setNeutralMode(NeutralMode.Coast);
+    talonFX.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 
+      INTAKE_CURRENT_LIMIT_AMPS, INTAKE_CURRENT_LIMIT_AMPS + 5, 1));
+    talonFX.configNominalOutputReverse(0, 30);
+    talonFX.configPeakOutputForward(1, 30);
+    talonFX.configPeakOutputReverse(-1, 30);
   }
 }

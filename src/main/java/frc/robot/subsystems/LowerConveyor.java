@@ -11,6 +11,7 @@ import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,11 +23,14 @@ public class LowerConveyor extends SubsystemBase {
   CANSparkMax pooperMotor;
   DigitalInput lowConBreakBeam;
   DigitalInput pooperBreakBeam;
-   /** Color Sensor and I2C setup */
+  /** Color Sensor and I2C setup */
   private final I2C.Port i2cPort = I2C.Port.kMXP;
   private final ColorSensorV3 colorSensor;
   private final ColorMatch mColorMatcher;
-  /** Create the colors to store in the colormatcher to compare the ball color against */
+  /**
+   * Create the colors to store in the colormatcher to compare the ball color
+   * against
+   */
   private final Color kBlueTarget = new Color(0.143, 0.427, 0.429);
   private final Color kGreenTarget = new Color(0.197, 0.561, 0.240);
   private final Color kRedTarget = new Color(0.561, 0.232, 0.114);
@@ -44,40 +48,73 @@ public class LowerConveyor extends SubsystemBase {
     detectedColor = colorSensor.getColor();
     mColorMatcher.addColorMatch(kRedTarget);
     lowConMotor = new CANSparkMax(Constants.lowerCon.LowConMotor, MotorType.kBrushless);
+    lowConMotor.enableVoltageCompensation(12.0);
     pooperMotor = new CANSparkMax(Constants.lowerCon.PooperMotor, MotorType.kBrushless);
-    
+    pooperMotor.enableVoltageCompensation(12.0);
+
     lowConBreakBeam = new DigitalInput(Constants.lowerCon.LowConBreakBeam);
     pooperBreakBeam = new DigitalInput(Constants.lowerCon.PooperBreakBeam);
   }
 
-  public boolean HasRedBall() {
+  public boolean HasTeamBall() {
     ColorMatchResult match = mColorMatcher.matchColor(detectedColor);
     // if the value is no where close to the desired
     // then null will be returned
     if (match.color != null) {
-      if (match.color == kRedTarget) {
-        return true;
+      if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
+        if (match.color == kRedTarget) {
+          return true;
+        }
+      } else if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
+        if (match.color == kBlueTarget) {
+          return true;
+        }
       }
     }
     return false;
   }
-    /**
-   * Check if a red ball is in the intake.
-   * @return boolean 
+
+  public boolean ColorSensorHasTarget() {
+    ColorMatchResult match = mColorMatcher.matchColor(detectedColor);
+    if (match.color != null) return true;
+    return false;
+  }
+
+  /**
+   * 1.0 is intaking, -1.0 is pooping
+   * @param speed
    */
-  public boolean HasBlueBall() {
-    ColorMatchResult match = mColorMatcher.matchColor(detectedColor);
-    // if the value is no where close to the desired
-    // then null will be returned
-    if (match.color != null) {
-      if (match.color == kBlueTarget) {
-        return true;
-      }
-    }
-    return false;
+  public void PooperMotorSet(double speed) {
+    pooperMotor.set(speed);
   }
+
+  /**
+   * 1.0 is intaking, -1.0 is reversing
+   * @param speed
+   */
+  public void LowConMotorSet(double speed) {
+    lowConMotor.set(speed);
+  }
+
+  /**
+   * Broken will return true
+   * @return
+   */
+  public boolean getLowConBreakBeam() {
+    return !lowConBreakBeam.get();
+  }
+
+  /**
+   * Broken will return true
+   * @return
+   */
+  public boolean getPooperBreakBeam() {
+    return !pooperBreakBeam.get();
+  }
+
   /**
    * Check if the blue ball is in the intake
+   * 
    * @return boolean
    */
   @Override
