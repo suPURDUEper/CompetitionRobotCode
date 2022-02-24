@@ -23,22 +23,22 @@ public final class Constants {
         public static final double DriveTrainCurve = 0.15;
         public static final double BaseVelocity = 0.14;
         public static final double DriveTrainSpeed = 0.7;
-        public static final int LeftFront = 1;
-        public static final int LeftBack = 2;
-        public static final int RightFront = 3;
-        public static final int RightBack = 4;
+        public static final int LeftFront = 3;
+        public static final int LeftBack = 4;
+        public static final int RightFront = 1;
+        public static final int RightBack = 2;
     }
 
     public static class Climber {
-        public static final int leftClimbMotor = 8;
-        public static final int rightClimbMotor = 9;
+        public static final int leftClimbMotor = 4;
+        public static final int rightClimbMotor = 5;
     }
 
     public static class lowerCon {
         public static final int LowConBreakBeam = 0;
         public static final int PooperBreakBeam = 1;
-        public static final int LowConMotor = 5;
-        public static final int PooperMotor = 6;
+        public static final int LowConMotor = 6;
+        public static final int PooperMotor = 7;
     }
 
     public static class Shooter {
@@ -59,12 +59,12 @@ public final class Constants {
     }
 
     public static class UpperCon {
-        public static final int UpperConMotor = 7;
+        public static final int UpperConMotor = 8;
         public static final int UpperConBreakBeam = 2;
     }
 
     public static class Intake {
-        public static final int INDEXER_MOTOR_ID = 0;
+        public static final int INDEXER_MOTOR_ID = 5;
         public static final int INTAKE_MOTOR_TALON_ID = 2;
         public static final int INTAKE_CURRENT_LIMIT_AMPS = 40;
     }
