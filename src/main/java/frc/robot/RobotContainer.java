@@ -7,28 +7,22 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.BallUpConveyor;
 import frc.robot.commands.DriveForwardTimed;
 import frc.robot.commands.DriveWithJoysticks;
-import frc.robot.commands.RevUpFlywheel;
-import frc.robot.commands.ShootBall;
+import frc.robot.commands.DriveWithLimelight;
 import frc.robot.commands.ExtendClimber;
-import frc.robot.commands.FreeClimb;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
-import frc.robot.commands.IntakeRun;
-import frc.robot.commands.LowerConveyorIntake;
-import frc.robot.commands.RevFlyhwheelToFarShot;
-import frc.robot.commands.RevFlywheelToFenderShot;
-import frc.robot.commands.DriveWithLimelight;
+import frc.robot.commands.ShootBall;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LowerConveyor;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.UpperConveyor;
 import frc.robot.subsystems.Vision;
-import frc.robot.subsystems.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -48,22 +42,6 @@ public class RobotContainer {
   private final LowerConveyor lowCon;
   private final UpperConveyor upperCon;
   private final Vision vision;
-  // command declare
-  private final DriveForwardTimed driveForwardTimed;
-  private final DriveWithJoysticks driveWithJoysticks;
-  private final LowerConveyorIntake lowConIntake;
-  private final BallUpConveyor ballUpConveyor;
-  private final RevUpFlywheel revFlywheel;
-  private final FreeClimb freeClimb;
-   private final ExtendClimber extendClimber;
-   private final IntakeIn intakeIn;
-   private final IntakeOut intakeOut;
-   private final DriveWithLimelight driveWithLimelight;
-   private final IntakeRun intakeRun;
-   private final RevFlywheelToFenderShot fenderShot;
-   private final RevUpFlywheel revUpFlywheel;
-   private final RevFlyhwheelToFarShot farShot;
-   private final ShootBall shootBall;
 
   // controller declare
   public static XboxController driverJoyStick;
@@ -83,55 +61,6 @@ public class RobotContainer {
     lowCon = new LowerConveyor();
     upperCon = new UpperConveyor();
     vision = new Vision();
-    // set values for commands and set default commands
-    driveWithJoysticks = new DriveWithJoysticks(driveTrain);
-    driveWithJoysticks.addRequirements(driveTrain);
-    driveTrain.setDefaultCommand(driveWithJoysticks);
-
-    extendClimber = new ExtendClimber(climber);
-    extendClimber.addRequirements(climber);
-    climber.setDefaultCommand(extendClimber);
-
-    freeClimb = new FreeClimb(climber);
-    freeClimb.addRequirements(climber);
-    climber.setDefaultCommand(freeClimb);
-
-    driveForwardTimed = new DriveForwardTimed(driveTrain);
-    driveForwardTimed.addRequirements(driveTrain);
-
-    lowConIntake = new LowerConveyorIntake(lowCon);
-    lowConIntake.addRequirements(lowCon);
-
-    ballUpConveyor = new BallUpConveyor(upperCon);
-    ballUpConveyor.addRequirements(upperCon);
-
-    revFlywheel = new RevUpFlywheel(shooter);
-    revFlywheel.addRequirements(shooter);
-    shooter.setDefaultCommand(revFlywheel);
-
-    intakeIn = new IntakeIn(intake);
-    intakeIn.addRequirements(intake);
-
-    driveWithLimelight = new DriveWithLimelight(driveTrain, vision);
-    driveWithLimelight.addRequirements(driveTrain, vision);
-
-    intakeOut = new IntakeOut(intake);
-    intakeOut.addRequirements(intake);
-
-    intakeRun = new IntakeRun(intake);
-    intakeRun.addRequirements(intake);
-
-    farShot = new RevFlyhwheelToFarShot(shooter);
-    farShot.addRequirements(shooter);
-
-    fenderShot = new RevFlywheelToFenderShot(shooter);
-    fenderShot.addRequirements(shooter);
-
-    shootBall = new ShootBall(upperCon, lowCon);
-    shootBall.addRequirements(upperCon, lowCon);
-
-    revUpFlywheel = new RevUpFlywheel(shooter);
-    revUpFlywheel.addRequirements(shooter);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -147,6 +76,38 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     
+    // Driver Joystick
+    driveTrain.setDefaultCommand(new DriveWithJoysticks(driveTrain));
+    Button driverAButton = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);
+    driverAButton.whenHeld(new DriveWithLimelight(driveTrain, vision));
+    Button driverRightTrigger = new Button(() -> driverJoyStick.getRightTriggerAxis() > 0.5);
+    driverRightTrigger.whenHeld(new ShootBall(upperCon, lowCon));
+    Button driverRightBumper = new JoystickButton(driverJoyStick, XboxController.Button.kRightBumper.value);
+    // driverRightBumper.whenHeld(manualConveyorForward);
+    Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() > 0.5);
+    //driverLeftTrigger.whenHeld(intakePause);
+    
+
+    //Operator Joystick 
+    Button operatorLeftBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kLeftBumper.value);
+    // operatorLeftBumper.whenHeld(fenderShot);
+    Button operatorRightBumper = new JoystickButton(operatorJoyStick , XboxController.Button.kRightBumper.value);
+    // operatorRightBumper.whenHeld(farShot);
+    Button operatorYButton = new JoystickButton(operatorJoyStick, XboxController.Button.kY.value);
+    operatorYButton.whenHeld(new IntakeIn(intake));
+    Button operatorAButton = new JoystickButton(operatorJoyStick, XboxController.Button.kA.value);
+    operatorAButton.whenHeld(new IntakeOut(intake));
+    Button operatorBButton = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
+    //operatorBButton.whenHeld(purge);
+
+    Button operatorDPadUp = new Button(() -> operatorJoyStick.getPOV() == 0);
+    operatorDPadUp.whenHeld(new ExtendClimber(climber));
+    Button operatorDPadDown = new Button(() -> operatorJoyStick.getPOV() == 180);
+    // operatorDPadDown.whenHeld(retractClimber);
+    Button operatorStartButton = new JoystickButton(operatorJoyStick, XboxController.Button.kStart.value);
+    // operatorStartButton.whenHeld(autoClimb);
+
+    
   }
 
   /**
@@ -156,6 +117,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return driveForwardTimed;
+    return new DriveForwardTimed(driveTrain);
   }
 }

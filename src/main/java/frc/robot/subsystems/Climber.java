@@ -50,7 +50,7 @@ public class Climber extends SubsystemBase {
   public void climb(XboxController controller) {
     // getRightY() is a new function introduced in the 2022 wpilib
     // removes the need for axis id
-    masterClimbMotor.set(ControlMode.PercentOutput, controller.getRightY());
+    masterClimbMotor.set(ControlMode.PercentOutput, controller.getLeftY());
   }
   public void controlSolenoid(XboxController controller) {
     Debouncer mDebouncer = new Debouncer(0.1, DebounceType.kBoth);
