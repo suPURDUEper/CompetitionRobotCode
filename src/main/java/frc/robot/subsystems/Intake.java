@@ -34,8 +34,7 @@ import static frc.robot.Constants.Intake.*;
  */
 public class Intake extends SubsystemBase {
   /** Pneumatics */
-  private final DoubleSolenoid leftIntakeSolenoid;
-  private final DoubleSolenoid rightIntakeSolenoid;
+  private final DoubleSolenoid IntakeSolenoid;
   /** Indexer motors */
   private final CANSparkMax indexerMotor;
   /** Intake Motor */
@@ -48,10 +47,8 @@ public class Intake extends SubsystemBase {
     intakeMotor = new WPI_TalonFX(Constants.Intake.INTAKE_MOTOR_TALON_ID);
     reinitTalonFx(intakeMotor);
     // Pneumatics
-    leftIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
-    rightIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
-    leftIntakeSolenoid.set(DoubleSolenoid.Value.kForward);
-    rightIntakeSolenoid.set(DoubleSolenoid.Value.kForward);
+    IntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+    IntakeSolenoid.set(DoubleSolenoid.Value.kForward);
   }
 
   /**
@@ -59,8 +56,7 @@ public class Intake extends SubsystemBase {
    * @param value DoubleSolenoid.Value type
    */
   public void IntakeSet(DoubleSolenoid.Value value) {
-    leftIntakeSolenoid.set(value);
-    rightIntakeSolenoid.set(value);
+    IntakeSolenoid.set(value);
   }
 
   /**
