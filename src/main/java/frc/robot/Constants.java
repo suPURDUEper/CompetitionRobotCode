@@ -42,8 +42,8 @@ public final class Constants {
     }
 
     public static class Shooter {
-        public static final int HOOD_SOLENOID_FWD_ID = 10;
-        public static final int HOOD_SOLENOID_REV_ID = 11;
+        public static final int HOOD_SOLENOID_FWD_ID = 2;
+        public static final int HOOD_SOLENOID_REV_ID = 3;
         public static final int HOOD_SERVO_CHANNEL = 1;
         public static final int FlywheelSpeed = 5700;
         public static final double FLYWHEEL_KD = 0;

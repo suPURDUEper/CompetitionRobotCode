@@ -15,6 +15,9 @@ import frc.robot.commands.DriveWithLimelight;
 import frc.robot.commands.ExtendClimber;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
+import frc.robot.commands.RetractClimber;
+import frc.robot.commands.SetFlywheelToFarShot;
+import frc.robot.commands.SetFlywheelToFenderShot;
 import frc.robot.commands.ShootBall;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
@@ -90,9 +93,9 @@ public class RobotContainer {
 
     //Operator Joystick 
     Button operatorLeftBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kLeftBumper.value);
-    // operatorLeftBumper.whenHeld(fenderShot);
+    operatorLeftBumper.whenHeld(new SetFlywheelToFenderShot(shooter));
     Button operatorRightBumper = new JoystickButton(operatorJoyStick , XboxController.Button.kRightBumper.value);
-    // operatorRightBumper.whenHeld(farShot);
+    operatorRightBumper.whenHeld(new SetFlywheelToFarShot(shooter));
     Button operatorYButton = new JoystickButton(operatorJoyStick, XboxController.Button.kY.value);
     operatorYButton.whenHeld(new IntakeIn(intake));
     Button operatorAButton = new JoystickButton(operatorJoyStick, XboxController.Button.kA.value);
@@ -100,10 +103,10 @@ public class RobotContainer {
     Button operatorBButton = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
     //operatorBButton.whenHeld(purge);
 
-    Button operatorDPadUp = new Button(() -> operatorJoyStick.getPOV() == 0);
-    operatorDPadUp.whenHeld(new ExtendClimber(climber));
+    //Button operatorDPadUp = new Button(() -> operatorJoyStick.getPOV() == 0);
+    //operatorDPadUp.whenHeld(new ExtendClimber(climber));
     Button operatorDPadDown = new Button(() -> operatorJoyStick.getPOV() == 180);
-    // operatorDPadDown.whenHeld(retractClimber);
+    operatorDPadDown.whenHeld(new RetractClimber(climber));
     Button operatorStartButton = new JoystickButton(operatorJoyStick, XboxController.Button.kStart.value);
     // operatorStartButton.whenHeld(autoClimb);
 

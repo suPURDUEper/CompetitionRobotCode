@@ -21,12 +21,12 @@ public class DriveTrain extends SubsystemBase {
 
   public DriveTrain() {
     leftFront = new CANSparkMax(Constants.DriveTrain.LeftFront, MotorType.kBrushless);
-    leftFront.setInverted(false);
+    leftFront.setInverted(true);
     leftBack = new CANSparkMax(Constants.DriveTrain.LeftBack, MotorType.kBrushless);
     rightFront = new CANSparkMax(Constants.DriveTrain.RightFront, MotorType.kBrushless);
-    rightFront.setInverted(true);
+    rightFront.setInverted(false);
     rightBack = new CANSparkMax(Constants.DriveTrain.RightBack, MotorType.kBrushless);
-
+    
     leftBack.follow(leftFront);
     rightBack.follow(rightFront);
     drive = new DifferentialDrive(leftFront, rightFront);

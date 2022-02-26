@@ -12,6 +12,7 @@ import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -32,7 +33,7 @@ public class Climber extends SubsystemBase {
     followerClimbMotor = new WPI_TalonFX(Constants.Climber.rightClimbMotor);
     // any command give to the master climb motor is now also passed to the follower
     followerClimbMotor.follow(followerClimbMotor);
-    climberSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
+    climberSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
     // initialize the climber to forward
     // this way the toggle function works
     climberSolenoid.set(DoubleSolenoid.Value.kForward);
@@ -52,12 +53,10 @@ public class Climber extends SubsystemBase {
     // removes the need for axis id
     masterClimbMotor.set(ControlMode.PercentOutput, controller.getLeftY());
   }
-  public void controlSolenoid(XboxController controller) {
-    Debouncer mDebouncer = new Debouncer(0.1, DebounceType.kBoth);
-
-    // calculates if the button is true or not
-    if (mDebouncer.calculate(controller.getXButton())) {
-      climberSolenoid.toggle();
-    }
+  public void extendSolenoid() {
+      climberSolenoid.set(Value.kForward);
+  }
+  public void retractSolenoid() {
+    climberSolenoid.set(Value.kReverse);
   }
 }
