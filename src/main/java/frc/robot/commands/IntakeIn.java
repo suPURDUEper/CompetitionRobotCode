@@ -4,11 +4,11 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.Intake;
 
-public class IntakeIn extends CommandBase {
+public class IntakeIn extends InstantCommand {
   private final Intake intake;
   /** Creates a new IntakeIn. */
   public IntakeIn(Intake mIntake) {
@@ -19,21 +19,7 @@ public class IntakeIn extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    intake.IntakeSet(DoubleSolenoid.Value.kReverse);
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
+  public void initialize() {
+    intake.intakeIn();
   }
 }

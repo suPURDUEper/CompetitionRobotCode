@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class UpperConveyor extends SubsystemBase {
   CANSparkMax ConveyorMotor;
-  DigitalInput UpperConveyorSensor;
+ public DigitalInput UpperConveyorSensor;
 
   /** Creates a new UpperConveyer. */
   public UpperConveyor() {

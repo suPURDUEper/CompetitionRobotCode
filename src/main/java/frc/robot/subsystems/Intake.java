@@ -4,17 +4,16 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.ColorMatch;
-import com.revrobotics.ColorMatchResult;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -38,17 +37,15 @@ public class Intake extends SubsystemBase {
   /** Indexer motors */
   private final CANSparkMax indexerMotor;
   /** Intake Motor */
-  private final WPI_TalonFX intakeMotor;
+  private final PWMTalonFX intakeMotor;
 
   public Intake() {
     // indexer motors
     indexerMotor = new CANSparkMax(Constants.Intake.INDEXER_MOTOR_ID, MotorType.kBrushless);
-    // index motors
-    intakeMotor = new WPI_TalonFX(Constants.Intake.INTAKE_MOTOR_TALON_ID);
-    reinitTalonFx(intakeMotor);
+    // intake motors
+    intakeMotor = new PWMTalonFX(Constants.Intake.INTAKE_MOTOR_TALON_ID);
     // Pneumatics
     IntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
-    IntakeSolenoid.set(DoubleSolenoid.Value.kForward);
   }
 
   /**
@@ -84,6 +81,13 @@ public class Intake extends SubsystemBase {
     // detectedColor = colorSensor.getColor();
   }
 
+  public void intakeIn(){
+    IntakeSolenoid.set(Value.kReverse);
+  }
+
+  public void intakeOut(){
+    IntakeSolenoid.set(Value.kForward);
+  }
   private void reinitTalonFx(WPI_TalonFX talonFX) {
     talonFX.configFactoryDefault();
     talonFX.configNeutralDeadband(Constants.Talon.DEFAULT_DEADBAND);

@@ -7,10 +7,10 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.Intake;
 
-public class IntakeOut extends InstantCommand {
+public class IntakeStop extends InstantCommand {
+  /** Creates a new IntakeStop. */
   private final Intake intake;
-  /** Creates a new IntakeOut. */
-  public IntakeOut(Intake mIntake) {
+  public IntakeStop(Intake mIntake) {
     intake = mIntake;
     addRequirements(mIntake);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -19,6 +19,7 @@ public class IntakeOut extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.intakeOut();
+    intake.IntakeMotorSet(0);
+    intake.IndexerMotorSet(0);
   }
 }
