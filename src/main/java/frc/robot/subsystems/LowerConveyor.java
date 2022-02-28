@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
@@ -20,7 +22,7 @@ import frc.robot.Constants;
 public class LowerConveyor extends SubsystemBase {
   /** Creates a new LowerConveyer. */
   CANSparkMax lowConMotor;
-  CANSparkMax pooperMotor;
+  TalonSRX pooperMotor;
   DigitalInput lowConBreakBeam;
   DigitalInput pooperBreakBeam;
   /** Color Sensor and I2C setup */
@@ -49,8 +51,7 @@ public class LowerConveyor extends SubsystemBase {
     mColorMatcher.addColorMatch(kRedTarget);
     lowConMotor = new CANSparkMax(Constants.lowerCon.LowConMotor, MotorType.kBrushless);
     lowConMotor.enableVoltageCompensation(12.0);
-    pooperMotor = new CANSparkMax(Constants.lowerCon.PooperMotor, MotorType.kBrushless);
-    pooperMotor.enableVoltageCompensation(12.0);
+    pooperMotor = new TalonSRX(Constants.lowerCon.PooperMotor);
 
     lowConBreakBeam = new DigitalInput(Constants.lowerCon.LowConBreakBeam);
     pooperBreakBeam = new DigitalInput(Constants.lowerCon.PooperBreakBeam);
@@ -85,7 +86,7 @@ public class LowerConveyor extends SubsystemBase {
    * @param speed
    */
   public void PooperMotorSet(double speed) {
-    pooperMotor.set(speed);
+    pooperMotor.set(ControlMode.PercentOutput, speed);
   }
 
   /**

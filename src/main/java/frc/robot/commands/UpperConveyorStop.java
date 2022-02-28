@@ -5,38 +5,30 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.UpperConveyor;
 
-public class IntakeRun extends CommandBase {
-  /** Creates a new IntakeRun. */
-  private final Intake intake;
-
-  public IntakeRun(Intake mIntake) {
+public class UpperConveyorStop extends CommandBase {
+  /** Creates a new UpperConveyorStop. */
+  private final UpperConveyor upperCon;
+  public UpperConveyorStop(UpperConveyor mUpperCon) {
+    upperCon = mUpperCon;
+    addRequirements(mUpperCon);
     // Use addRequirements() here to declare subsystem dependencies.
-    intake = mIntake;
-    addRequirements(mIntake);
-
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    intake.IndexerMotorSet(1);
-    intake.IntakeMotorSet(1);
+    upperCon.ConveyorMotorSet(0);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    intake.IndexerMotorSet(0);
-    intake.IntakeMotorSet(0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

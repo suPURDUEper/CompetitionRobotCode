@@ -33,6 +33,7 @@ public class ShuffleboardInfo {
         driverTab = Shuffleboard.getTab("driver");
         shooterTab = Shuffleboard.getTab("Shooter");
 
+
         mIsTargetValid = driverTab.add("Valid Target?", false)
             .withPosition(0, 0).withSize(1, 1).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
         

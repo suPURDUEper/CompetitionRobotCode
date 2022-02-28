@@ -52,9 +52,9 @@ public final class Constants {
         public static final double FLYWHEEL_KP = 1023.0/21777.0;
         public static final int PID_LOOP_INDEX = 0;
         public static final int SHOOTER_CURRENT_LIMIT = 40;
-        public static final int LEFT_FLYWHEEL_CAN_ID = 0;
-        public static final int RIGHT_FLYWHEEL_CAN_ID = 1;
-        public static final int ACCELERATOR_CAN_ID = 2;
+        public static final int LEFT_FLYWHEEL_CAN_ID = 1;
+        public static final int RIGHT_FLYWHEEL_CAN_ID = 2;
+        public static final int ACCELERATOR_CAN_ID = 3;
         public static final int SHOOTER_CURRENT_LIMIT_AMPS = 40;
         public static final int SHOOTER_FENDER_SHOT_RPM = 3000;
         public static final int SHOOTER_FAR_SHOT_RPM = 5000;

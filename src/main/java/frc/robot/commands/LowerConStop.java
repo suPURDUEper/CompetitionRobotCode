@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Constants.lowerCon;
 import frc.robot.subsystems.LowerConveyor;
 
 public class LowerConStop extends InstantCommand {
@@ -20,5 +21,6 @@ public class LowerConStop extends InstantCommand {
   @Override
   public void initialize() {
     lowCon.LowConMotorSet(0);
+    lowCon.PooperMotorSet(0);
   }
 }

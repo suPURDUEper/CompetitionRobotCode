@@ -28,7 +28,7 @@ public class LowerConveyorIntake extends CommandBase {
     // figure out which direction the motors need to run
     // getting the break beam, and color sensor values
     // getLowConBreakBeam(), HasTeamBall()
-    lowCon.PooperMotorSet(1);
+    lowCon.PooperMotorSet(.8);
     lowCon.LowConMotorSet(1);
    /* if (lowCon.ColorSensorHasTarget()) {
       if (lowCon.HasTeamBall()) {
@@ -47,6 +47,8 @@ public class LowerConveyorIntake extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    lowCon.PooperMotorSet(0);
+    lowCon.LowConMotorSet(0);
     //lowCon.PooperMotorSet(0);
     //lowCon.LowConMotorSet(0);
   }
