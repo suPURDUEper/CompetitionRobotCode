@@ -4,12 +4,12 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 
 
-public class SetFlywheelToFarShot extends InstantCommand {
+public class SetFlywheelToFarShot extends CommandBase {
   private final Shooter shooter;
   /** Creates a new ShootBall. */
   public SetFlywheelToFarShot(Shooter mShooter) {
@@ -21,7 +21,18 @@ public class SetFlywheelToFarShot extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    shooter.enableShooter();
     shooter.setDistanceHoodPosition();
     shooter.setFlywheelTargetRPM(Constants.Shooter.SHOOTER_FAR_SHOT_RPM);
+  }
+  
+  @Override
+  public void execute() {
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    shooter.disableShooter();
   }
 }

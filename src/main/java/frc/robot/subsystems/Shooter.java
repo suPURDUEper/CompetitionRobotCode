@@ -92,14 +92,14 @@ public class Shooter extends SubsystemBase {
    * Meant for right up against the fender
    */
   public void setFenderHoodPosition() {
-    hood.set(Value.kReverse);
+    hood.set(Value.kForward);
   }
 
   /**
    * Meant for anything further than the Tarmac
    */
   public void setDistanceHoodPosition() {
-    hood.set(Value.kForward);
+    hood.set(Value.kReverse);
   }
 
   /**
