@@ -33,7 +33,7 @@ public class Climber extends SubsystemBase {
     followerClimbMotor = new WPI_TalonFX(Constants.Climber.rightClimbMotor);
     // any command give to the master climb motor is now also passed to the follower
     followerClimbMotor.follow(followerClimbMotor);
-    climberSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
+    climberSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 5);
     // initialize the climber to forward
     // this way the toggle function works
     climberSolenoid.set(DoubleSolenoid.Value.kForward);

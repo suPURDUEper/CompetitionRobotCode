@@ -12,6 +12,7 @@ import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
@@ -40,6 +41,7 @@ public class LowerConveyor extends SubsystemBase {
   private final Color kYellowTarget = new Color(0.361, 0.524, 0.113);
   /** Make A Detected Color Variable which is reset every Period */
   private Color detectedColor;
+  private final NetworkTableEntry mDetectedColor;
 
   public LowerConveyor() {
     // Color Sensor and Macther
@@ -56,6 +58,7 @@ public class LowerConveyor extends SubsystemBase {
 
     lowConBreakBeam = new DigitalInput(Constants.lowerCon.LowConBreakBeam);
     pooperBreakBeam = new DigitalInput(Constants.lowerCon.PooperBreakBeam);
+    mDetectedColor = Shuffleboard.getTab("Limelight Aim").add("Tx Error", "No Ball").getEntry();
   }
 
   public boolean HasTeamBall() {
@@ -122,6 +125,13 @@ public class LowerConveyor extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    detectedColor = colorSensor.getColor();
+    // detectedColor = colorSensor.getColor();
+    // if (ColorSensorHasTarget()) {
+    //   if (HasTeamBall()) {
+    //     mDetectedColor.forceSetString("Team Ball");
+    //   } else if (!HasTeamBall()) {
+    //     mDetectedColor.forceSetString("Enemy Ball");
+    //   }
+    // }
   }
 }

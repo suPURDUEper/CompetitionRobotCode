@@ -88,14 +88,14 @@ public class Intake extends SubsystemBase {
   public void intakeOut(){
     IntakeSolenoid.set(Value.kForward);
   }
-  private void reinitTalonFx(WPI_TalonFX talonFX) {
-    talonFX.configFactoryDefault();
-    talonFX.configNeutralDeadband(Constants.Talon.DEFAULT_DEADBAND);
-    talonFX.setNeutralMode(NeutralMode.Coast);
-    talonFX.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 
-      INTAKE_CURRENT_LIMIT_AMPS, INTAKE_CURRENT_LIMIT_AMPS + 5, 1));
-    talonFX.configNominalOutputReverse(0, 30);
-    talonFX.configPeakOutputForward(1, 30);
-    talonFX.configPeakOutputReverse(-1, 30);
-  }
+  // private void reinitTalonFx(PWMTalonFX talonFX) {
+  //   talonFX.configFactoryDefault();
+  //   talonFX.configNeutralDeadband(Constants.Talon.DEFAULT_DEADBAND);
+  //   talonFX.setNeutralMode(NeutralMode.Coast);
+  //   talonFX.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 
+  //     INTAKE_CURRENT_LIMIT_AMPS, INTAKE_CURRENT_LIMIT_AMPS + 5, 1));
+  //   talonFX.configNominalOutputReverse(0, 30);
+  //   talonFX.configPeakOutputForward(1, 30);
+  //   talonFX.configPeakOutputReverse(-1, 30);
+  // }
 }

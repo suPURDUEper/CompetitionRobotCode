@@ -28,21 +28,21 @@ public class LowerConveyorIntake extends CommandBase {
     // figure out which direction the motors need to run
     // getting the break beam, and color sensor values
     // getLowConBreakBeam(), HasTeamBall()
-    //lowCon.PooperMotorSet(.8);
-    //lowCon.LowConMotorSet(1);
-    /*if (lowCon.ColorSensorHasTarget()) {
+    lowCon.PooperMotorSet(.8);
+    lowCon.LowConMotorSet(1);
+    if (lowCon.ColorSensorHasTarget()) {
       if (lowCon.HasTeamBall()) {
         lowCon.PooperMotorSet(0.8);
-        System.out.print("good ball");
+        // System.out.print("good ball");
       } else {
         lowCon.PooperMotorSet(-1.0);
-        System.out.print("bad ball");
+        // System.out.print("bad ball");
       }
       
     } else {
       lowCon.PooperMotorSet(.8);
-      System.out.print("no ball");
-    }*/
+      // System.out.print("no ball");
+    }
 
 
   }

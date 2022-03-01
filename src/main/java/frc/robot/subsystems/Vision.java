@@ -14,10 +14,9 @@ public class Vision extends SubsystemBase {
   private final NetworkTable mLimelightTable;
   private double tv, tx;
   private boolean mIsTargetValid;
-  private final NetworkTableEntry mLedEntry, mTxError, mTv;
+  private final NetworkTableEntry mLedEntry, mTv;
   /** Creates a new Vision. */
   public Vision() {
-    mTxError = Shuffleboard.getTab("Limelight Aim").add("Tx Error", 0.0).getEntry();
     mTv = Shuffleboard.getTab("Limelight Aim").add("Tv", 0.0).getEntry();
     mLimelightTable = NetworkTableInstance.getDefault().getTable("limelight");
     mLedEntry = mLimelightTable.getEntry("ledmode");
@@ -29,7 +28,6 @@ public class Vision extends SubsystemBase {
     tv = mLimelightTable.getEntry("tv").getDouble(0.0);
     tx = mLimelightTable.getEntry("tx").getDouble(0.0);
     mIsTargetValid = isTargetValid();
-    mTxError.forceSetDouble(tx);
     mTv.forceSetDouble(tv);
   }
 

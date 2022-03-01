@@ -91,12 +91,12 @@ public class RobotContainer {
     Button driverAButton = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);
     driverAButton.whenHeld(new DriveWithLimelight(driveTrain, vision));
     Button driverRightTrigger = new Button(() -> driverJoyStick.getRightTriggerAxis() > 0.5);
-    driverRightTrigger.whenHeld(new ShootBall(upperCon, lowCon));
+    // driverRightTrigger.whenHeld(new ShootBall(upperCon, lowCon));
     Button driverRightBumper = new JoystickButton(driverJoyStick, XboxController.Button.kRightBumper.value);
     // driverRightBumper.whenHeld(manualConveyorForward);
     Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() > 0.5);
     driverLeftTrigger.whileHeld(new IntakeRun(intake));
-    driverLeftTrigger.whileHeld(new LowerConveyorIntake(lowCon));
+    // driverLeftTrigger.whileHeld(new LowerConveyorIntake(lowCon));
     driverLeftTrigger.whileHeld(new UpperConveyorIntake(upperCon));
     //driverLeftTrigger.whenHeld(intakePause);
     
@@ -109,7 +109,7 @@ public class RobotContainer {
     Button operatorYButton = new JoystickButton(operatorJoyStick, XboxController.Button.kY.value);
     operatorYButton.whenHeld(new IntakeIn(intake));
     operatorYButton.whenHeld(new IntakeStop(intake));
-    operatorYButton.whenHeld(new LowerConStop(lowCon));
+    // operatorYButton.whenHeld(new LowerConStop(lowCon));
     operatorYButton.whenHeld(new UpperConveyorStop(upperCon));
     Button operatorAButton = new JoystickButton(operatorJoyStick, XboxController.Button.kA.value);
     operatorAButton.whenHeld(new IntakeOut(intake));
