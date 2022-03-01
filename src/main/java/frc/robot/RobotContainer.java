@@ -46,7 +46,7 @@ import frc.robot.subsystems.Vision;
 public class RobotContainer {
   // subsystem declare
   private final DriveTrain driveTrain;
-  private final Shooter shooter;
+  // private final Shooter shooter;
   private final Climber climber;
   private final Intake intake;
   private final LowerConveyor lowCon;
@@ -65,7 +65,7 @@ public class RobotContainer {
     operatorJoyStick = new XboxController(Constants.Controller.OperatorJoystickNumber);
     // set values for subsystems
     driveTrain = new DriveTrain();
-    shooter = new Shooter();
+    // shooter = new Shooter();
     climber = new Climber();
     intake = new Intake();
     lowCon = new LowerConveyor();
@@ -96,26 +96,28 @@ public class RobotContainer {
     // driverRightBumper.whenHeld(manualConveyorForward);
     Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() > 0.5);
     driverLeftTrigger.whileHeld(new IntakeRun(intake));
+    driverLeftTrigger.whileHeld(new LowerConveyorIntake(lowCon));
+    driverLeftTrigger.whileHeld(new UpperConveyorIntake(upperCon));
     // driverLeftTrigger.whileHeld(new LowerConveyorIntake(lowCon));
     driverLeftTrigger.whileHeld(new UpperConveyorIntake(upperCon));
     //driverLeftTrigger.whenHeld(intakePause);
     
 
     //Operator Joystick 
-    Button operatorLeftBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kLeftBumper.value);
-    operatorLeftBumper.whenHeld(new SetFlywheelToFenderShot(shooter));
-    Button operatorRightBumper = new JoystickButton(operatorJoyStick , XboxController.Button.kRightBumper.value);
-    operatorRightBumper.whenHeld(new SetFlywheelToFarShot(shooter));
+    // Button operatorLeftBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kLeftBumper.value);
+    // operatorLeftBumper.whenHeld(new SetFlywheelToFenderShot(shooter));
+    // Button operatorRightBumper = new JoystickButton(operatorJoyStick , XboxController.Button.kRightBumper.value);
+    // operatorRightBumper.whenHeld(new SetFlywheelToFarShot(shooter));
     Button operatorYButton = new JoystickButton(operatorJoyStick, XboxController.Button.kY.value);
     operatorYButton.whenHeld(new IntakeIn(intake));
     operatorYButton.whenHeld(new IntakeStop(intake));
-    // operatorYButton.whenHeld(new LowerConStop(lowCon));
+    operatorYButton.whenHeld(new LowerConStop(lowCon));
     operatorYButton.whenHeld(new UpperConveyorStop(upperCon));
     Button operatorAButton = new JoystickButton(operatorJoyStick, XboxController.Button.kA.value);
     operatorAButton.whenHeld(new IntakeOut(intake));
-    //operatorAButton.whenHeld(new IntakeRun(intake));
-    //operatorAButton.whenHeld(new LowerConveyorIntake(lowCon));
-    //operatorAButton.whenHeld(new UpperConveyorIntake(upperCon));
+    // operatorAButton.whenHeld(new IntakeRun(intake));
+    // operatorAButton.whenHeld(new LowerConveyorIntake(lowCon));
+    // operatorAButton.whenHeld(new UpperConveyorIntake(upperCon));
     Button operatorBButton = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
     //operatorBButton.whenHeld(purge);
 

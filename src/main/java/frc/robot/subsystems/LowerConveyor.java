@@ -80,13 +80,15 @@ public class LowerConveyor extends SubsystemBase {
   }
 
   public boolean ColorSensorHasTarget() {
-    ColorMatchResult match = mColorMatcher.matchColor(detectedColor);
-    if (match.color != null) return true;
+    if (mColorMatcher.matchColor(detectedColor) != null) {
+      return true;
+    }
     return false;
   }
 
   /**
    * 1.0 is intaking, -1.0 is pooping
+   * 
    * @param speed
    */
   public void PooperMotorSet(double speed) {
@@ -95,6 +97,7 @@ public class LowerConveyor extends SubsystemBase {
 
   /**
    * 1.0 is intaking, -1.0 is reversing
+   * 
    * @param speed
    */
   public void LowConMotorSet(double speed) {
@@ -103,6 +106,7 @@ public class LowerConveyor extends SubsystemBase {
 
   /**
    * Broken will return true
+   * 
    * @return
    */
   public boolean getLowConBreakBeam() {
@@ -111,6 +115,7 @@ public class LowerConveyor extends SubsystemBase {
 
   /**
    * Broken will return true
+   * 
    * @return
    */
   public boolean getPooperBreakBeam() {
@@ -127,11 +132,11 @@ public class LowerConveyor extends SubsystemBase {
     // This method will be called once per scheduler run
     // detectedColor = colorSensor.getColor();
     // if (ColorSensorHasTarget()) {
-    //   if (HasTeamBall()) {
-    //     mDetectedColor.forceSetString("Team Ball");
-    //   } else if (!HasTeamBall()) {
-    //     mDetectedColor.forceSetString("Enemy Ball");
-    //   }
+    // if (HasTeamBall()) {
+    // mDetectedColor.forceSetString("Team Ball");
+    // } else if (!HasTeamBall()) {
+    // mDetectedColor.forceSetString("Enemy Ball");
+    // }
     // }
   }
 }
