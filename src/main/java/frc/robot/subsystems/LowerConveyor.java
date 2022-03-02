@@ -52,13 +52,16 @@ public class LowerConveyor extends SubsystemBase {
     // Init detected color
     detectedColor = colorSensor.getColor();
     mColorMatcher.addColorMatch(kRedTarget);
+    mColorMatcher.addColorMatch(kBlueTarget);
+    mColorMatcher.addColorMatch(kGreenTarget);
+    mColorMatcher.addColorMatch(kYellowTarget);
     lowConMotor = new CANSparkMax(Constants.lowerCon.LowConMotor, MotorType.kBrushless);
     lowConMotor.enableVoltageCompensation(12.0);
     pooperMotor = new TalonSRX(Constants.lowerCon.PooperMotor);
 
     lowConBreakBeam = new DigitalInput(Constants.lowerCon.LowConBreakBeam);
     pooperBreakBeam = new DigitalInput(Constants.lowerCon.PooperBreakBeam);
-    mDetectedColor = Shuffleboard.getTab("Limelight Aim").add("Tx Error", "No Ball").getEntry();
+    mDetectedColor = Shuffleboard.getTab("Limelight Aim").add("Ball Color", "No Ball").getEntry();
   }
 
   public boolean HasTeamBall() {
@@ -130,13 +133,15 @@ public class LowerConveyor extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    // detectedColor = colorSensor.getColor();
-    // if (ColorSensorHasTarget()) {
-    // if (HasTeamBall()) {
-    // mDetectedColor.forceSetString("Team Ball");
-    // } else if (!HasTeamBall()) {
-    // mDetectedColor.forceSetString("Enemy Ball");
-    // }
-    // }
+    detectedColor = colorSensor.getColor();
+    if (ColorSensorHasTarget()) {
+      if (HasTeamBall()) {
+        mDetectedColor.forceSetString("Team Ball");
+      } else if (!HasTeamBall()) {
+        mDetectedColor.forceSetString("Enemy Ball");
+      }
+    } else {
+      mDetectedColor.forceSetString("No Ball");
+    }
   }
 }

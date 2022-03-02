@@ -27,6 +27,8 @@ public class ShuffleboardInfo {
 
     private final NetworkTableEntry flywheelRPMSpeed;
 
+    private final NetworkTableEntry colorOfBall;
+
     private static ShuffleboardInfo instance = null;
 
     private ShuffleboardInfo() {
@@ -40,6 +42,7 @@ public class ShuffleboardInfo {
         mKpSteer = Shuffleboard.getTab("Limelight Aim").add("Steering KP", -0.05).getEntry();
         mKpDrive = Shuffleboard.getTab("Limelight Aim").add("Drive KP", -0.05).getEntry();
         flywheelRPMSpeed = Shuffleboard.getTab("Shooter").add("Flywheel Speed (RPM)", 0).getEntry();
+        colorOfBall = Shuffleboard.getTab("Shooter").add("Color of Ball in Intake", "No Ball").getEntry();
     }
 
     public static ShuffleboardInfo getInstance() {
@@ -64,6 +67,10 @@ public class ShuffleboardInfo {
 
     public NetworkTableEntry getFlywheelSpeed() {
         return flywheelRPMSpeed;
+    }
+
+    public NetworkTableEntry getColorOfBall() {
+        return colorOfBall;
     }
 
     public void addAutoChooser(SendableChooser<Command> mAutoChooser) {

@@ -85,7 +85,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    
+
     // Driver Joystick
     driveTrain.setDefaultCommand(new DriveWithJoysticks(driveTrain));
     Button driverAButton = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);
@@ -104,10 +104,10 @@ public class RobotContainer {
     
 
     //Operator Joystick 
-    // Button operatorLeftBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kLeftBumper.value);
-    // operatorLeftBumper.whenHeld(new SetFlywheelToFenderShot(shooter));
-    // Button operatorRightBumper = new JoystickButton(operatorJoyStick , XboxController.Button.kRightBumper.value);
-    // operatorRightBumper.whenHeld(new SetFlywheelToFarShot(shooter));
+    Button operatorLeftBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kLeftBumper.value);
+    operatorLeftBumper.whenHeld(new SetFlywheelToFenderShot(shooter));
+    Button operatorRightBumper = new JoystickButton(operatorJoyStick , XboxController.Button.kRightBumper.value);
+    operatorRightBumper.whenHeld(new SetFlywheelToFarShot(shooter));
     Button operatorYButton = new JoystickButton(operatorJoyStick, XboxController.Button.kY.value);
     operatorYButton.whenHeld(new IntakeIn(intake));
     operatorYButton.whenHeld(new IntakeStop(intake));
@@ -119,16 +119,15 @@ public class RobotContainer {
     // operatorAButton.whenHeld(new LowerConveyorIntake(lowCon));
     // operatorAButton.whenHeld(new UpperConveyorIntake(upperCon));
     Button operatorBButton = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
-    //operatorBButton.whenHeld(purge);
+    // operatorBButton.whenHeld(purge);
 
-    //Button operatorDPadUp = new Button(() -> operatorJoyStick.getPOV() == 0);
-    //operatorDPadUp.whenHeld(new ExtendClimber(climber));
+    // Button operatorDPadUp = new Button(() -> operatorJoyStick.getPOV() == 0);
+    // operatorDPadUp.whenHeld(new ExtendClimber(climber));
     Button operatorDPadDown = new Button(() -> operatorJoyStick.getPOV() == 180);
     operatorDPadDown.whenHeld(new RetractClimber(climber));
     Button operatorStartButton = new JoystickButton(operatorJoyStick, XboxController.Button.kStart.value);
     // operatorStartButton.whenHeld(autoClimb);
 
-    
   }
 
   /**
