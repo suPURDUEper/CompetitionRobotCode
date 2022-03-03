@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.lowerCon;
+import frc.robot.commands.ClimberDown;
+import frc.robot.commands.ClimberUp;
 import frc.robot.commands.DriveForwardTimed;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.DriveWithLimelight;
@@ -116,12 +118,16 @@ public class RobotContainer {
     operatorAButton.whenHeld(new IntakeOut(intake));
     Button operatorBButton = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
     // operatorBButton.whenHeld(purge);
-    climber.setDefaultCommand(new FreeClimb(climber));
+    //climber.setDefaultCommand(new FreeClimb(climber));
 
+    Button operatorDPadRight = new Button(() -> operatorJoyStick.getPOV() == 90);
+    operatorDPadRight.whenHeld(new ExtendClimber(climber));
+    Button operatorDPadLeft = new Button(() -> operatorJoyStick.getPOV() == 270);
+    operatorDPadLeft.whenHeld(new RetractClimber(climber));
     Button operatorDPadUp = new Button(() -> operatorJoyStick.getPOV() == 0);
-    operatorDPadUp.whenHeld(new ExtendClimber(climber));
+    operatorDPadUp.whenHeld(new ClimberUp(climber));
     Button operatorDPadDown = new Button(() -> operatorJoyStick.getPOV() == 180);
-    operatorDPadDown.whenHeld(new RetractClimber(climber));
+    operatorDPadDown.whenHeld(new ClimberDown(climber));
     Button operatorStartButton = new JoystickButton(operatorJoyStick, XboxController.Button.kStart.value);
     // operatorStartButton.whenHeld(autoClimb);
 

@@ -43,7 +43,13 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
+  public void climberUp() {
+    masterClimbMotor.set(ControlMode.Position, 4096);
 
+  } 
+  public void climberDown() {
+    masterClimbMotor.set(ControlMode.Position, 0);
+  }
   /**
    * 
    * @param controller the controller object for the operator
