@@ -14,6 +14,7 @@ import frc.robot.commands.DriveForwardTimed;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.DriveWithLimelight;
 import frc.robot.commands.ExtendClimber;
+import frc.robot.commands.FreeClimb;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
 import frc.robot.commands.IntakeRun;
@@ -46,7 +47,7 @@ import frc.robot.subsystems.Vision;
 public class RobotContainer {
   // subsystem declare
   private final DriveTrain driveTrain;
-  // private final Shooter shooter;
+  private final Shooter shooter;
   private final Climber climber;
   private final Intake intake;
   private final LowerConveyor lowCon;
@@ -65,7 +66,7 @@ public class RobotContainer {
     operatorJoyStick = new XboxController(Constants.Controller.OperatorJoystickNumber);
     // set values for subsystems
     driveTrain = new DriveTrain();
-    // shooter = new Shooter();
+    shooter = new Shooter();
     climber = new Climber();
     intake = new Intake();
     lowCon = new LowerConveyor();
@@ -91,14 +92,12 @@ public class RobotContainer {
     Button driverAButton = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);
     driverAButton.whenHeld(new DriveWithLimelight(driveTrain, vision));
     Button driverRightTrigger = new Button(() -> driverJoyStick.getRightTriggerAxis() > 0.5);
-    // driverRightTrigger.whenHeld(new ShootBall(upperCon, lowCon));
+    driverRightTrigger.whenHeld(new ShootBall(upperCon, lowCon));
     Button driverRightBumper = new JoystickButton(driverJoyStick, XboxController.Button.kRightBumper.value);
     // driverRightBumper.whenHeld(manualConveyorForward);
     Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() > 0.5);
     driverLeftTrigger.whileHeld(new IntakeRun(intake));
     driverLeftTrigger.whileHeld(new LowerConveyorIntake(lowCon));
-    driverLeftTrigger.whileHeld(new UpperConveyorIntake(upperCon));
-    // driverLeftTrigger.whileHeld(new LowerConveyorIntake(lowCon));
     driverLeftTrigger.whileHeld(new UpperConveyorIntake(upperCon));
     //driverLeftTrigger.whenHeld(intakePause);
     
@@ -115,14 +114,12 @@ public class RobotContainer {
     operatorYButton.whenHeld(new UpperConveyorStop(upperCon));
     Button operatorAButton = new JoystickButton(operatorJoyStick, XboxController.Button.kA.value);
     operatorAButton.whenHeld(new IntakeOut(intake));
-    // operatorAButton.whenHeld(new IntakeRun(intake));
-    // operatorAButton.whenHeld(new LowerConveyorIntake(lowCon));
-    // operatorAButton.whenHeld(new UpperConveyorIntake(upperCon));
     Button operatorBButton = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
     // operatorBButton.whenHeld(purge);
+    climber.setDefaultCommand(new FreeClimb(climber));
 
-    // Button operatorDPadUp = new Button(() -> operatorJoyStick.getPOV() == 0);
-    // operatorDPadUp.whenHeld(new ExtendClimber(climber));
+    Button operatorDPadUp = new Button(() -> operatorJoyStick.getPOV() == 0);
+    operatorDPadUp.whenHeld(new ExtendClimber(climber));
     Button operatorDPadDown = new Button(() -> operatorJoyStick.getPOV() == 180);
     operatorDPadDown.whenHeld(new RetractClimber(climber));
     Button operatorStartButton = new JoystickButton(operatorJoyStick, XboxController.Button.kStart.value);

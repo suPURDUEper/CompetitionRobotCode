@@ -24,6 +24,7 @@ public class SetFlywheelToFarShot extends CommandBase {
     shooter.enableShooter();
     shooter.setDistanceHoodPosition();
     shooter.setFlywheelTargetRPM(Constants.Shooter.SHOOTER_FAR_SHOT_RPM);
+    shooter.setAcceleratorTargetRPM(Constants.Shooter.SHOOTER_FAR_SHOT_RPM);
   }
   
   @Override

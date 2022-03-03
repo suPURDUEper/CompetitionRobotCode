@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 
 public class SetFlywheelToFenderShot extends CommandBase {
@@ -23,7 +24,8 @@ public class SetFlywheelToFenderShot extends CommandBase {
   public void initialize() {
     shooter.enableShooter();
     shooter.setFenderHoodPosition();
-    shooter.setFlywheelTargetRPM(3000);
+    shooter.setFlywheelTargetRPM(Constants.Shooter.SHOOTER_FENDER_SHOT_RPM);
+    shooter.setAcceleratorTargetRPM(Constants.Shooter.SHOOTER_FENDER_SHOT_RPM);
   }
 
   @Override
