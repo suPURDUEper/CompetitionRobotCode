@@ -124,11 +124,13 @@ public class RobotContainer {
     Button operatorDPadLeft = new Button(() -> operatorJoyStick.getPOV() == 270);
     operatorDPadLeft.whenPressed(new InstantCommand(climber::climberStraight, climber));
     Button operatorDPadUp = new Button(() -> operatorJoyStick.getPOV() == 0);
-    operatorDPadUp.whenHeld(new ClimberUp(climber));
+    operatorDPadUp.whenPressed(new ClimberUp(climber));
     Button operatorDPadDown = new Button(() -> operatorJoyStick.getPOV() == 180);
-    operatorDPadDown.whenHeld(new ClimberDown(climber));
+    operatorDPadDown.whenPressed(new ClimberDown(climber));
     Button operatorStartButton = new JoystickButton(operatorJoyStick, XboxController.Button.kStart.value);
     // operatorStartButton.whenHeld(autoClimb);
+
+    // Auto climb
 
   }
 

@@ -4,15 +4,11 @@ package frc.robot.subsystems;
 // the WPILib BSD license file in the root directory of this project.
 
 
-import static frc.robot.Constants.Climber.CLIMB_MAX_HEIGHT;
-import static frc.robot.Constants.Climber.CLIMB_SYNC_KD;
-import static frc.robot.Constants.Climber.CLIMB_SYNC_KI;
-import static frc.robot.Constants.Climber.CLIMB_SYNC_KP;
-import static frc.robot.Constants.Climber.LEFT_CLIMB_MOTOR_CAD_ID;
-import static frc.robot.Constants.Climber.RIGHT_CLIMB_MOTOR_CAN_ID;
+import static frc.robot.Constants.Climber.*;
+
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StickyFaults;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -24,7 +20,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
-import frc.robot.Constants;
+import frc.robot.utils.TalonUtils;
 
 public class Climber extends PIDSubsystem {
   private final DoubleSolenoid climberSolenoid;
@@ -39,11 +35,13 @@ public class Climber extends PIDSubsystem {
     leftClimbMotor = new WPI_TalonFX(LEFT_CLIMB_MOTOR_CAD_ID);
     leftClimbMotor.setInverted(false);
     leftClimbMotor.configAllSettings(getClimberTalonConfig());
+    leftClimbMotor.setNeutralMode(NeutralMode.Brake);
     leftClimbMotor.setSelectedSensorPosition(0);
 
     rightClimbMotor = new WPI_TalonFX(RIGHT_CLIMB_MOTOR_CAN_ID);
     rightClimbMotor.setInverted(false);
     rightClimbMotor.configAllSettings(getClimberTalonConfig());
+    rightClimbMotor.setNeutralMode(NeutralMode.Brake);
     rightClimbMotor.setSelectedSensorPosition(0);
 
     climberSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 5);
@@ -116,20 +114,10 @@ public class Climber extends PIDSubsystem {
   }
 
   private TalonFXConfiguration getClimberTalonConfig() {
-    TalonFXConfiguration config = new TalonFXConfiguration();
-    config.nominalOutputReverse = 0.0;
-    config.nominalOutputReverse = 0.0;
-    config.peakOutputForward = 1.0;
-    config.peakOutputReverse = -1.0;
+    TalonFXConfiguration config = TalonUtils.getDefaultTalonConfig();
     config.supplyCurrLimit = new SupplyCurrentLimitConfiguration(true, 60, 40, 0.5);
-    config.neutralDeadband = 0.001;
     config.forwardSoftLimitThreshold = CLIMB_MAX_HEIGHT;
     config.forwardSoftLimitEnable = true;
     return config;
-  }
-
-  private void setTalonStatusFrames(WPI_TalonFX talonFX) {
-    talonFX.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.TALON_TIMEOUT);
-		talonFX.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.TALON_TIMEOUT);
   }
 }
