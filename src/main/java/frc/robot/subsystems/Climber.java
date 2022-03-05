@@ -8,6 +8,8 @@ import static frc.robot.Constants.Climber.*;
 
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StickyFaults;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
@@ -56,6 +58,14 @@ public class Climber extends PIDSubsystem {
     super.periodic();
     SmartDashboard.putNumber("Left Climb Motor Position", leftClimbMotor.getSelectedSensorPosition());
     SmartDashboard.putNumber("Right Climb Motor Position", rightClimbMotor.getSelectedSensorPosition());
+
+    // Reset position if limit switch is triggered
+    if (leftClimbMotor.getSensorCollection().isRevLimitSwitchClosed() == 1) {
+      leftClimbMotor.setSelectedSensorPosition(0);
+    }
+    if (rightClimbMotor.getSensorCollection().isRevLimitSwitchClosed() == 1) {
+      rightClimbMotor.setSelectedSensorPosition(0);
+    }
   }
 
   @Override
@@ -104,8 +114,9 @@ public class Climber extends PIDSubsystem {
   }
 
   public boolean isClimberDown() {
-    // TODO
-    return false;
+    boolean leftDown = leftClimbMotor.getSensorCollection().isRevLimitSwitchClosed() == 1;
+    boolean rightDown = rightClimbMotor.getSensorCollection().isRevLimitSwitchClosed() == 1;
+    return leftDown && rightDown;
   }
 
   public void clearStickyFaults() {
@@ -118,6 +129,8 @@ public class Climber extends PIDSubsystem {
     config.supplyCurrLimit = new SupplyCurrentLimitConfiguration(true, 60, 40, 0.5);
     config.forwardSoftLimitThreshold = CLIMB_MAX_HEIGHT;
     config.forwardSoftLimitEnable = true;
+    config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
+    config.reverseLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
     return config;
   }
 }
