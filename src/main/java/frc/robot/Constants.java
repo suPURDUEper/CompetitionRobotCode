@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
@@ -27,16 +28,12 @@ public final class Constants {
         public static final double DriveTrainCurve = 0.15;
         public static final double BaseVelocity = 0.14;
         public static final double DriveTrainSpeed = 0.7;
-        public static final double TRACK_WIDTH_INCHES = 12.0;
         public static final double WHEEL_DIAMETER_INCHES = 4.0;
         public static final int ENCODER_RESOLUTION = 42;
         public static final double GEARBOX_RATIO = 8.45;
 
-
-        public static final double kTrackwidthMeters = 0.69;
         public static final double kWheelRadiusMeters = Units.inchesToMeters(WHEEL_DIAMETER_INCHES / 2.0);
 
-        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
         public static final double kMaxSpeedMetersPerSecond = 3;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;
         // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
@@ -46,15 +43,29 @@ public final class Constants {
         public static final int LeftBack = 4;
         public static final int RightFront = 1;
         public static final int RightBack = 2;
-        public static final double DRIVE_KS = 0.27122;
-        public static final double DRIVE_KV = 3.361;
-        public static final double DRIVE_KA = 0.60179;
-        public static final double DRIVE_VELOCITY_KP = 0.32029;
-        public static final double DRIVE_VELOCTIY_MAX_ERR = 0.87241;
+        public static final double DRIVE_LINEAR_KS = 0.27122;
+        public static final double DRIVE_LINEAR_KV = 3.361;
+        public static final double DRIVE_LINEAR_KA = 0.60179;
+        public static final SimpleMotorFeedforward DRIVE_LINEAER_FF = new SimpleMotorFeedforward(DRIVE_LINEAR_KS, DRIVE_LINEAR_KV, DRIVE_LINEAR_KA);
+        public static final double DRIVE_LINEAR_VELOCITY_KP = 0.32029;
+        public static final double DRIVE_LINAER_VELOCTIY_MAX_ERR = 0.87241;
         public static final double DRIVE_MAX_CONTROL_EFFORT = 7;
-        public static final double DRIVE_POSITION_KP = 139.93;
-        public static final double DRIVE_POSITION_KD = 11.657;
-        public static final double DRIVE_POSITION_MAX_ERR = 0.03997;
+        public static final double DRIVE_LINEAR_POSITION_KP = 139.93;
+        public static final double DRIVE_LINEAR_POSITION_KD = 11.657;
+        public static final double DRIVE_LINEAR_POSITION_MAX_ERR = 0.03997;
+        public static final double DRIVE_ANGULAR_KS = 0.7092;
+        public static final double DRIVE_ANGULAR_KV = 3.5767;
+        public static final double DRIVE_ANGULAR_KA = 0.43016;
+        public static final SimpleMotorFeedforward DRIVE_ANGULAR_FF = new SimpleMotorFeedforward(DRIVE_ANGULAR_KS, DRIVE_ANGULAR_KV, DRIVE_ANGULAR_KA);
+        public static final double TRACK_WIDTH_METERS = 0.60389;
+        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(TRACK_WIDTH_METERS);
+        public static final double DRIVE_ANGULAR_POSITION_KP = 132.87;
+        public static final double DRIVE_ANGULAR_POSITION_KD = 9.6808;
+        public static final double DRIVE_ANGULAR_POSITION_MAX_ERR = 0.03997;
+        public static final double DRIVE_ANGULAR_VELOCITY_KP = 0.000068388;
+        public static final double DRIVE_ANGULAR_VELOCTIY_MAX_ERR = 0.78919;
+
+
 
     }
 
