@@ -4,56 +4,47 @@ package frc.robot.subsystems;
 // the WPILib BSD license file in the root directory of this project.
 
 
+import static frc.robot.Constants.Climber.CLIMB_MAX_HEIGHT;
+import static frc.robot.Constants.Climber.CLIMB_SYNC_KD;
+import static frc.robot.Constants.Climber.CLIMB_SYNC_KI;
+import static frc.robot.Constants.Climber.CLIMB_SYNC_KP;
+import static frc.robot.Constants.Climber.LEFT_CLIMB_MOTOR_CAD_ID;
+import static frc.robot.Constants.Climber.RIGHT_CLIMB_MOTOR_CAN_ID;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.StickyFaults;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import frc.robot.Constants;
 
-public class Climber extends SubsystemBase {
+public class Climber extends PIDSubsystem {
   private final DoubleSolenoid climberSolenoid;
   private final WPI_TalonFX leftClimbMotor;
   private final WPI_TalonFX rightClimbMotor;
+  private double climbSyncCorrection;
   /**
    * Creates a new climber object.
    */
   public Climber() {
-    // double acting solenoid
-    // double acting cylinder
-
-    leftClimbMotor = new WPI_TalonFX(Constants.Climber.LEFT_CLIMB_MOTOR_CAD_ID);
-    setupTalon(leftClimbMotor);
+    super(new PIDController(CLIMB_SYNC_KP, CLIMB_SYNC_KI, CLIMB_SYNC_KD), 0);
+    leftClimbMotor = new WPI_TalonFX(LEFT_CLIMB_MOTOR_CAD_ID);
     leftClimbMotor.setInverted(false);
-    leftClimbMotor.selectProfileSlot(0, 0);
-		leftClimbMotor.config_kF(0, Constants.Climber.LEFT_CLIMB_MOTOR_KF, Constants.TALON_TIMEOUT);
-		leftClimbMotor.config_kP(0, Constants.Climber.LEFT_CLIMB_MOTOR_KP, Constants.TALON_TIMEOUT);
-		leftClimbMotor.config_kI(0, Constants.Climber.LEFT_CLIMB_MOTOR_KI, Constants.TALON_TIMEOUT);
-		leftClimbMotor.config_kD(0, Constants.Climber.LEFT_CLIMB_MOTOR_KD, Constants.TALON_TIMEOUT);
-    leftClimbMotor.configMotionCruiseVelocity(Constants.Climber.CLIMB_MAX_VELOCITY, Constants.TALON_TIMEOUT);
-		leftClimbMotor.configMotionAcceleration(Constants.Climber.CLIMB_MAX_ACCELERATION, Constants.TALON_TIMEOUT);
+    leftClimbMotor.configAllSettings(getClimberTalonConfig());
+    leftClimbMotor.setSelectedSensorPosition(0);
 
-    rightClimbMotor = new WPI_TalonFX(Constants.Climber.LEFT_CLIMB_MOTOR_CAD_ID);
-    setupTalon(rightClimbMotor);
+    rightClimbMotor = new WPI_TalonFX(RIGHT_CLIMB_MOTOR_CAN_ID);
     rightClimbMotor.setInverted(false);
-    rightClimbMotor.selectProfileSlot(0, 0);
-		rightClimbMotor.config_kF(0, Constants.Climber.LEFT_CLIMB_MOTOR_KF, Constants.TALON_TIMEOUT);
-		rightClimbMotor.config_kP(0, Constants.Climber.LEFT_CLIMB_MOTOR_KP, Constants.TALON_TIMEOUT);
-		rightClimbMotor.config_kI(0, Constants.Climber.LEFT_CLIMB_MOTOR_KI, Constants.TALON_TIMEOUT);
-		rightClimbMotor.config_kD(0, Constants.Climber.LEFT_CLIMB_MOTOR_KD, Constants.TALON_TIMEOUT);
-    rightClimbMotor.configMotionCruiseVelocity(Constants.Climber.CLIMB_MAX_VELOCITY, Constants.TALON_TIMEOUT);
-		rightClimbMotor.configMotionAcceleration(Constants.Climber.CLIMB_MAX_ACCELERATION, Constants.TALON_TIMEOUT);
-
+    rightClimbMotor.configAllSettings(getClimberTalonConfig());
+    rightClimbMotor.setSelectedSensorPosition(0);
 
     climberSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 5);
     // initialize the climber to forward
@@ -64,49 +55,81 @@ public class Climber extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    super.periodic();
     SmartDashboard.putNumber("Left Climb Motor Position", leftClimbMotor.getSelectedSensorPosition());
     SmartDashboard.putNumber("Right Climb Motor Position", rightClimbMotor.getSelectedSensorPosition());
-    
   }
-  public void climberUp() {
-    leftClimbMotor.set(ControlMode.MotionMagic, Constants.Climber.LEFT_CLIMB_EXTEND_HEIGHT);
-    rightClimbMotor.set(ControlMode.MotionMagic, Constants.Climber.RIGHT_CLIMB_EXTEND_HEIGHT);
 
+  @Override
+  protected void useOutput(double output, double setpoint) {
+    output = climbSyncCorrection;
+  }
 
-  } 
-  public void climberDown() {
-    leftClimbMotor.set(ControlMode.MotionMagic, 0);
-    rightClimbMotor.set(ControlMode.MotionMagic, 0);
+  @Override
+  protected double getMeasurement() {
+    return leftClimbMotor.getSelectedSensorPosition() - rightClimbMotor.getSelectedSensorPosition();
   }
-  /**
-   * 
-   * @param controller the controller object for the operator
-   */
-  public void climb(XboxController controller) {
-    // getRightY() is a new function introduced in the 2022 wpilib
-    // removes the need for axis id
-    leftClimbMotor.set(ControlMode.PercentOutput, controller.getLeftY());
-    rightClimbMotor.set(ControlMode.PercentOutput, controller.getLeftY());
+
+  @Override 
+  public void disable() {
+    super.disable();
+    climbSyncCorrection = 0;
   }
-  public void extendSolenoid() {
-      climberSolenoid.set(Value.kForward);
+
+  public void setPower(double power) {
+    // Cap at 95% speed so we have some room to sync
+    if (Math.abs(power) > 0.95) {
+      power = Math.copySign(0.95, power);
+    }
+    // Left higher than right -> difference is positive -> error is negative -> correction is negative.
+    // Left is higher means we need to slow down left, so add correction to left (and subtract from right)
+    leftClimbMotor.set(ControlMode.PercentOutput, power + climbSyncCorrection);
+    rightClimbMotor.set(ControlMode.PercentOutput, power - climbSyncCorrection);
   }
-  public void retractSolenoid() {
+
+  public void climberTilt() {
+    climberSolenoid.set(Value.kForward);
+  }
+
+  public void climberStraight() {
     climberSolenoid.set(Value.kReverse);
   }
 
-  private void setupTalon(WPI_TalonFX talonFX) {
-    talonFX.configFactoryDefault();
-    talonFX.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.TALON_TIMEOUT);
-    talonFX.configNeutralDeadband(0.001, Constants.TALON_TIMEOUT);
-    talonFX.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.TALON_TIMEOUT);
-		talonFX.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.TALON_TIMEOUT);
-    talonFX.configNominalOutputForward(0, Constants.TALON_TIMEOUT);
-		talonFX.configNominalOutputReverse(0, Constants.TALON_TIMEOUT);
-		talonFX.configPeakOutputForward(1, Constants.TALON_TIMEOUT);
-		talonFX.configPeakOutputReverse(-1, Constants.TALON_TIMEOUT);
-    talonFX.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 60, 40, 0.5));
+  public boolean isClimberUp() {
+    boolean leftAtTop, rightAtTop;
+    StickyFaults stickyFaults = new StickyFaults();
+    leftClimbMotor.getStickyFaults(stickyFaults);
+    leftAtTop = stickyFaults.ForwardSoftLimit;
+    rightClimbMotor.getStickyFaults(stickyFaults);
+    rightAtTop = stickyFaults.ForwardSoftLimit;
+    return leftAtTop && rightAtTop;
   }
 
+  public boolean isClimberDown() {
+    // TODO
+    return false;
+  }
 
+  public void clearStickyFaults() {
+    leftClimbMotor.clearStickyFaults();
+    rightClimbMotor.clearStickyFaults();
+  }
+
+  private TalonFXConfiguration getClimberTalonConfig() {
+    TalonFXConfiguration config = new TalonFXConfiguration();
+    config.nominalOutputReverse = 0.0;
+    config.nominalOutputReverse = 0.0;
+    config.peakOutputForward = 1.0;
+    config.peakOutputReverse = -1.0;
+    config.supplyCurrLimit = new SupplyCurrentLimitConfiguration(true, 60, 40, 0.5);
+    config.neutralDeadband = 0.001;
+    config.forwardSoftLimitThreshold = CLIMB_MAX_HEIGHT;
+    config.forwardSoftLimitEnable = true;
+    return config;
+  }
+
+  private void setTalonStatusFrames(WPI_TalonFX talonFX) {
+    talonFX.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.TALON_TIMEOUT);
+		talonFX.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.TALON_TIMEOUT);
+  }
 }
