@@ -17,6 +17,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
@@ -42,7 +43,7 @@ public class DriveTrain extends SubsystemBase {
 
 
   // Simulation classes help us simulate our robot
-  private final Encoder leftFrontMockEncoder = new Encoder(3, 4);
+  private final Encoder leftFrontMockEncoder = new Encoder(7, 8);
   private final Encoder rightFrontMockEncoder = new Encoder(5, 6);
   private final EncoderSim m_leftEncoderSim = new EncoderSim(leftFrontMockEncoder);
   private final EncoderSim m_rightEncoderSim = new EncoderSim(rightFrontMockEncoder);
@@ -73,18 +74,12 @@ public class DriveTrain extends SubsystemBase {
   }
 
   private DifferentialDrivetrainSim createDrivetrainSim() {
-    // MOI estimation -- note that I = m r^2 for point masses
-    var batteryMoi = 12.5 / 2.2 * Math.pow(Units.inchesToMeters(10), 2);
-    var gearboxMoi =
-        (2.8 /* CIM motor */ * 2 / 2.2 + 2.0 /* Toughbox Mini- ish */)
-            * Math.pow(Units.inchesToMeters(26.0 / 2.0), 2);
     return new DifferentialDrivetrainSim(
+      LinearSystemId.identifyDrivetrainSystem(DRIVE_LINEAR_KV, DRIVE_LINEAR_KA, DRIVE_ANGULAR_KV, DRIVE_ANGULAR_KA),
       DCMotor.getNEO(2),
       GEARBOX_RATIO,
-      batteryMoi + gearboxMoi,
-      Units.lbsToKilograms(125 + 12 + 10),
+      TRACK_WIDTH_METERS,
       Units.inchesToMeters(WHEEL_DIAMETER_INCHES / 2),
-      Units.inchesToMeters(25),
       null);
   }
 
