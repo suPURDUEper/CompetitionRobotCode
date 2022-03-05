@@ -67,7 +67,7 @@ public class DriveTrain extends SubsystemBase {
     rightFrontMockEncoder.setDistancePerPulse(metersPerPulse);
     leftFront.getEncoder().setPositionConversionFactor(metersPerPulse);
     rightFront.getEncoder().setPositionConversionFactor(metersPerPulse);
-    gyro = new AHRS(SerialPort.Port.kMXP);
+    gyro = new AHRS();
     odometry = new DifferentialDriveOdometry(gyro.getRotation2d());
     SmartDashboard.putData("Field", fieldDashboardWidget);
   }

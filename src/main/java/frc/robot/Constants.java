@@ -31,17 +31,7 @@ public final class Constants {
         public static final double WHEEL_DIAMETER_INCHES = 4.0;
         public static final int ENCODER_RESOLUTION = 42;
         public static final double GEARBOX_RATIO = 8.45;
-        // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
-        // These characterization values MUST be determined either experimentally or theoretically
-        // for *your* robot's drive.
-        // The Robot Characterization Toolsuite provides a convenient tool for obtaining these
-        // values for your robot.
-        public static final double ksVolts = 0.22;
-        public static final double kvVoltSecondsPerMeter = 1.98;
-        public static final double kaVoltSecondsSquaredPerMeter = 0.2;
 
-        // Example value only - as above, this must be tuned for your drive!
-        public static final double kPDriveVel = 8.5;
 
         public static final double kTrackwidthMeters = 0.69;
         public static final double kWheelRadiusMeters = Units.inchesToMeters(WHEEL_DIAMETER_INCHES / 2.0);
@@ -56,6 +46,16 @@ public final class Constants {
         public static final int LeftBack = 4;
         public static final int RightFront = 1;
         public static final int RightBack = 2;
+        public static final double DRIVE_KS = 0.27122;
+        public static final double DRIVE_KV = 3.361;
+        public static final double DRIVE_KA = 0.60179;
+        public static final double DRIVE_VELOCITY_KP = 0.32029;
+        public static final double DRIVE_VELOCTIY_MAX_ERR = 0.87241;
+        public static final double DRIVE_MAX_CONTROL_EFFORT = 7;
+        public static final double DRIVE_POSITION_KP = 139.93;
+        public static final double DRIVE_POSITION_KD = 11.657;
+        public static final double DRIVE_POSITION_MAX_ERR = 0.03997;
+
     }
 
     public static class Climber {
