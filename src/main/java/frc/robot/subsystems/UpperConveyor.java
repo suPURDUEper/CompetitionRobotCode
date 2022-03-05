@@ -33,7 +33,6 @@ public class UpperConveyor extends SubsystemBase {
   }
 
   public void ConveyorMotorSet(double speed) {
-
     ConveyorMotor.set(speed);
   }
 

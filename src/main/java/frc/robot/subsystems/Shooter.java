@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ShuffleboardInfo;
+import frc.robot.utils.TalonUtils;
 
 import static frc.robot.Constants.Shooter.*;
 
@@ -73,6 +74,7 @@ public class Shooter extends SubsystemBase {
     reinitTalonFx(rightFlywheelMotor);
     rightFlywheelMotor.setInverted(true);
     rightFlywheelMotor.follow(leftFlywheelMotor);
+    TalonUtils.setStatusFramePeriodFollower(rightFlywheelMotor);
 
     //Setup accelerator wheel
     reinitTalonFx(acceleratorWheelMotor);
