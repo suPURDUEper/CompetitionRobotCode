@@ -4,15 +4,19 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -20,7 +24,7 @@ import frc.robot.Constants;
 public class LowerConveyor extends SubsystemBase {
   /** Creates a new LowerConveyer. */
   CANSparkMax lowConMotor;
-  CANSparkMax pooperMotor;
+  TalonSRX pooperMotor;
   DigitalInput lowConBreakBeam;
   DigitalInput pooperBreakBeam;
   /** Color Sensor and I2C setup */
@@ -37,6 +41,7 @@ public class LowerConveyor extends SubsystemBase {
   private final Color kYellowTarget = new Color(0.361, 0.524, 0.113);
   /** Make A Detected Color Variable which is reset every Period */
   private Color detectedColor;
+  private final NetworkTableEntry mDetectedColor;
 
   public LowerConveyor() {
     // Color Sensor and Macther
@@ -47,13 +52,16 @@ public class LowerConveyor extends SubsystemBase {
     // Init detected color
     detectedColor = colorSensor.getColor();
     mColorMatcher.addColorMatch(kRedTarget);
+    mColorMatcher.addColorMatch(kBlueTarget);
+    mColorMatcher.addColorMatch(kGreenTarget);
+    mColorMatcher.addColorMatch(kYellowTarget);
     lowConMotor = new CANSparkMax(Constants.lowerCon.LowConMotor, MotorType.kBrushless);
     lowConMotor.enableVoltageCompensation(12.0);
-    pooperMotor = new CANSparkMax(Constants.lowerCon.PooperMotor, MotorType.kBrushless);
-    pooperMotor.enableVoltageCompensation(12.0);
+    pooperMotor = new TalonSRX(Constants.lowerCon.PooperMotor);
 
     lowConBreakBeam = new DigitalInput(Constants.lowerCon.LowConBreakBeam);
     pooperBreakBeam = new DigitalInput(Constants.lowerCon.PooperBreakBeam);
+    mDetectedColor = Shuffleboard.getTab("Limelight Aim").add("Ball Color", "No Ball").getEntry();
   }
 
   public boolean HasTeamBall() {
@@ -75,21 +83,24 @@ public class LowerConveyor extends SubsystemBase {
   }
 
   public boolean ColorSensorHasTarget() {
-    ColorMatchResult match = mColorMatcher.matchColor(detectedColor);
-    if (match.color != null) return true;
+    if (mColorMatcher.matchColor(detectedColor) != null) {
+      return true;
+    }
     return false;
   }
 
   /**
    * 1.0 is intaking, -1.0 is pooping
+   * 
    * @param speed
    */
   public void PooperMotorSet(double speed) {
-    pooperMotor.set(speed);
+    pooperMotor.set(ControlMode.PercentOutput, speed);
   }
 
   /**
    * 1.0 is intaking, -1.0 is reversing
+   * 
    * @param speed
    */
   public void LowConMotorSet(double speed) {
@@ -98,6 +109,7 @@ public class LowerConveyor extends SubsystemBase {
 
   /**
    * Broken will return true
+   * 
    * @return
    */
   public boolean getLowConBreakBeam() {
@@ -106,6 +118,7 @@ public class LowerConveyor extends SubsystemBase {
 
   /**
    * Broken will return true
+   * 
    * @return
    */
   public boolean getPooperBreakBeam() {
@@ -121,5 +134,14 @@ public class LowerConveyor extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     detectedColor = colorSensor.getColor();
+    if (ColorSensorHasTarget()) {
+      if (HasTeamBall()) {
+        mDetectedColor.forceSetString("Team Ball");
+      } else if (!HasTeamBall()) {
+        mDetectedColor.forceSetString("Enemy Ball");
+      }
+    } else {
+      mDetectedColor.forceSetString("No Ball");
+    }
   }
 }

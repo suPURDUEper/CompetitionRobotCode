@@ -5,20 +5,22 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.subsystems.Intake;
+import frc.robot.Constants.lowerCon;
+import frc.robot.subsystems.LowerConveyor;
 
-public class IntakeOut extends InstantCommand {
-  private final Intake intake;
-  /** Creates a new IntakeOut. */
-  public IntakeOut(Intake mIntake) {
-    intake = mIntake;
-    addRequirements(mIntake);
+public class LowerConStop extends InstantCommand {
+  /** Creates a new LowerConStop. */
+  private final LowerConveyor lowCon;
+  public LowerConStop(LowerConveyor mLowCon) {
     // Use addRequirements() here to declare subsystem dependencies.
+    lowCon = mLowCon;
+    addRequirements(mLowCon);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.intakeOut();
+    lowCon.LowConMotorSet(0);
+    lowCon.PooperMotorSet(0);
   }
 }

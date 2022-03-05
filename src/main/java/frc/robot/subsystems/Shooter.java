@@ -12,13 +12,18 @@ import com.ctre.phoenix.motorcontrol.TalonFXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.ShuffleboardInfo;
+import frc.robot.utils.TalonUtils;
+
 import static frc.robot.Constants.Shooter.*;
 
 
@@ -40,6 +45,13 @@ public class Shooter extends SubsystemBase {
   private FlywheelSim flywheelSim;
   private TalonFXSimCollection flywheelLeftMotorSim;
   private TalonFXSimCollection flywheelRightMotorSim;
+
+  // Target RPM
+  private int targetFlywheelRpm = 0;
+  private int targetAcceleratorRpm = 0;
+  NetworkTableEntry flywheNetworkTableEntry;
+  
+  boolean isShooterEnabled = false;
   
   /**
    * Create a new shooter subsystem
@@ -62,6 +74,7 @@ public class Shooter extends SubsystemBase {
     reinitTalonFx(rightFlywheelMotor);
     rightFlywheelMotor.setInverted(true);
     rightFlywheelMotor.follow(leftFlywheelMotor);
+    TalonUtils.setStatusFramePeriodFollower(rightFlywheelMotor);
 
     //Setup accelerator wheel
     reinitTalonFx(acceleratorWheelMotor);
@@ -73,28 +86,31 @@ public class Shooter extends SubsystemBase {
     flywheelLeftMotorSim = leftFlywheelMotor.getSimCollection();
     flywheelRightMotorSim = rightFlywheelMotor.getSimCollection();
 
+    flywheNetworkTableEntry = ShuffleboardInfo.getInstance().getFlywheelSpeed();
+
   }
 
   /**
    * Meant for right up against the fender
    */
   public void setFenderHoodPosition() {
-    hood.set(Value.kReverse);
+    hood.set(Value.kForward);
   }
 
   /**
    * Meant for anything further than the Tarmac
    */
   public void setDistanceHoodPosition() {
-    hood.set(Value.kForward);
+    hood.set(Value.kReverse);
   }
 
   /**
    * Set the flywheel speed
    * @param speed taken in units of RPM
    */
-  public void setFlywheelRPM(double rpm) {
-    leftFlywheelMotor.set(ControlMode.Velocity, rpmToTalonFXUnits(rpm));
+  public void setFlywheelTargetRPM(int rpm) {
+    targetFlywheelRpm = rpm;
+    flywheNetworkTableEntry.setNumber(rpm);
   }
 
   /**
@@ -104,13 +120,20 @@ public class Shooter extends SubsystemBase {
     return talonFXUnitsToRpm(leftFlywheelMotor.getClosedLoopTarget());
   }
 
+  public void enableShooter() {
+    isShooterEnabled = true;
+  }
+
+  public void disableShooter() {
+    isShooterEnabled = false;
+  }
+
   /**
    * Set the accelerator wheel speed
    * @param rpm taken in units of RPM
    */
-  public void setAcceleratorRPM(double rpm) {
-    acceleratorWheelMotor.set(ControlMode.Velocity, rpmToTalonFXUnits(rpm));
-
+  public void setAcceleratorTargetRPM(int rpm) {
+    targetAcceleratorRpm = rpm;
   }
 
   /**
@@ -140,8 +163,14 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    
+    targetFlywheelRpm = flywheNetworkTableEntry.getNumber(0).intValue();
+    if (isShooterEnabled) {
+      leftFlywheelMotor.set(ControlMode.Velocity, rpmToTalonFXUnits(targetFlywheelRpm));
+      acceleratorWheelMotor.set(ControlMode.Velocity, rpmToTalonFXUnits(targetAcceleratorRpm));
+    } else {
+      leftFlywheelMotor.set(ControlMode.Disabled, 0);
+      acceleratorWheelMotor.set(ControlMode.Disabled, 0);
+    }
   }
 
   private double rpmToTalonFXUnits(double rpm) {

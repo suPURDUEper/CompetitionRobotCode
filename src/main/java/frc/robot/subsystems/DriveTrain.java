@@ -5,13 +5,7 @@
 package frc.robot.subsystems;
 
 
-import static frc.robot.Constants.DriveTrain.ENCODER_RESOLUTION;
-import static frc.robot.Constants.DriveTrain.GEARBOX_RATIO;
-import static frc.robot.Constants.DriveTrain.LEFT_BACK_CAN_ID;
-import static frc.robot.Constants.DriveTrain.LEFT_FRONT_CAN_ID;
-import static frc.robot.Constants.DriveTrain.RIGHT_BACK_CAN_ID;
-import static frc.robot.Constants.DriveTrain.RIGHT_FRONT_CAN_ID;
-import static frc.robot.Constants.DriveTrain.WHEEL_DIAMETER_INCHES;
+import static frc.robot.Constants.DriveTrain.*;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
@@ -56,13 +50,13 @@ public class DriveTrain extends SubsystemBase {
   private final DifferentialDrivetrainSim m_drivetrainSimulator = createDrivetrainSim();
   
   public DriveTrain() {
-    // Setup drive motors
-    leftFront = new CANSparkMax(LEFT_FRONT_CAN_ID, MotorType.kBrushless);
-    leftFront.setInverted(false);
-    leftBack = new CANSparkMax(LEFT_BACK_CAN_ID, MotorType.kBrushless);
-    rightFront = new CANSparkMax(RIGHT_FRONT_CAN_ID, MotorType.kBrushless);
-    rightFront.setInverted(true);
-    rightBack = new CANSparkMax(RIGHT_BACK_CAN_ID, MotorType.kBrushless);
+    leftFront = new CANSparkMax(LeftFront, MotorType.kBrushless);
+    leftFront.setInverted(true);
+    leftBack = new CANSparkMax(LeftBack, MotorType.kBrushless);
+    rightFront = new CANSparkMax(RightFront, MotorType.kBrushless);
+    rightFront.setInverted(false);
+    rightBack = new CANSparkMax(RightBack, MotorType.kBrushless);
+    
     leftBack.follow(leftFront);
     rightBack.follow(rightFront);
     drive = new DifferentialDrive(leftFront, rightFront);
@@ -104,13 +98,19 @@ public class DriveTrain extends SubsystemBase {
     fieldDashboardWidget.setRobotPose(odometry.getPoseMeters());
   }
 
+  public void driveWithJoysticks(double throttle, double turn) {
+    // arcadeDrive(throttle, turn);
+    // drive.arcadeDrive(xSpeed, zRotation);
+    drive.curvatureDrive(throttle, turn, Math.abs(throttle) < 0.2);
+  }
+
   public void driveForward(double speed) {
     drive.tankDrive(speed, speed);
   }
 
   public void arcadeDrive(double throttle, double turn) {
     // false as 3rd is to disable wpilibs squaring of the inputs
-    drive.arcadeDrive(throttle, turn, false);
+    drive.arcadeDrive(throttle, turn);
   }
 
   public void stop() {

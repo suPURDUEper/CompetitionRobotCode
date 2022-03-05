@@ -4,17 +4,16 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.ColorMatch;
-import com.revrobotics.ColorMatchResult;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -34,24 +33,19 @@ import static frc.robot.Constants.Intake.*;
  */
 public class Intake extends SubsystemBase {
   /** Pneumatics */
-  private final DoubleSolenoid leftIntakeSolenoid;
-  private final DoubleSolenoid rightIntakeSolenoid;
+  private final DoubleSolenoid IntakeSolenoid;
   /** Indexer motors */
   private final CANSparkMax indexerMotor;
   /** Intake Motor */
-  private final WPI_TalonFX intakeMotor;
+  private final PWMTalonFX intakeMotor;
 
   public Intake() {
     // indexer motors
     indexerMotor = new CANSparkMax(Constants.Intake.INDEXER_MOTOR_ID, MotorType.kBrushless);
-    // index motors
-    intakeMotor = new WPI_TalonFX(Constants.Intake.INTAKE_MOTOR_TALON_ID);
-    reinitTalonFx(intakeMotor);
+    // intake motors
+    intakeMotor = new PWMTalonFX(Constants.Intake.INTAKE_MOTOR_TALON_ID);
     // Pneumatics
-    leftIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
-    rightIntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
-    leftIntakeSolenoid.set(DoubleSolenoid.Value.kForward);
-    rightIntakeSolenoid.set(DoubleSolenoid.Value.kForward);
+    IntakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
   }
 
   /**
@@ -59,8 +53,7 @@ public class Intake extends SubsystemBase {
    * @param value DoubleSolenoid.Value type
    */
   public void IntakeSet(DoubleSolenoid.Value value) {
-    leftIntakeSolenoid.set(value);
-    rightIntakeSolenoid.set(value);
+    IntakeSolenoid.set(value);
   }
 
   /**
@@ -88,14 +81,21 @@ public class Intake extends SubsystemBase {
     // detectedColor = colorSensor.getColor();
   }
 
-  private void reinitTalonFx(WPI_TalonFX talonFX) {
-    talonFX.configFactoryDefault();
-    talonFX.configNeutralDeadband(Constants.Talon.DEFAULT_DEADBAND);
-    talonFX.setNeutralMode(NeutralMode.Coast);
-    talonFX.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 
-      INTAKE_CURRENT_LIMIT_AMPS, INTAKE_CURRENT_LIMIT_AMPS + 5, 1));
-    talonFX.configNominalOutputReverse(0, 30);
-    talonFX.configPeakOutputForward(1, 30);
-    talonFX.configPeakOutputReverse(-1, 30);
+  public void intakeIn(){
+    IntakeSolenoid.set(Value.kReverse);
   }
+
+  public void intakeOut(){
+    IntakeSolenoid.set(Value.kForward);
+  }
+  // private void reinitTalonFx(PWMTalonFX talonFX) {
+  //   talonFX.configFactoryDefault();
+  //   talonFX.configNeutralDeadband(Constants.Talon.DEFAULT_DEADBAND);
+  //   talonFX.setNeutralMode(NeutralMode.Coast);
+  //   talonFX.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 
+  //     INTAKE_CURRENT_LIMIT_AMPS, INTAKE_CURRENT_LIMIT_AMPS + 5, 1));
+  //   talonFX.configNominalOutputReverse(0, 30);
+  //   talonFX.configPeakOutputForward(1, 30);
+  //   talonFX.configPeakOutputReverse(-1, 30);
+  // }
 }

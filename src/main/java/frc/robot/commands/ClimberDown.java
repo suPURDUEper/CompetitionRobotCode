@@ -4,36 +4,38 @@
 
 package frc.robot.commands;
 
-import frc.robot.RobotContainer;
-import frc.robot.subsystems.Climber;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Climber;
 
-public class ExtendClimber extends CommandBase {
-  public final Climber mClimber;
-  /** Creates a new ExtendClimber. */
-  public ExtendClimber(Climber climber) {
+public class ClimberDown extends CommandBase {
+  /** Creates a new ClimberDown. */
+  private final Climber climber;
+  public ClimberDown(Climber mClimber) {
+    climber = mClimber;
+    addRequirements(mClimber);
     // Use addRequirements() here to declare subsystem dependencies.
-    mClimber = climber;
-    addRequirements(climber);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    mClimber.controlSolenoid(RobotContainer.operatorJoyStick);
+    climber.setPower(-1);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    climber.clearStickyFaults();
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return climber.isClimberDown();
   }
 }

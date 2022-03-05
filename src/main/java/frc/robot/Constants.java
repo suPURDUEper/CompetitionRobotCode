@@ -20,16 +20,13 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    public static int TALON_TIMEOUT = 30;
     public static class DriveTrain {
         public static final double BoostActive = 1.0;
         public static final double BoostInactive = 0.7;
         public static final double DriveTrainCurve = 0.15;
         public static final double BaseVelocity = 0.14;
         public static final double DriveTrainSpeed = 0.7;
-        public static final int LEFT_FRONT_CAN_ID = 1;
-        public static final int LEFT_BACK_CAN_ID = 2;
-        public static final int RIGHT_FRONT_CAN_ID = 3;
-        public static final int RIGHT_BACK_CAN_ID = 4;
         public static final double TRACK_WIDTH_INCHES = 12.0;
         public static final double WHEEL_DIAMETER_INCHES = 4.0;
         public static final int ENCODER_RESOLUTION = 42;
@@ -55,23 +52,35 @@ public final class Constants {
         // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
         public static final double kRamseteB = 2;
         public static final double kRamseteZeta = 0.7;
+        public static final int LeftFront = 3;
+        public static final int LeftBack = 4;
+        public static final int RightFront = 1;
+        public static final int RightBack = 2;
     }
 
     public static class Climber {
-        public static final int leftClimbMotor = 8;
-        public static final int rightClimbMotor = 9;
+        public static final int LEFT_CLIMB_MOTOR_CAD_ID = 5;
+        public static final int RIGHT_CLIMB_MOTOR_CAN_ID = 4;
+        public static final double CLIMB_SYNC_KF = 0;
+        public static final double CLIMB_SYNC_KP = 0.00007;
+        public static final double CLIMB_SYNC_KI = 0;
+        public static final double CLIMB_SYNC_KD = 0;
+        public static final double CLIMB_LEFT_MAX_HEIGHT = 358000;
+        public static final double CLIMB_RIGHT_MAX_HEIGHT = 366000;
+        public static final double LEFT_CLIMB_EXTEND_HEIGHT = 0;
+        public static final int CLIMB_CURRENT_LIMIT = 60;
     }
 
     public static class lowerCon {
         public static final int LowConBreakBeam = 0;
         public static final int PooperBreakBeam = 1;
-        public static final int LowConMotor = 5;
-        public static final int PooperMotor = 6;
+        public static final int LowConMotor = 6;
+        public static final int PooperMotor = 7;
     }
 
     public static class Shooter {
-        public static final int HOOD_SOLENOID_FWD_ID = 10;
-        public static final int HOOD_SOLENOID_REV_ID = 11;
+        public static final int HOOD_SOLENOID_FWD_ID = 2;
+        public static final int HOOD_SOLENOID_REV_ID = 3;
         public static final int HOOD_SERVO_CHANNEL = 1;
         public static final int FlywheelSpeed = 5700;
         public static final double FLYWHEEL_KD = 0;
@@ -79,20 +88,23 @@ public final class Constants {
         public static final double FLYWHEEL_KF = 1023.0/21777.0; // 1023 is max talon internal output units, 20660 is talon max internal velocity sensor units
         public static final double FLYWHEEL_KP = 1023.0/21777.0;
         public static final int PID_LOOP_INDEX = 0;
+        public static final int SHOOTER_CURRENT_LIMIT = 40;
+        public static final int LEFT_FLYWHEEL_CAN_ID = 1;
+        public static final int RIGHT_FLYWHEEL_CAN_ID = 2;
+        public static final int ACCELERATOR_CAN_ID = 3;
         public static final int SHOOTER_CURRENT_LIMIT_AMPS = 40;
-        public static final int LEFT_FLYWHEEL_CAN_ID = 0;
-        public static final int RIGHT_FLYWHEEL_CAN_ID = 1;
-        public static final int ACCELERATOR_CAN_ID = 2;
+        public static final int SHOOTER_FENDER_SHOT_RPM = 2250;
+        public static final int SHOOTER_FAR_SHOT_RPM = 3750;
     }
 
     public static class UpperCon {
-        public static final int UpperConMotor = 7;
+        public static final int UpperConMotor = 8;
         public static final int UpperConBreakBeam = 2;
     }
 
     public static class Intake {
-        public static final int INDEXER_MOTOR_ID = 0;
-        public static final int INTAKE_MOTOR_TALON_ID = 2;
+        public static final int INDEXER_MOTOR_ID = 5;
+        public static final int INTAKE_MOTOR_TALON_ID = 0;
         public static final int INTAKE_CURRENT_LIMIT_AMPS = 40;
     }
 

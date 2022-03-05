@@ -24,7 +24,7 @@ public class FreeClimb extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.climb(RobotContainer.operatorJoyStick);
+    climber.setPower(RobotContainer.operatorJoyStick.getLeftY()*-1);
   }
 
   // Called once the command ends or is interrupted.

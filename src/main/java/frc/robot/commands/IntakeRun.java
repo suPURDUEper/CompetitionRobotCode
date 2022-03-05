@@ -34,6 +34,8 @@ public class IntakeRun extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    intake.IndexerMotorSet(0);
+    intake.IntakeMotorSet(0);
   }
 
   // Returns true when the command should end.
