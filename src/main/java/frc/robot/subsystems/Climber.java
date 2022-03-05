@@ -22,27 +22,35 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utils.TalonUtils;
 
-public class Climber extends PIDSubsystem {
+public class Climber extends SubsystemBase {
   private final DoubleSolenoid climberSolenoid;
   private final WPI_TalonFX leftClimbMotor;
   private final WPI_TalonFX rightClimbMotor;
-  private double climbSyncCorrection;
+  private PIDController syncController;
+  double climbSyncCorrection;
   /**
    * Creates a new climber object.
    */
   public Climber() {
-    super(new PIDController(CLIMB_SYNC_KP, CLIMB_SYNC_KI, CLIMB_SYNC_KD), 0);
+    syncController = new PIDController(CLIMB_SYNC_KP, CLIMB_SYNC_KI, CLIMB_SYNC_KD);
     leftClimbMotor = new WPI_TalonFX(LEFT_CLIMB_MOTOR_CAD_ID);
     leftClimbMotor.setInverted(false);
-    leftClimbMotor.configAllSettings(getClimberTalonConfig());
+    TalonFXConfiguration leftConfig = getClimberTalonConfig();
+    leftConfig.forwardSoftLimitThreshold = CLIMB_LEFT_MAX_HEIGHT;
+    leftConfig.forwardSoftLimitEnable = true;
+    leftClimbMotor.configAllSettings(leftConfig);
     leftClimbMotor.setNeutralMode(NeutralMode.Brake);
     leftClimbMotor.setSelectedSensorPosition(0);
 
     rightClimbMotor = new WPI_TalonFX(RIGHT_CLIMB_MOTOR_CAN_ID);
     rightClimbMotor.setInverted(false);
-    rightClimbMotor.configAllSettings(getClimberTalonConfig());
+    TalonFXConfiguration rightConfig = getClimberTalonConfig();
+    rightConfig.forwardSoftLimitThreshold = CLIMB_RIGHT_MAX_HEIGHT;
+    rightConfig.forwardSoftLimitEnable = true;
+    rightClimbMotor.configAllSettings(rightConfig);
     rightClimbMotor.setNeutralMode(NeutralMode.Brake);
     rightClimbMotor.setSelectedSensorPosition(0);
 
@@ -55,33 +63,23 @@ public class Climber extends PIDSubsystem {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    super.periodic();
+
+    // Update PID Controller
+    climbSyncCorrection = syncController.calculate(leftClimbMotor.getSelectedSensorPosition() - rightClimbMotor.getSelectedSensorPosition(), 0);
+    
     SmartDashboard.putNumber("Left Climb Motor Position", leftClimbMotor.getSelectedSensorPosition());
     SmartDashboard.putNumber("Right Climb Motor Position", rightClimbMotor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("CLimb Correction", climbSyncCorrection);
 
     // Reset position if limit switch is triggered
     if (leftClimbMotor.getSensorCollection().isRevLimitSwitchClosed() == 1) {
       leftClimbMotor.setSelectedSensorPosition(0);
+      climbSyncCorrection = 0;
     }
     if (rightClimbMotor.getSensorCollection().isRevLimitSwitchClosed() == 1) {
       rightClimbMotor.setSelectedSensorPosition(0);
+      climbSyncCorrection = 0;
     }
-  }
-
-  @Override
-  protected void useOutput(double output, double setpoint) {
-    output = climbSyncCorrection;
-  }
-
-  @Override
-  protected double getMeasurement() {
-    return leftClimbMotor.getSelectedSensorPosition() - rightClimbMotor.getSelectedSensorPosition();
-  }
-
-  @Override 
-  public void disable() {
-    super.disable();
-    climbSyncCorrection = 0;
   }
 
   public void setPower(double power) {
@@ -95,11 +93,11 @@ public class Climber extends PIDSubsystem {
     rightClimbMotor.set(ControlMode.PercentOutput, power - climbSyncCorrection);
   }
 
-  public void climberTilt() {
+  public void climberStraight() {
     climberSolenoid.set(Value.kForward);
   }
 
-  public void climberStraight() {
+  public void climberTilt() {
     climberSolenoid.set(Value.kReverse);
   }
 
@@ -127,8 +125,6 @@ public class Climber extends PIDSubsystem {
   private TalonFXConfiguration getClimberTalonConfig() {
     TalonFXConfiguration config = TalonUtils.getDefaultTalonConfig();
     config.supplyCurrLimit = new SupplyCurrentLimitConfiguration(true, 60, 40, 0.5);
-    config.forwardSoftLimitThreshold = CLIMB_MAX_HEIGHT;
-    config.forwardSoftLimitEnable = true;
     config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
     config.reverseLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
     return config;

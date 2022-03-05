@@ -18,7 +18,7 @@ public class TalonUtils {
         config.nominalOutputReverse = 0.0;
         config.peakOutputForward = 1.0;
         config.peakOutputReverse = -1.0;
-        config.neutralDeadband = 0.001;
+        config.neutralDeadband = 0.04;
         return config;
     }
 

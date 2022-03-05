@@ -124,25 +124,31 @@ public class RobotContainer {
     climber.setDefaultCommand(new FreeClimb(climber));
 
     Button operatorDPadRight = new Button(() -> operatorJoyStick.getPOV() == 90);
-    operatorDPadRight.whenPressed(new InstantCommand(climber::climberTilt, climber));
+    operatorDPadRight.whenPressed(new InstantCommand(climber::climberTilt));
     Button operatorDPadLeft = new Button(() -> operatorJoyStick.getPOV() == 270);
-    operatorDPadLeft.whenPressed(new InstantCommand(climber::climberStraight, climber));
+    operatorDPadLeft.whenPressed(new InstantCommand(climber::climberStraight));
     Button operatorDPadUp = new Button(() -> operatorJoyStick.getPOV() == 0);
     operatorDPadUp.whenPressed(new ClimberUp(climber));
     Button operatorDPadDown = new Button(() -> operatorJoyStick.getPOV() == 180);
     operatorDPadDown.whenPressed(new ClimberDown(climber));
     Button operatorStartButton = new JoystickButton(operatorJoyStick, XboxController.Button.kStart.value);
-    JoystickButton operatorBackButton = new JoystickButton(operatorJoyStick, XboxController.Button.kBack.value);
-    Command moveToNextBar = new SequentialCommandGroup(
-      new ParallelCommandGroup(new ClimberUp(climber), new InstantCommand(climber::climberTilt, climber)),
-      new InstantCommand(climber::climberStraight, climber),
-      new ParallelCommandGroup(new WaitCommand(.5),new CheckButton(operatorBackButton)),
-      new ClimberDown(climber)
+    operatorStartButton.whenHeld(moveToNextBarCommand()
+      .andThen(new WaitCommand(1.5))
+      .andThen(moveToNextBarCommand())
     );
-    operatorStartButton.whenHeld(moveToNextBar.andThen(moveToNextBar));
 
     // Auto climb
 
+  }
+
+  private Command moveToNextBarCommand() {
+    JoystickButton operatorBackButton = new JoystickButton(operatorJoyStick, XboxController.Button.kBack.value);
+    return new SequentialCommandGroup(
+      new ParallelCommandGroup(new ClimberUp(climber), new InstantCommand(climber::climberTilt)),
+      new InstantCommand(climber::climberStraight),
+      new ParallelCommandGroup(new WaitCommand(.5),new CheckButton(operatorBackButton)),
+      new ClimberDown(climber)
+    );
   }
 
   /**
