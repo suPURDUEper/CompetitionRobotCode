@@ -8,9 +8,13 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.lowerCon;
+import frc.robot.commands.CheckButton;
 import frc.robot.commands.ClimberDown;
 import frc.robot.commands.ClimberUp;
 import frc.robot.commands.DriveForwardTimed;
@@ -128,7 +132,14 @@ public class RobotContainer {
     Button operatorDPadDown = new Button(() -> operatorJoyStick.getPOV() == 180);
     operatorDPadDown.whenPressed(new ClimberDown(climber));
     Button operatorStartButton = new JoystickButton(operatorJoyStick, XboxController.Button.kStart.value);
-    // operatorStartButton.whenHeld(autoClimb);
+    JoystickButton operatorBackButton = new JoystickButton(operatorJoyStick, XboxController.Button.kBack.value);
+    Command moveToNextBar = new SequentialCommandGroup(
+      new ParallelCommandGroup(new ClimberUp(climber), new InstantCommand(climber::climberTilt, climber)),
+      new InstantCommand(climber::climberStraight, climber),
+      new ParallelCommandGroup(new WaitCommand(.5),new CheckButton(operatorBackButton)),
+      new ClimberDown(climber)
+    );
+    operatorStartButton.whenHeld(moveToNextBar.andThen(moveToNextBar));
 
     // Auto climb
 
