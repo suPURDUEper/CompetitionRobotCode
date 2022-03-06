@@ -32,21 +32,21 @@ public final class Constants {
         public static final int ENCODER_RESOLUTION = 42;
         public static final double GEARBOX_RATIO = 8.45;
 
-        public static final double kWheelRadiusMeters = Units.inchesToMeters(WHEEL_DIAMETER_INCHES / 2.0);
+        public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(WHEEL_DIAMETER_INCHES / 2.0);
 
         public static final double kMaxSpeedMetersPerSecond = 3;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;
         // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
         public static final double kRamseteB = 2;
         public static final double kRamseteZeta = 0.7;
-        public static final int LeftFront = 3;
-        public static final int LeftBack = 4;
-        public static final int RightFront = 1;
-        public static final int RightBack = 2;
+        public static final int DRIVE_LEFT_FRONT_CAN_ID = 3;
+        public static final int DRIVE_LEFT_BACK_CAN_ID = 4;
+        public static final int DRIVE_RIGHT_FRONT_CAN_ID = 1;
+        public static final int DRIVE_RIGHT_BACK_CAN_ID = 2;
         public static final double DRIVE_LINEAR_KS = 0.27122;
         public static final double DRIVE_LINEAR_KV = 3.361;
         public static final double DRIVE_LINEAR_KA = 0.60179;
-        public static final SimpleMotorFeedforward DRIVE_LINEAER_FF = new SimpleMotorFeedforward(DRIVE_LINEAR_KS, DRIVE_LINEAR_KV, DRIVE_LINEAR_KA);
+        public static final SimpleMotorFeedforward DRIVE_LINEAR_FF = new SimpleMotorFeedforward(DRIVE_LINEAR_KS, DRIVE_LINEAR_KV, DRIVE_LINEAR_KA);
         public static final double DRIVE_LINEAR_VELOCITY_KP = 0.32029;
         public static final double DRIVE_LINAER_VELOCTIY_MAX_ERR = 0.87241;
         public static final double DRIVE_MAX_CONTROL_EFFORT = 7;
@@ -64,6 +64,10 @@ public final class Constants {
         public static final double DRIVE_ANGULAR_POSITION_MAX_ERR = 0.03997;
         public static final double DRIVE_ANGULAR_VELOCITY_KP = 0.000068388;
         public static final double DRIVE_ANGULAR_VELOCTIY_MAX_ERR = 0.78919;
+        public static final double DRIVE_ANGULAR_VELOCITY_MAX = 360; // deg/s
+        public static final double DRIVE_ANGULAR_ACCELERATION_MAX = 720; // deg/s^2
+
+
 
 
 

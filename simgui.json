@@ -1,24 +1,9 @@
 {
   "HALProvider": {
     "Other Devices": {
-      "SPARK MAX [3]": {
-        "header": {
-          "open": true
-        }
-      },
-      "SPARK MAX [4]": {
-        "header": {
-          "open": true
-        }
-      },
       "SPARK MAX [7]": {
         "header": {
-          "open": true
-        }
-      },
-      "navX-Sensor[0]": {
-        "header": {
-          "open": true
+          "open": false
         }
       }
     }
@@ -26,6 +11,7 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Climber": "Subsystem",
       "/LiveWindow/DriveTrain": "Subsystem",
       "/LiveWindow/Intake": "Subsystem",
       "/LiveWindow/LowerConveyor": "Subsystem",
@@ -35,34 +21,23 @@
       "/LiveWindow/Ungrouped/DigitalInput[1]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[2]": "Digital Input",
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
-      "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
-      "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
-      "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
-      "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
-      "/LiveWindow/Ungrouped/PIDController[6]": "PIDController",
+      "/LiveWindow/Ungrouped/PWMTalonFX[0]": "Motor Controller",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
-      "/LiveWindow/Ungrouped/Talon FX [0]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [1]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [2]": "Motor Controller",
-      "/LiveWindow/Ungrouped/navX-Sensor[1]": "Gyro",
+      "/LiveWindow/Ungrouped/Talon FX [3]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [4]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [5]": "Motor Controller",
+      "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
       "/LiveWindow/UpperConveyor": "Subsystem",
+      "/LiveWindow/Vision": "Subsystem",
       "/SmartDashboard/Field": "Field2d"
     },
     "windows": {
-      "/LiveWindow/DriveTrain": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/LiveWindow/Shooter": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/Field": {
         "bottom": 900,
         "height": 8.229599952697754,
-        "image": "C:\\Users\\knufi\\Documents\\CompetitionRobotCode\\res\\2022-field.png",
+        "image": "/Users/rahul/Code/Robots/7457/2022/CompetitionRobotCode/res/2022-field.png",
         "left": 74,
         "right": 1774,
         "top": 50,
@@ -74,37 +49,10 @@
     }
   },
   "NetworkTables": {
-    "SmartDashboard": {
-      "open": true
-    }
-  },
-  "Plot": {
-    "Plot <0>": {
-      "plots": [
-        {
-          "height": 101,
-          "series": [
-            {
-              "color": [
-                0.2980392277240753,
-                0.44705885648727417,
-                0.6901960968971252,
-                1.0
-              ],
-              "id": "NT:/SmartDashboard/Flywheel Speed"
-            },
-            {
-              "color": [
-                0.8666667342185974,
-                0.5176470875740051,
-                0.32156863808631897,
-                1.0
-              ],
-              "id": "NT:/SmartDashboard/Battery Voltage"
-            }
-          ]
-        }
-      ]
+    "LiveWindow": {
+      "DriveTrain": {
+        "open": false
+      }
     }
   }
 }

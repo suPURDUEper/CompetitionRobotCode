@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ShuffleboardInfo;
-import frc.robot.utils.TalonUtils;
+import frc.robot.util.TalonUtils;
 
 import static frc.robot.Constants.Shooter.*;
 

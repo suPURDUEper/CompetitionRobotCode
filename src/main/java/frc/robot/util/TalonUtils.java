@@ -1,4 +1,4 @@
-package frc.robot.utils;
+package frc.robot.util;
 
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;

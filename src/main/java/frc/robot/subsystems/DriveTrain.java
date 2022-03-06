@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -23,7 +24,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
@@ -51,12 +51,12 @@ public class DriveTrain extends SubsystemBase {
   private final DifferentialDrivetrainSim m_drivetrainSimulator = createDrivetrainSim();
   
   public DriveTrain() {
-    leftFront = new CANSparkMax(LeftFront, MotorType.kBrushless);
+    leftFront = new CANSparkMax(DRIVE_LEFT_FRONT_CAN_ID, MotorType.kBrushless);
     leftFront.setInverted(true);
-    leftBack = new CANSparkMax(LeftBack, MotorType.kBrushless);
-    rightFront = new CANSparkMax(RightFront, MotorType.kBrushless);
+    leftBack = new CANSparkMax(DRIVE_LEFT_BACK_CAN_ID, MotorType.kBrushless);
+    rightFront = new CANSparkMax(DRIVE_RIGHT_FRONT_CAN_ID, MotorType.kBrushless);
     rightFront.setInverted(false);
-    rightBack = new CANSparkMax(RightBack, MotorType.kBrushless);
+    rightBack = new CANSparkMax(DRIVE_RIGHT_BACK_CAN_ID, MotorType.kBrushless);
     
     leftBack.follow(leftFront);
     rightBack.follow(rightFront);
@@ -79,8 +79,14 @@ public class DriveTrain extends SubsystemBase {
       DCMotor.getNEO(2),
       GEARBOX_RATIO,
       TRACK_WIDTH_METERS,
-      Units.inchesToMeters(WHEEL_DIAMETER_INCHES / 2),
-      null);
+      WHEEL_DIAMETER_METERS,
+      // The standard deviations for measurement noise:
+      // x and y:          0.001 m
+      // heading:          0.001 rad
+      // l and r velocity: 0.1   m/s
+      // l and r position: 0.005 m
+      VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
+    );
   }
 
   @Override
@@ -191,7 +197,8 @@ public class DriveTrain extends SubsystemBase {
    * @return The turn rate of the robot, in degrees per second
    */
   public double getTurnRate() {
-    return gyro.getRate();
+    // AHRS::getRate is clockwise positive, we want everything to be counterclockwise positive
+    return -1 * gyro.getRate();
   }
 
   /** Update our simulation. This should be run every robot loop in simulation. */
@@ -221,6 +228,6 @@ public class DriveTrain extends SubsystemBase {
     // m_gyroSim.setAngle(-m_drivetrainSimulator.getHeading().getDegrees());
     int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
     SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Yaw"));
-    angle.set(-m_drivetrainSimulator.getHeading().getDegrees());
+    angle.set(-1 * m_drivetrainSimulator.getHeading().getDegrees());
   }
 }

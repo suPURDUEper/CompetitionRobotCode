@@ -43,6 +43,7 @@ import frc.robot.commands.LowerConveyorIntake;
 import frc.robot.commands.SetFlywheelToFarShot;
 import frc.robot.commands.SetFlywheelToFenderShot;
 import frc.robot.commands.ShootBall;
+import frc.robot.commands.TurnByAngleProfiled;
 import frc.robot.commands.UpperConveyorIntake;
 import frc.robot.commands.UpperConveyorStop;
 import frc.robot.subsystems.Climber;
@@ -170,16 +171,14 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new WaitCommand(1);
-    // // Create a voltage constraint to ensure we don't accelerate too fast
+    return new TurnByAngleProfiled(-135, driveTrain);
+    // Create a voltage constraint to ensure we don't accelerate too fast
     // var autoVoltageConstraint =
     //   new DifferentialDriveVoltageConstraint(
-    //     new SimpleMotorFeedforward(
-    //         Constants.DriveTrain.DRIVE_KS,
-    //         Constants.DriveTrain.DRIVE_KV,
-    //         Constants.DriveTrain.DRIVE_KA),
-    //         Constants.DriveTrain.kDriveKinematics,
-    //         10);
+    //     Constants.DriveTrain.DRIVE_LINEAR_FF,
+    //     Constants.DriveTrain.kDriveKinematics,
+    //     10
+    //   );
 
     // // Create config for trajectory
     // TrajectoryConfig config =
@@ -195,11 +194,21 @@ public class RobotContainer {
     // Trajectory exampleTrajectory =
     //   TrajectoryGenerator.generateTrajectory(
     //     // Start at the origin facing the +X direction
-    //     new Pose2d(0, 0, new Rotation2d(0)),
+        
     //     // Pass through these two interior waypoints, making an 's' curve path
-    //     List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+    //     List.of(
+    //       new Pose2d(0, 0, new Rotation2d(0)),
+    //       FieldConstants.cargoA,
+    //       FieldConstants.cargoB,
+    //       FieldConstants.cargoC,
+    //       FieldConstants.cargoD,
+    //       FieldConstants.cargoE,
+    //       FieldConstants.cargoF,
+    //       FieldConstants.cargoG,
+    //       new Pose2d(3, 0, new Rotation2d(0))
+    //     ),
     //     // End 3 meters straight ahead of where we started, facing forward
-    //     new Pose2d(3, 0, new Rotation2d(0)),
+        
     //     // Pass config
     //     config);
 
@@ -208,14 +217,11 @@ public class RobotContainer {
     //     exampleTrajectory,
     //     driveTrain::getPose,
     //     new RamseteController(Constants.DriveTrain.kRamseteB, Constants.DriveTrain.kRamseteZeta),
-    //     new SimpleMotorFeedforward(
-    //       Constants.DriveTrain.DRIVE_KV,
-    //       Constants.DriveTrain.DRIVE_KS,
-    //       Constants.DriveTrain.DRIVE_KA),
+    //     Constants.DriveTrain.DRIVE_LINEAR_FF,
     //     Constants.DriveTrain.kDriveKinematics,
     //     driveTrain::getWheelSpeeds,
-    //     new PIDController(Constants.DriveTrain.DRIVE_VELOCITY_KP, 0, 0),
-    //     new PIDController(Constants.DriveTrain.DRIVE_VELOCITY_KP, 0, 0),
+    //     new PIDController(Constants.DriveTrain.DRIVE_LINEAR_VELOCITY_KP, 0, 0),
+    //     new PIDController(Constants.DriveTrain.DRIVE_LINEAR_VELOCITY_KP, 0, 0),
     //     // RamseteCommand passes volts to the callback
     //     driveTrain::setDriveMotorVoltage,
     //     driveTrain);
