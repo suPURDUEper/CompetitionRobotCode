@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.PicoColorSensor;
+import frc.robot.PicoColorSensor.RawColor;
 
 public class LowerConveyor extends SubsystemBase {
   /** Creates a new LowerConveyer. */
@@ -28,8 +30,8 @@ public class LowerConveyor extends SubsystemBase {
   DigitalInput lowConBreakBeam;
   DigitalInput pooperBreakBeam;
   /** Color Sensor and I2C setup */
-  private final I2C.Port i2cPort = I2C.Port.kMXP;
-  private final ColorSensorV3 colorSensor;
+  //private final I2C.Port i2cPort = I2C.Port.kMXP;
+  private final PicoColorSensor colorSensor;
   private final ColorMatch mColorMatcher;
   /**
    * Create the colors to store in the colormatcher to compare the ball color
@@ -40,17 +42,17 @@ public class LowerConveyor extends SubsystemBase {
   private final Color kRedTarget = new Color(0.561, 0.232, 0.114);
   private final Color kYellowTarget = new Color(0.361, 0.524, 0.113);
   /** Make A Detected Color Variable which is reset every Period */
-  private Color detectedColor;
+  private RawColor detectedColor;
   private final NetworkTableEntry mDetectedColor;
 
   public LowerConveyor() {
     // Color Sensor and Macther
-    colorSensor = new ColorSensorV3(i2cPort);
+    colorSensor = new PicoColorSensor();
     mColorMatcher = new ColorMatch();
     // These are the defaul RGB values given for the color red from rev robotics
     // example
     // Init detected color
-    detectedColor = colorSensor.getColor();
+    detectedColor = colorSensor.getRawColor0();
     mColorMatcher.addColorMatch(kRedTarget);
     mColorMatcher.addColorMatch(kBlueTarget);
     mColorMatcher.addColorMatch(kGreenTarget);
