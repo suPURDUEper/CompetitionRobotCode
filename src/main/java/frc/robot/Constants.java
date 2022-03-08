@@ -72,6 +72,7 @@ public final class Constants {
     public static class UpperCon {
         public static final int UpperConMotor = 8;
         public static final int UpperConBreakBeam = 2;
+        public static final int MidConBreakBeam = 3; 
     }
 
     public static class Intake {

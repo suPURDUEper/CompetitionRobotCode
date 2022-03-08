@@ -101,9 +101,9 @@ public class RobotContainer {
     Button driverRightBumper = new JoystickButton(driverJoyStick, XboxController.Button.kRightBumper.value);
     // driverRightBumper.whenHeld(manualConveyorForward);
     Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() > 0.5);
-    driverLeftTrigger.whileHeld(new IntakeRun(intake));
-    driverLeftTrigger.whileHeld(new LowerConveyorIntake(lowCon));
-    driverLeftTrigger.whileHeld(new UpperConveyorIntake(upperCon));
+    driverLeftTrigger.whileHeld(new IntakeRun(intake, lowCon, upperCon));
+    //driverLeftTrigger.whileHeld(new LowerConveyorIntake(lowCon));
+    //driverLeftTrigger.whileHeld(new UpperConveyorIntake(upperCon));
     //driverLeftTrigger.whenHeld(intakePause);
     
 
