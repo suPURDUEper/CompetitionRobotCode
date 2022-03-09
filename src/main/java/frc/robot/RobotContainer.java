@@ -52,7 +52,7 @@ public class RobotContainer {
   private final Shooter shooter;
   private final Climber climber;
   private final Intake intake;
-  private final LowerConveyor lowCon;
+  private final LowerConveyor lowerCon;
   private final UpperConveyor upperCon;
   private final Vision vision;
 
@@ -71,7 +71,7 @@ public class RobotContainer {
     shooter = new Shooter();
     climber = new Climber();
     intake = new Intake();
-    lowCon = new LowerConveyor();
+    lowerCon = new LowerConveyor();
     upperCon = new UpperConveyor();
     vision = new Vision();
 
@@ -94,7 +94,7 @@ public class RobotContainer {
     Button driverAButton = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);
     driverAButton.whenHeld(new DriveWithLimelight(driveTrain, vision));
     Button driverRightTrigger = new Button(() -> driverJoyStick.getRightTriggerAxis() > 0.5);
-    driverRightTrigger.whenHeld(new ShootBall(upperCon, lowCon));
+    driverRightTrigger.whenHeld(new ShootBall(upperCon, lowerCon, shooter::isShooterAtSpeed));
     Button driverRightBumper = new JoystickButton(driverJoyStick, XboxController.Button.kRightBumper.value);
     // driverRightBumper.whenHeld(manualConveyorForward);
     Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() > 0.5);
@@ -112,7 +112,7 @@ public class RobotContainer {
     operatorYButton.whenHeld(new IntakeIn(intake));
     Button operatorAButton = new JoystickButton(operatorJoyStick, XboxController.Button.kA.value);
     operatorAButton.whenHeld(new IntakeOut(intake));
-    operatorAButton.whenPressed(new Index(lowCon, upperCon));
+    operatorAButton.whenPressed(new Index(lowerCon, upperCon).andThen(new IntakeIn(intake)));
     Button operatorBButton = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
     climber.setDefaultCommand(new FreeClimb(climber));
 

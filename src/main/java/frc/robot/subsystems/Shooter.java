@@ -17,10 +17,13 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.ShuffleboardInfo;
 import frc.robot.utils.TalonUtils;
 
@@ -52,6 +55,7 @@ public class Shooter extends SubsystemBase {
   NetworkTableEntry flywheNetworkTableEntry;
   
   boolean isShooterEnabled = false;
+  double atSpeedTimer;
   
   /**
    * Create a new shooter subsystem
@@ -117,7 +121,7 @@ public class Shooter extends SubsystemBase {
    * @return the speed of the motor in units of RPM
    */
   public double getFlywheelRPM() {
-    return talonFXUnitsToRpm(leftFlywheelMotor.getClosedLoopTarget());
+    return talonFXUnitsToRpm(leftFlywheelMotor.getSelectedSensorVelocity());
   }
 
   public void enableShooter() {
@@ -182,6 +186,17 @@ public class Shooter extends SubsystemBase {
 
   private double talonFXUnitsToRpm(double talonFXUnit) {
     return (talonFXUnit / 2048) * 10 * 60;
+  }
+
+  public boolean isShooterAtSpeed() {
+    if (Math.abs(getFlywheelRPM() - targetFlywheelRpm) < SHOOTER_RPM_TOLERANCE) {
+      // Must be at the target RPM for a certain amount of loops in a row before saying
+      // it's safe to fire. 
+      return RobotController.getFPGATime() > (atSpeedTimer + SHOOTER_RPM_STABLE_TIME);
+    } else {
+      atSpeedTimer = RobotController.getFPGATime();
+      return false;
+    }
   }
 
   private void reinitTalonFx(TalonFX talonFX) {
