@@ -98,10 +98,10 @@ public final class Constants {
         public static final int HOOD_SOLENOID_REV_ID = 3;
         public static final int HOOD_SERVO_CHANNEL = 1;
         public static final int FlywheelSpeed = 5700;
-        public static final double FLYWHEEL_KD = 0;
+        public static final double FLYWHEEL_KD = 0.7;
         public static final double FLYWHEEL_KI = 0;
-        public static final double FLYWHEEL_KF = 1023.0/21777.0; // 1023 is max talon internal output units, 20660 is talon max internal velocity sensor units
-        public static final double FLYWHEEL_KP = 1023.0/21777.0;
+        public static final double FLYWHEEL_KF = 0.0589;
+        public static final double FLYWHEEL_KP = 0.21;
         public static final int PID_LOOP_INDEX = 0;
         public static final int SHOOTER_CURRENT_LIMIT = 40;
         public static final int LEFT_FLYWHEEL_CAN_ID = 1;
