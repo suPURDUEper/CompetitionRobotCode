@@ -159,6 +159,7 @@ public class Shooter extends SubsystemBase {
     flywheelLeftMotorSim.setSupplyCurrent(flywheelSim.getCurrentDrawAmps() * -1);
     flywheelRightMotorSim.setSupplyCurrent(flywheelSim.getCurrentDrawAmps() * -1);
     SmartDashboard.putNumber("Flywheel Speed", flywheelSim.getAngularVelocityRPM());
+
   }
 
   @Override
@@ -171,6 +172,8 @@ public class Shooter extends SubsystemBase {
       leftFlywheelMotor.set(ControlMode.Disabled, 0);
       acceleratorWheelMotor.set(ControlMode.Disabled, 0);
     }
+    SmartDashboard.putNumber("Flywheel Speed", talonFXUnitsToRpm(leftFlywheelMotor.getSelectedSensorVelocity()));
+
   }
 
   private double rpmToTalonFXUnits(double rpm) {

@@ -21,5 +21,7 @@ public class IntakeIn extends InstantCommand {
   @Override
   public void initialize() {
     intake.intakeIn();
+    intake.IntakeMotorSet(0);
+    intake.IndexerMotorSet(0);
   }
 }
