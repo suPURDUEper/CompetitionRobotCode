@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class UpperConveyor extends SubsystemBase {
   CANSparkMax ConveyorMotor;
   DigitalInput UpperConveyorSensor;
+  DigitalInput MidConveyorSensor;
 
   /** Creates a new UpperConveyer. */
   public UpperConveyor() {
@@ -21,22 +22,22 @@ public class UpperConveyor extends SubsystemBase {
     ConveyorMotor.setInverted(true);
     ConveyorMotor.enableVoltageCompensation(12.0);
     UpperConveyorSensor = new DigitalInput(Constants.UpperCon.UpperConBreakBeam);
+    MidConveyorSensor = new DigitalInput(Constants.UpperCon.MidConBreakBeam);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
-
-  public boolean getUpperConBreakBeam() {
-    return !UpperConveyorSensor.get();
-  }
-
+  
   public void ConveyorMotorSet(double speed) {
     ConveyorMotor.set(speed);
   }
 
-  public boolean IsUpperConveyorOpen() {
+  public boolean hasTopBall() {
     return !UpperConveyorSensor.get();
+  }
+  public boolean hasTwoBalls() {
+    return !MidConveyorSensor.get() && hasTopBall();
   }
 }

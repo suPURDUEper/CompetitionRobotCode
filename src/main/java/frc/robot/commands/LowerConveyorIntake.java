@@ -38,22 +38,19 @@ public class LowerConveyorIntake extends CommandBase {
         lowCon.PooperMotorSet(-1.0);
         // System.out.print("bad ball");
       }
-      
+
     } else {
       lowCon.PooperMotorSet(.8);
       // System.out.print("no ball");
     }
-
-
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    lowCon.PooperMotorSet(0);
-    lowCon.LowConMotorSet(0);
-    //lowCon.PooperMotorSet(0);
-    //lowCon.LowConMotorSet(0);
+
+    // lowCon.PooperMotorSet(0);
+    // lowCon.LowConMotorSet(0);
   }
 
   // Returns true when the command should end.

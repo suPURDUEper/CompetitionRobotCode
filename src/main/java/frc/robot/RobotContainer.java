@@ -23,15 +23,12 @@ import frc.robot.commands.DriveWithLimelight;
 import frc.robot.commands.FreeClimb;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
-import frc.robot.commands.IntakeRun;
-import frc.robot.commands.IntakeStop;
-import frc.robot.commands.LowerConStop;
+import frc.robot.commands.Index;
 import frc.robot.commands.LowerConveyorIntake;
 import frc.robot.commands.SetFlywheelToFarShot;
 import frc.robot.commands.SetFlywheelToFenderShot;
 import frc.robot.commands.ShootBall;
 import frc.robot.commands.UpperConveyorIntake;
-import frc.robot.commands.UpperConveyorStop;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
@@ -101,9 +98,8 @@ public class RobotContainer {
     Button driverRightBumper = new JoystickButton(driverJoyStick, XboxController.Button.kRightBumper.value);
     // driverRightBumper.whenHeld(manualConveyorForward);
     Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() > 0.5);
-    driverLeftTrigger.whileHeld(new IntakeRun(intake));
-    driverLeftTrigger.whileHeld(new LowerConveyorIntake(lowCon));
-    driverLeftTrigger.whileHeld(new UpperConveyorIntake(upperCon));
+    //driverLeftTrigger.whileHeld(new LowerConveyorIntake(lowCon));
+    //driverLeftTrigger.whileHeld(new UpperConveyorIntake(upperCon));
     //driverLeftTrigger.whenHeld(intakePause);
     
 
@@ -114,13 +110,10 @@ public class RobotContainer {
     operatorRightBumper.whenHeld(new SetFlywheelToFarShot(shooter));
     Button operatorYButton = new JoystickButton(operatorJoyStick, XboxController.Button.kY.value);
     operatorYButton.whenHeld(new IntakeIn(intake));
-    operatorYButton.whenHeld(new IntakeStop(intake));
-    operatorYButton.whenHeld(new LowerConStop(lowCon));
-    operatorYButton.whenHeld(new UpperConveyorStop(upperCon));
     Button operatorAButton = new JoystickButton(operatorJoyStick, XboxController.Button.kA.value);
     operatorAButton.whenHeld(new IntakeOut(intake));
+    operatorAButton.whenPressed(new Index(lowCon, upperCon));
     Button operatorBButton = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
-    // operatorBButton.whenHeld(purge);
     climber.setDefaultCommand(new FreeClimb(climber));
 
     Button operatorDPadRight = new Button(() -> operatorJoyStick.getPOV() == 90);
