@@ -38,8 +38,9 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void driveWithJoysticks(double throttle, double turn) {
-    arcadeDrive(throttle, turn);
+    // arcadeDrive(throttle, turn);
     // drive.arcadeDrive(xSpeed, zRotation);
+    drive.curvatureDrive(throttle, turn, Math.abs(throttle) < 0.2);
   }
 
   public void driveForward(double speed) {
@@ -48,7 +49,7 @@ public class DriveTrain extends SubsystemBase {
 
   public void arcadeDrive(double throttle, double turn) {
     // false as 3rd is to disable wpilibs squaring of the inputs
-    drive.arcadeDrive(throttle, turn, false);
+    drive.arcadeDrive(throttle, turn);
   }
 
   public void stop() {

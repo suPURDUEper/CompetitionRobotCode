@@ -23,15 +23,12 @@ import frc.robot.commands.DriveWithLimelight;
 import frc.robot.commands.FreeClimb;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
-import frc.robot.commands.IntakeRun;
-import frc.robot.commands.IntakeStop;
-import frc.robot.commands.LowerConStop;
+import frc.robot.commands.Index;
 import frc.robot.commands.LowerConveyorIntake;
 import frc.robot.commands.SetFlywheelToFarShot;
 import frc.robot.commands.SetFlywheelToFenderShot;
 import frc.robot.commands.ShootBall;
 import frc.robot.commands.UpperConveyorIntake;
-import frc.robot.commands.UpperConveyorStop;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
@@ -101,7 +98,6 @@ public class RobotContainer {
     Button driverRightBumper = new JoystickButton(driverJoyStick, XboxController.Button.kRightBumper.value);
     // driverRightBumper.whenHeld(manualConveyorForward);
     Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() > 0.5);
-    driverLeftTrigger.whileHeld(new IntakeRun(intake, lowCon, upperCon));
     //driverLeftTrigger.whileHeld(new LowerConveyorIntake(lowCon));
     //driverLeftTrigger.whileHeld(new UpperConveyorIntake(upperCon));
     //driverLeftTrigger.whenHeld(intakePause);
@@ -114,35 +110,38 @@ public class RobotContainer {
     operatorRightBumper.whenHeld(new SetFlywheelToFarShot(shooter));
     Button operatorYButton = new JoystickButton(operatorJoyStick, XboxController.Button.kY.value);
     operatorYButton.whenHeld(new IntakeIn(intake));
-    operatorYButton.whenHeld(new IntakeStop(intake));
-    operatorYButton.whenHeld(new LowerConStop(lowCon));
-    operatorYButton.whenHeld(new UpperConveyorStop(upperCon));
     Button operatorAButton = new JoystickButton(operatorJoyStick, XboxController.Button.kA.value);
     operatorAButton.whenHeld(new IntakeOut(intake));
+    operatorAButton.whenPressed(new Index(lowCon, upperCon));
     Button operatorBButton = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
-    // operatorBButton.whenHeld(purge);
     climber.setDefaultCommand(new FreeClimb(climber));
 
     Button operatorDPadRight = new Button(() -> operatorJoyStick.getPOV() == 90);
-    operatorDPadRight.whenPressed(new InstantCommand(climber::climberTilt, climber));
+    operatorDPadRight.whenPressed(new InstantCommand(climber::climberTilt));
     Button operatorDPadLeft = new Button(() -> operatorJoyStick.getPOV() == 270);
-    operatorDPadLeft.whenPressed(new InstantCommand(climber::climberStraight, climber));
+    operatorDPadLeft.whenPressed(new InstantCommand(climber::climberStraight));
     Button operatorDPadUp = new Button(() -> operatorJoyStick.getPOV() == 0);
     operatorDPadUp.whenPressed(new ClimberUp(climber));
     Button operatorDPadDown = new Button(() -> operatorJoyStick.getPOV() == 180);
     operatorDPadDown.whenPressed(new ClimberDown(climber));
     Button operatorStartButton = new JoystickButton(operatorJoyStick, XboxController.Button.kStart.value);
-    JoystickButton operatorBackButton = new JoystickButton(operatorJoyStick, XboxController.Button.kBack.value);
-    Command moveToNextBar = new SequentialCommandGroup(
-      new ParallelCommandGroup(new ClimberUp(climber), new InstantCommand(climber::climberTilt, climber)),
-      new InstantCommand(climber::climberStraight, climber),
-      new ParallelCommandGroup(new WaitCommand(.5),new CheckButton(operatorBackButton)),
-      new ClimberDown(climber)
+    operatorStartButton.whenHeld(moveToNextBarCommand()
+      .andThen(new WaitCommand(1.5))
+      .andThen(moveToNextBarCommand())
     );
-    operatorStartButton.whenHeld(moveToNextBar.andThen(moveToNextBar));
 
     // Auto climb
 
+  }
+
+  private Command moveToNextBarCommand() {
+    JoystickButton operatorBackButton = new JoystickButton(operatorJoyStick, XboxController.Button.kBack.value);
+    return new SequentialCommandGroup(
+      new ParallelCommandGroup(new ClimberUp(climber), new InstantCommand(climber::climberTilt)),
+      new InstantCommand(climber::climberStraight),
+      new ParallelCommandGroup(new WaitCommand(.5),new CheckButton(operatorBackButton)),
+      new ClimberDown(climber)
+    );
   }
 
   /**

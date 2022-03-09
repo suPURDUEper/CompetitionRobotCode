@@ -29,20 +29,15 @@ public class UpperConveyor extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
-
-  public boolean getUpperConBreakBeam() {
-    return !UpperConveyorSensor.get();
-  }
-
+  
   public void ConveyorMotorSet(double speed) {
-
     ConveyorMotor.set(speed);
   }
 
-  public boolean IsUpperConveyorOpen() {
+  public boolean hasTopBall() {
     return !UpperConveyorSensor.get();
   }
-  public boolean HasTwoBalls() {
-    return !MidConveyorSensor.get();
+  public boolean hasTwoBalls() {
+    return !MidConveyorSensor.get() && hasTopBall();
   }
 }
