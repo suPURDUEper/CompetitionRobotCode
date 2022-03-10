@@ -173,8 +173,9 @@ public class Shooter extends SubsystemBase {
     } else {
       leftFlywheelMotor.set(ControlMode.Disabled, 0);
       acceleratorWheelMotor.set(ControlMode.Disabled, 0);
-    }
-    SmartDashboard.putNumber("Flywheel Speed", talonFXUnitsToRpm(leftFlywheelMotor.getSelectedSensorVelocity()));
+      }
+      SmartDashboard.putNumber("Flywheel Speed", talonFXUnitsToRpm(leftFlywheelMotor.getSelectedSensorVelocity()));
+      SmartDashboard.putNumber("Accelerator Speed", talonFXUnitsToRpm(acceleratorWheelMotor.getSelectedSensorVelocity()));
 
   }
 

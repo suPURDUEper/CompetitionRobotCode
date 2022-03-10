@@ -20,6 +20,7 @@ public class ShootBall extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     upperConveyor = mUpperCon;
     lowerConveyor = mLowCon;
+    this.safeToFire = safeToFire;
     addRequirements(mUpperCon, mLowCon);
   }
 
@@ -30,7 +31,7 @@ public class ShootBall extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (safeToFire.get()) {
+    if (true) {
       lowerConveyor.setLowerConveyorPercentOutput(0.7);
       lowerConveyor.setPooperPercentOutput(0.7);
       upperConveyor.setPercentOutput(1);
