@@ -40,6 +40,7 @@ import frc.robot.commands.Index;
 import frc.robot.commands.LowerConveyorIntake;
 import frc.robot.commands.SetFlywheelToFarShot;
 import frc.robot.commands.SetFlywheelToFenderShot;
+import frc.robot.commands.SetFlywheelToLowShot;
 import frc.robot.commands.ShootBall;
 import frc.robot.commands.TurnByAngleProfiled;
 import frc.robot.commands.UpperConveyorIntake;
@@ -66,7 +67,7 @@ public class RobotContainer {
   private final Shooter shooter;
   private final Climber climber;
   private final Intake intake;
-  private final LowerConveyor lowCon;
+  private final LowerConveyor lowerCon;
   private final UpperConveyor upperCon;
   private final Vision vision;
 
@@ -85,7 +86,7 @@ public class RobotContainer {
     shooter = new Shooter();
     climber = new Climber();
     intake = new Intake();
-    lowCon = new LowerConveyor();
+    lowerCon = new LowerConveyor();
     upperCon = new UpperConveyor();
     vision = new Vision();
 
@@ -108,7 +109,7 @@ public class RobotContainer {
     Button driverAButton = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);
     driverAButton.whenHeld(new DriveWithLimelight(driveTrain, vision));
     Button driverRightTrigger = new Button(() -> driverJoyStick.getRightTriggerAxis() > 0.5);
-    driverRightTrigger.whenHeld(new ShootBall(upperCon, lowCon));
+    driverRightTrigger.whenHeld(new ShootBall(upperCon, lowerCon, shooter::isShooterAtSpeed));
     Button driverRightBumper = new JoystickButton(driverJoyStick, XboxController.Button.kRightBumper.value);
     // driverRightBumper.whenHeld(manualConveyorForward);
     Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() > 0.5);
@@ -119,15 +120,18 @@ public class RobotContainer {
 
     //Operator Joystick 
     Button operatorLeftBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kLeftBumper.value);
-    operatorLeftBumper.whenHeld(new SetFlywheelToFenderShot(shooter));
+    operatorLeftBumper.whenHeld(new IntakeOut(intake));
+    operatorLeftBumper.whenPressed(new Index(lowerCon, upperCon).andThen(new IntakeIn(intake)));
     Button operatorRightBumper = new JoystickButton(operatorJoyStick , XboxController.Button.kRightBumper.value);
-    operatorRightBumper.whenHeld(new SetFlywheelToFarShot(shooter));
+    operatorRightBumper.whenHeld(new IntakeIn(intake));
     Button operatorYButton = new JoystickButton(operatorJoyStick, XboxController.Button.kY.value);
-    operatorYButton.whenHeld(new IntakeIn(intake));
+    operatorYButton.whenHeld(new SetFlywheelToFarShot(shooter));
+    Button operatorXButton = new JoystickButton(operatorJoyStick, XboxController.Button.kX.value);
+    operatorXButton.whenHeld(new SetFlywheelToFenderShot(shooter));
     Button operatorAButton = new JoystickButton(operatorJoyStick, XboxController.Button.kA.value);
-    operatorAButton.whenHeld(new IntakeOut(intake));
-    operatorAButton.whenPressed(new Index(lowCon, upperCon));
+    operatorAButton.whenHeld(new SetFlywheelToLowShot(shooter));
     Button operatorBButton = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
+    //operatorBButton.whenHeld(new Purge());
     climber.setDefaultCommand(new FreeClimb(climber));
 
     Button operatorDPadRight = new Button(() -> operatorJoyStick.getPOV() == 90);

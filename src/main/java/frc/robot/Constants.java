@@ -110,6 +110,8 @@ public final class Constants {
         public static final int SHOOTER_CURRENT_LIMIT_AMPS = 40;
         public static final int SHOOTER_FENDER_SHOT_RPM = 2250;
         public static final int SHOOTER_FAR_SHOT_RPM = 3750;
+        public static final int SHOOTER_RPM_TOLERANCE = 30;
+        public static final long SHOOTER_RPM_STABLE_TIME = 300 * 1000; // This needs to be in microseconds
     }
 
     public static class UpperCon {

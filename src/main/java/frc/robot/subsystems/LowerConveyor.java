@@ -96,7 +96,7 @@ public class LowerConveyor extends SubsystemBase {
    * 
    * @param speed
    */
-  public void PooperMotorSet(double speed) {
+  public void setPooperPercentOutput(double speed) {
     pooperMotor.set(ControlMode.PercentOutput, speed);
   }
 
@@ -105,7 +105,7 @@ public class LowerConveyor extends SubsystemBase {
    * 
    * @param speed
    */
-  public void LowConMotorSet(double speed) {
+  public void setLowerConveyorPercentOutput(double speed) {
     lowConMotor.set(speed);
   }
 

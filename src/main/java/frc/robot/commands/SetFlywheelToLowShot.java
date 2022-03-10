@@ -5,36 +5,39 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 
-public class SetFlywheelToFenderShot extends CommandBase {
-  private final Shooter shooter;
-
-  /** Creates a new RevFlywheelToFenderShot. */
-  public SetFlywheelToFenderShot(Shooter mShooter) {
-    // Use addRequirements() here to declare subsystem dependencies.
+public class SetFlywheelToLowShot extends CommandBase {
+  /** Creates a new SetFlywheelToLowShot. */
+  public final Shooter shooter;
+  public SetFlywheelToLowShot(Shooter mShooter) {
     shooter = mShooter;
     addRequirements(mShooter);
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    shooter.enableShooter();
-    shooter.setFenderHoodPosition();
-    shooter.setFlywheelTargetRPM(Constants.Shooter.SHOOTER_FENDER_SHOT_RPM);
-    shooter.setAcceleratorTargetRPM(Constants.Shooter.SHOOTER_FENDER_SHOT_RPM);
-  }
+  public void initialize() {}
 
+  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
+    shooter.enableShooter();
+    shooter.setAcceleratorTargetRPM(1500);
+    shooter.setFlywheelTargetRPM(1500);
+    shooter.setDistanceHoodPosition();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     shooter.disableShooter();
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return false;
   }
 }

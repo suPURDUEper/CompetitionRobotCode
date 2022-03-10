@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LowerConveyor;
 import frc.robot.subsystems.UpperConveyor;
 
@@ -32,23 +31,23 @@ public class Index extends CommandBase {
   public void execute() {
     if (!upperCon.hasTopBall()) {
       // We have no balls, run everything
-      lowCon.PooperMotorSet(.8);
-      lowCon.LowConMotorSet(1);
-      upperCon.ConveyorMotorSet(1);
+      lowCon.setPooperPercentOutput(.8);
+      lowCon.setLowerConveyorPercentOutput(1);
+      upperCon.setPercentOutput(1);
     } else if (upperCon.hasTopBall() && !upperCon.hasTwoBalls()) {
       // We have one ball, run everything but upper con
-      upperCon.ConveyorMotorSet(0);
-      lowCon.PooperMotorSet(.8);
-      lowCon.LowConMotorSet(1);
+      upperCon.setPercentOutput(0);
+      lowCon.setPooperPercentOutput(.8);
+      lowCon.setLowerConveyorPercentOutput(1);
     } 
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    lowCon.PooperMotorSet(0);
-    lowCon.LowConMotorSet(0);
-    upperCon.ConveyorMotorSet(0);
+    lowCon.setPooperPercentOutput(0);
+    lowCon.setLowerConveyorPercentOutput(0);
+    upperCon.setPercentOutput(0);
   }
 
   // Returns true when the command should end.
