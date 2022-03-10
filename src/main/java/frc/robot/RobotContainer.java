@@ -27,6 +27,7 @@ import frc.robot.commands.IntakeRun;
 import frc.robot.commands.IntakeStop;
 import frc.robot.commands.LowerConStop;
 import frc.robot.commands.LowerConveyorIntake;
+import frc.robot.commands.Purge;
 import frc.robot.commands.SetFlywheelToFarShot;
 import frc.robot.commands.SetFlywheelToFenderShot;
 import frc.robot.commands.ShootBall;
@@ -120,7 +121,7 @@ public class RobotContainer {
     Button operatorAButton = new JoystickButton(operatorJoyStick, XboxController.Button.kA.value);
     operatorAButton.whenHeld(new IntakeOut(intake));
     Button operatorBButton = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
-    // operatorBButton.whenHeld(purge);
+    operatorBButton.whenHeld(new Purge(intake,lowCon,upperCon,shooter));
     climber.setDefaultCommand(new FreeClimb(climber));
 
     Button operatorDPadRight = new Button(() -> operatorJoyStick.getPOV() == 90);
