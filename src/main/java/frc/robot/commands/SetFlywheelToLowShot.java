@@ -24,8 +24,8 @@ public class SetFlywheelToLowShot extends CommandBase {
   @Override
   public void execute() {
     shooter.enableShooter();
-    shooter.setAcceleratorTargetRPM(1500);
-    shooter.setFlywheelTargetRPM(1500);
+    shooter.setAcceleratorTargetRPM(1100);
+    shooter.setFlywheelTargetRPM(1100);
     shooter.setDistanceHoodPosition();
   }
 
