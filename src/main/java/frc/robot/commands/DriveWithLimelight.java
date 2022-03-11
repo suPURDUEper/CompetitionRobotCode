@@ -33,36 +33,32 @@ public class DriveWithLimelight extends CommandBase {
     mVision = v;
     addRequirements(dt, v);
 
-    mKpSteer = ShuffleboardInfo.getInstance().getKpSteer();
-    mDrive_Kp = ShuffleboardInfo.getInstance().getKpDrive();
+
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    mSteeringKp = mKpSteer.getDouble(0);
-    mDriveKp = mDrive_Kp.getDouble(0);
-    steeringAdjust = 0;
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    double throttle = RobotContainer.driverJoyStick.getLeftY();
     if (mVision.isTargetValid()) {
-      double throttle = RobotContainer.driverJoyStick.getLeftY();
       mTx = mVision.getTx();
-      steeringAdjust = 0;
-      turnCommand = 0;
-      headingError = mTx;
+      headingError = -mTx;
       if (mTx < -0.5) {
-        turnCommand = mSteeringKp * headingError - minCommand;
+        turnCommand = mSteeringKp * headingError; //- minCommand;
       } else if (mTx > 0.5) {
-        turnCommand = mSteeringKp * headingError + minCommand;
+        turnCommand = mSteeringKp * headingError; //+ minCommand;
       } else if (mTx < 0.5 && mTx > -0.5) {
         turnCommand = 0;
       }
       mDriveTrain.arcadeDrive(throttle, turnCommand);
     }
+    else mDriveTrain.arcadeDrive(throttle, -RobotContainer.driverJoyStick.getRightX());
   }
 
   // Called once the command ends or is interrupted.
