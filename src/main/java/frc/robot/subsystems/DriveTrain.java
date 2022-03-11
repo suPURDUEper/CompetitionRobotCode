@@ -15,6 +15,7 @@ import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -49,6 +50,8 @@ public class DriveTrain extends SubsystemBase {
   private final EncoderSim m_rightEncoderSim = new EncoderSim(rightFrontMockEncoder);
   private final Field2d fieldDashboardWidget = new Field2d();
   private final DifferentialDrivetrainSim m_drivetrainSimulator = createDrivetrainSim();
+
+  private static final double DRIVE_METERS_PER_PULSE = 1 / 22.756;
   
   public DriveTrain() {
     leftFront = new CANSparkMax(DRIVE_LEFT_FRONT_CAN_ID, MotorType.kBrushless);
@@ -63,13 +66,14 @@ public class DriveTrain extends SubsystemBase {
     drive = new DifferentialDrive(leftFront, rightFront);
 
     // Setup odometry
-    double metersPerPulse = Units.inchesToMeters(Math.PI * WHEEL_DIAMETER_INCHES) / (double) ENCODER_RESOLUTION;
-    leftFrontMockEncoder.setDistancePerPulse(metersPerPulse);
-    rightFrontMockEncoder.setDistancePerPulse(metersPerPulse);
-    leftFront.getEncoder().setPositionConversionFactor(metersPerPulse);
-    rightFront.getEncoder().setPositionConversionFactor(metersPerPulse);
+    double metersPerRevolution = Units.inchesToMeters(Math.PI * WHEEL_DIAMETER_INCHES);
+    leftFrontMockEncoder.setDistancePerPulse(DRIVE_METERS_PER_PULSE);
+    rightFrontMockEncoder.setDistancePerPulse(DRIVE_METERS_PER_PULSE);
+    leftFront.getEncoder().setPositionConversionFactor(DRIVE_METERS_PER_PULSE);
+    rightFront.getEncoder().setPositionConversionFactor(DRIVE_METERS_PER_PULSE);
     gyro = new AHRS();
     odometry = new DifferentialDriveOdometry(gyro.getRotation2d());
+    resetOdometry(new Pose2d());
     SmartDashboard.putData("Field", fieldDashboardWidget);
   }
 
@@ -92,11 +96,14 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     if (RobotBase.isReal()) {
-      odometry.update(gyro.getRotation2d(), leftFront.getEncoder().getPosition(), rightFront.getEncoder().getPosition());
+      odometry.update(getGyroRotation2D(), getLeftDriveMeters(), getRightDriveMeters());
     } else {
       odometry.update(gyro.getRotation2d(), leftFrontMockEncoder.getDistance(), rightFrontMockEncoder.getDistance());
     }
     fieldDashboardWidget.setRobotPose(odometry.getPoseMeters());
+    SmartDashboard.putNumber("Left Meters", getLeftDriveMeters());
+    SmartDashboard.putNumber("Right Meters", getRightDriveMeters());
+
   }
 
   public void driveWithJoysticks(double throttle, double turn) {
@@ -149,7 +156,7 @@ public class DriveTrain extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
-    odometry.resetPosition(pose, gyro.getRotation2d());
+    odometry.resetPosition(pose, getGyroRotation2D());
   }
 
   /** Resets the drive encoders to currently read a position of 0. */
@@ -164,7 +171,19 @@ public class DriveTrain extends SubsystemBase {
    * @return the average of the two encoder readings
    */
   public double getAverageEncoderDistance() {
-    return (leftFront.getEncoder().getPosition() + rightFront.getEncoder().getPosition()) / 2.0;
+    return (getLeftDriveMeters() + getRightDriveMeters()) / 2.0;
+  }
+
+  public double getLeftDriveMeters() {
+    return -1 * leftFront.getEncoder().getPosition();
+  }
+
+  public double getRightDriveMeters() {
+    return -1 * rightFront.getEncoder().getPosition();
+  }
+
+  public Rotation2d getGyroRotation2D() {
+    return Rotation2d.fromDegrees(gyro.getAngle());
   }
 
 
@@ -188,7 +207,7 @@ public class DriveTrain extends SubsystemBase {
    * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
-    return gyro.getRotation2d().getDegrees();
+    return getGyroRotation2D().getDegrees();
   }
 
   /**

@@ -73,12 +73,11 @@ public class TurnByAngleProfiled extends CommandBase {
   private double getFeedforward(State setpoint) {
     // Setpoint is in units of degrees and degrees/s, so we need to convert to
     // // wheel velocities for these gains to make sense.
-    // double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
-    // return DRIVE_ANGULAR_FF.calculate(
-    //   rotationalToTangential(setpoint.velocity), 
-    //   rotationalToTangential(acceleration)
-    // );
-    return 0;
+    double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
+    return DRIVE_LINEAR_FF.calculate(
+      rotationalToTangential(setpoint.velocity), 
+      rotationalToTangential(acceleration)
+    );
   }
 
   private double tangentialToRotational(double tangentialMeters) {

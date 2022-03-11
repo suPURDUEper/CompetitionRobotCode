@@ -61,10 +61,7 @@ public class DriveWithLimelight extends CommandBase {
       } else if (mTx < 0.5 && mTx > -0.5) {
         turnCommand = 0;
       }
-
-      
-
-      
+      mDriveTrain.arcadeDrive(throttle, turnCommand);
     }
   }
 
