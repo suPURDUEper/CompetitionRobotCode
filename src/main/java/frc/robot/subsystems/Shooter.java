@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.Shooter.*;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
@@ -11,20 +13,19 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ShuffleboardInfo;
-import frc.robot.utils.TalonUtils;
-
-import static frc.robot.Constants.Shooter.*;
+import frc.robot.util.TalonUtils;
 
 
 /**
@@ -52,6 +53,7 @@ public class Shooter extends SubsystemBase {
   NetworkTableEntry flywheNetworkTableEntry;
   
   boolean isShooterEnabled = false;
+  double atSpeedTimer;
   
   /**
    * Create a new shooter subsystem
@@ -117,7 +119,7 @@ public class Shooter extends SubsystemBase {
    * @return the speed of the motor in units of RPM
    */
   public double getFlywheelRPM() {
-    return talonFXUnitsToRpm(leftFlywheelMotor.getClosedLoopTarget());
+    return talonFXUnitsToRpm(leftFlywheelMotor.getSelectedSensorVelocity());
   }
 
   public void enableShooter() {
@@ -171,8 +173,9 @@ public class Shooter extends SubsystemBase {
     } else {
       leftFlywheelMotor.set(ControlMode.Disabled, 0);
       acceleratorWheelMotor.set(ControlMode.Disabled, 0);
-    }
-    SmartDashboard.putNumber("Flywheel Speed", talonFXUnitsToRpm(leftFlywheelMotor.getSelectedSensorVelocity()));
+      }
+      SmartDashboard.putNumber("Flywheel Speed", talonFXUnitsToRpm(leftFlywheelMotor.getSelectedSensorVelocity()));
+      SmartDashboard.putNumber("Accelerator Speed", talonFXUnitsToRpm(acceleratorWheelMotor.getSelectedSensorVelocity()));
 
   }
 
@@ -182,6 +185,17 @@ public class Shooter extends SubsystemBase {
 
   private double talonFXUnitsToRpm(double talonFXUnit) {
     return (talonFXUnit / 2048) * 10 * 60;
+  }
+
+  public boolean isShooterAtSpeed() {
+    if (Math.abs(getFlywheelRPM() - targetFlywheelRpm) < SHOOTER_RPM_TOLERANCE) {
+      // Must be at the target RPM for a certain amount of loops in a row before saying
+      // it's safe to fire. 
+      return RobotController.getFPGATime() > (atSpeedTimer + SHOOTER_RPM_STABLE_TIME);
+    } else {
+      atSpeedTimer = RobotController.getFPGATime();
+      return false;
+    }
   }
 
   private void reinitTalonFx(TalonFX talonFX) {

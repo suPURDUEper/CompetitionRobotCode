@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.utils.TalonUtils;
+import frc.robot.util.TalonUtils;
 
 public class Climber extends SubsystemBase {
   private final DoubleSolenoid climberSolenoid;

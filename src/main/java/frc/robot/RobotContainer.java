@@ -13,22 +13,20 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Constants.lowerCon;
 import frc.robot.commands.CheckButton;
 import frc.robot.commands.ClimberDown;
 import frc.robot.commands.ClimberUp;
-import frc.robot.commands.DriveForwardTimed;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.DriveWithLimelight;
 import frc.robot.commands.FreeClimb;
+import frc.robot.commands.Index;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
-import frc.robot.commands.Index;
-import frc.robot.commands.LowerConveyorIntake;
 import frc.robot.commands.SetFlywheelToFarShot;
 import frc.robot.commands.SetFlywheelToFenderShot;
+import frc.robot.commands.SetFlywheelToLowShot;
 import frc.robot.commands.ShootBall;
-import frc.robot.commands.UpperConveyorIntake;
+import frc.robot.commands.TurnByAngleProfiled;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
@@ -52,7 +50,7 @@ public class RobotContainer {
   private final Shooter shooter;
   private final Climber climber;
   private final Intake intake;
-  private final LowerConveyor lowCon;
+  private final LowerConveyor lowerCon;
   private final UpperConveyor upperCon;
   private final Vision vision;
 
@@ -71,7 +69,7 @@ public class RobotContainer {
     shooter = new Shooter();
     climber = new Climber();
     intake = new Intake();
-    lowCon = new LowerConveyor();
+    lowerCon = new LowerConveyor();
     upperCon = new UpperConveyor();
     vision = new Vision();
 
@@ -94,7 +92,7 @@ public class RobotContainer {
     Button driverAButton = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);
     driverAButton.whenHeld(new DriveWithLimelight(driveTrain, vision));
     Button driverRightTrigger = new Button(() -> driverJoyStick.getRightTriggerAxis() > 0.5);
-    driverRightTrigger.whenHeld(new ShootBall(upperCon, lowCon));
+    driverRightTrigger.whenHeld(new ShootBall(upperCon, lowerCon, shooter::isShooterAtSpeed));
     Button driverRightBumper = new JoystickButton(driverJoyStick, XboxController.Button.kRightBumper.value);
     // driverRightBumper.whenHeld(manualConveyorForward);
     Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() > 0.5);
@@ -105,15 +103,18 @@ public class RobotContainer {
 
     //Operator Joystick 
     Button operatorLeftBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kLeftBumper.value);
-    operatorLeftBumper.whenHeld(new SetFlywheelToFenderShot(shooter));
+    operatorLeftBumper.whenHeld(new IntakeOut(intake));
+    operatorLeftBumper.whenPressed(new Index(lowerCon, upperCon).andThen(new IntakeIn(intake)));
     Button operatorRightBumper = new JoystickButton(operatorJoyStick , XboxController.Button.kRightBumper.value);
-    operatorRightBumper.whenHeld(new SetFlywheelToFarShot(shooter));
+    operatorRightBumper.whenHeld(new IntakeIn(intake));
     Button operatorYButton = new JoystickButton(operatorJoyStick, XboxController.Button.kY.value);
-    operatorYButton.whenHeld(new IntakeIn(intake));
+    operatorYButton.whenHeld(new SetFlywheelToFarShot(shooter));
+    Button operatorXButton = new JoystickButton(operatorJoyStick, XboxController.Button.kX.value);
+    operatorXButton.whenHeld(new SetFlywheelToFenderShot(shooter));
     Button operatorAButton = new JoystickButton(operatorJoyStick, XboxController.Button.kA.value);
-    operatorAButton.whenHeld(new IntakeOut(intake));
-    operatorAButton.whenPressed(new Index(lowCon, upperCon));
+    operatorAButton.whenHeld(new SetFlywheelToLowShot(shooter));
     Button operatorBButton = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
+    //operatorBButton.whenHeld(new Purge());
     climber.setDefaultCommand(new FreeClimb(climber));
 
     Button operatorDPadRight = new Button(() -> operatorJoyStick.getPOV() == 90);
@@ -150,7 +151,65 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return new DriveForwardTimed(driveTrain);
+    return new TurnByAngleProfiled(-135, driveTrain);
+    // Create a voltage constraint to ensure we don't accelerate too fast
+    // var autoVoltageConstraint =
+    //   new DifferentialDriveVoltageConstraint(
+    //     Constants.DriveTrain.DRIVE_LINEAR_FF,
+    //     Constants.DriveTrain.kDriveKinematics,
+    //     10
+    //   );
+
+    // // Create config for trajectory
+    // TrajectoryConfig config =
+    //   new TrajectoryConfig(
+    //     Constants.DriveTrain.kMaxSpeedMetersPerSecond,
+    //     Constants.DriveTrain.kMaxAccelerationMetersPerSecondSquared)
+    //   // Add kinematics to ensure max speed is actually obeyed
+    //   .setKinematics(Constants.DriveTrain.kDriveKinematics)
+    //   // Apply the voltage constraint
+    //   .addConstraint(autoVoltageConstraint);
+
+    // // An example trajectory to follow.  All units in meters.
+    // Trajectory exampleTrajectory =
+    //   TrajectoryGenerator.generateTrajectory(
+    //     // Start at the origin facing the +X direction
+        
+    //     // Pass through these two interior waypoints, making an 's' curve path
+    //     List.of(
+    //       new Pose2d(0, 0, new Rotation2d(0)),
+    //       FieldConstants.cargoA,
+    //       FieldConstants.cargoB,
+    //       FieldConstants.cargoC,
+    //       FieldConstants.cargoD,
+    //       FieldConstants.cargoE,
+    //       FieldConstants.cargoF,
+    //       FieldConstants.cargoG,
+    //       new Pose2d(3, 0, new Rotation2d(0))
+    //     ),
+    //     // End 3 meters straight ahead of where we started, facing forward
+        
+    //     // Pass config
+    //     config);
+
+    // RamseteCommand ramseteCommand =
+    //   new RamseteCommand(
+    //     exampleTrajectory,
+    //     driveTrain::getPose,
+    //     new RamseteController(Constants.DriveTrain.kRamseteB, Constants.DriveTrain.kRamseteZeta),
+    //     Constants.DriveTrain.DRIVE_LINEAR_FF,
+    //     Constants.DriveTrain.kDriveKinematics,
+    //     driveTrain::getWheelSpeeds,
+    //     new PIDController(Constants.DriveTrain.DRIVE_LINEAR_VELOCITY_KP, 0, 0),
+    //     new PIDController(Constants.DriveTrain.DRIVE_LINEAR_VELOCITY_KP, 0, 0),
+    //     // RamseteCommand passes volts to the callback
+    //     driveTrain::setDriveMotorVoltage,
+    //     driveTrain);
+
+    // // Reset odometry to the starting pose of the trajectory.
+    // driveTrain.resetOdometry(exampleTrajectory.getInitialPose());
+
+    // // Run path following command, then stop at the end.
+    // return ramseteCommand.andThen(() -> driveTrain.setDriveMotorVoltage(0, 0));
   }
 }

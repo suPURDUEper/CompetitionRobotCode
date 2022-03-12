@@ -30,7 +30,7 @@ public class UpperConveyor extends SubsystemBase {
     // This method will be called once per scheduler run
   }
   
-  public void ConveyorMotorSet(double speed) {
+  public void setPercentOutput(double speed) {
     ConveyorMotor.set(speed);
   }
 

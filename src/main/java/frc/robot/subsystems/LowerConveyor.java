@@ -66,37 +66,37 @@ public class LowerConveyor extends SubsystemBase {
     mDetectedColor = Shuffleboard.getTab("Limelight Aim").add("Ball Color", "No Ball").getEntry();
   }
 
-  public boolean HasTeamBall() {
-    ColorMatchResult match = mColorMatcher.matchColor(detectedColor);
-    // if the value is no where close to the desired
-    // then null will be returned
-    if (match.color != null) {
-      if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
-        if (match.color == kRedTarget) {
-          return true;
-        }
-      } else if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
-        if (match.color == kBlueTarget) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
+  // public boolean HasTeamBall() {
+  //   ColorMatchResult match = mColorMatcher.matchColor(detectedColor);
+  //   // if the value is no where close to the desired
+  //   // then null will be returned
+  //   if (match.color != null) {
+  //     if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
+  //       if (match.color == kRedTarget) {
+  //         return true;
+  //       }
+  //     } else if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
+  //       if (match.color == kBlueTarget) {
+  //         return true;
+  //       }
+  //     }
+  //   }
+  //   return false;
+  // }
 
-  public boolean ColorSensorHasTarget() {
-    if (mColorMatcher.matchColor(detectedColor) != null) {
-      return true;
-    }
-    return false;
-  }
+  // public boolean ColorSensorHasTarget() {
+  //   if (mColorMatcher.matchColor(detectedColor) != null) {
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
   /**
    * 1.0 is intaking, -1.0 is pooping
    * 
    * @param speed
    */
-  public void PooperMotorSet(double speed) {
+  public void setPooperPercentOutput(double speed) {
     pooperMotor.set(ControlMode.PercentOutput, speed);
   }
 
@@ -105,7 +105,7 @@ public class LowerConveyor extends SubsystemBase {
    * 
    * @param speed
    */
-  public void LowConMotorSet(double speed) {
+  public void setLowerConveyorPercentOutput(double speed) {
     lowConMotor.set(speed);
   }
 
@@ -134,16 +134,16 @@ public class LowerConveyor extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    detectedColor = colorSensor.getColor();
-    if (ColorSensorHasTarget()) {
-      if (HasTeamBall()) {
-        mDetectedColor.forceSetString("Team Ball");
-      } else if (!HasTeamBall()) {
-        mDetectedColor.forceSetString("Enemy Ball");
-      }
-    } else {
-      mDetectedColor.forceSetString("No Ball");
-    }
+  //   // This method will be called once per scheduler run
+  //   detectedColor = colorSensor.getColor();
+  //   if (ColorSensorHasTarget()) {
+  //     if (HasTeamBall()) {
+  //       mDetectedColor.forceSetString("Team Ball");
+  //     } else if (!HasTeamBall()) {
+  //       mDetectedColor.forceSetString("Enemy Ball");
+  //     }
+  //   } else {
+  //     mDetectedColor.forceSetString("No Ball");
+  //   }
   }
 }

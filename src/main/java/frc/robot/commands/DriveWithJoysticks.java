@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveTrain;
 
@@ -34,7 +35,16 @@ public class DriveWithJoysticks extends CommandBase {
     // driveTrain.driveWithJoysticks(
     //     DriveController.getThrottleMap(RobotContainer.driverJoyStick.getLeftY(), speed),
     //     DriveController.getTurnMap(RobotContainer.driverJoyStick.getRightX(), speed));
-    driveTrain.driveWithJoysticks(speed * squareJoystick(RobotContainer.driverJoyStick.getLeftY()), speed * squareJoystick(-1*RobotContainer.driverJoyStick.getRightX()));
+    double throttleInput, turnInput;
+    if (Robot.isReal()) {
+      throttleInput = RobotContainer.driverJoyStick.getLeftY();
+      turnInput = RobotContainer.driverJoyStick.getRightX();
+    } else {
+      // WASD for driving robot in simulator
+      turnInput = -1 * RobotContainer.driverJoyStick.getRawAxis(0);
+      throttleInput = -1 * RobotContainer.driverJoyStick.getRawAxis(1);
+    }
+    driveTrain.driveWithJoysticks(speed * squareJoystick(throttleInput), speed * squareJoystick(-1*turnInput));
   }
 
   private double squareJoystick(double original) {

@@ -4,18 +4,23 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LowerConveyor;
 import frc.robot.subsystems.UpperConveyor;
 
 public class ShootBall extends CommandBase {
-  private final UpperConveyor upperCon;
-  private final LowerConveyor lowCon;
+  private final UpperConveyor upperConveyor;
+  private final LowerConveyor lowerConveyor;
+  private Supplier<Boolean> safeToFire;
+
   /** Creates a new ShootBall. */
-  public ShootBall(UpperConveyor mUpperCon, LowerConveyor mLowCon) {
+  public ShootBall(UpperConveyor mUpperCon, LowerConveyor mLowCon, Supplier<Boolean> safeToFire) {
     // Use addRequirements() here to declare subsystem dependencies.
-    upperCon = mUpperCon;
-    lowCon = mLowCon;
+    upperConveyor = mUpperCon;
+    lowerConveyor = mLowCon;
+    this.safeToFire = safeToFire;
     addRequirements(mUpperCon, mLowCon);
   }
 
@@ -26,17 +31,23 @@ public class ShootBall extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    lowCon.LowConMotorSet(0.7);
-    lowCon.PooperMotorSet(0.7);
-    upperCon.ConveyorMotorSet(1);
+    if (true) {
+      lowerConveyor.setLowerConveyorPercentOutput(0.7);
+      lowerConveyor.setPooperPercentOutput(0.7);
+      upperConveyor.setPercentOutput(1);
+    } else {
+      lowerConveyor.setLowerConveyorPercentOutput(0.7);
+      lowerConveyor.setPooperPercentOutput(0.7);
+      upperConveyor.setPercentOutput(1);
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    lowCon.LowConMotorSet(0);
-    lowCon.PooperMotorSet(0);
-    upperCon.ConveyorMotorSet(0);
+    lowerConveyor.setLowerConveyorPercentOutput(0);
+    lowerConveyor.setPooperPercentOutput(0);
+    upperConveyor.setPercentOutput(0);
   }
 
   // Returns true when the command should end.

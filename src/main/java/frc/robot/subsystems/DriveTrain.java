@@ -4,37 +4,106 @@
 
 package frc.robot.subsystems;
 
+
+import static frc.robot.Constants.DriveTrain.*;
+
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import frc.robot.Constants;
+import edu.wpi.first.hal.SimDouble;
+import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveTrain extends SubsystemBase {
-  CANSparkMax leftFront;
-  CANSparkMax rightFront;
-  CANSparkMax leftBack;
-  CANSparkMax rightBack;
-  DifferentialDrive drive;
-  public double boost = Constants.DriveTrain.BoostInactive;
 
+  private final CANSparkMax leftFront;
+  private final CANSparkMax rightFront;
+  private final CANSparkMax leftBack;
+  private final CANSparkMax rightBack;
+  private final AHRS gyro;
+  private final DifferentialDrive drive;
+  private final DifferentialDriveOdometry odometry;
+
+
+  // Simulation classes help us simulate our robot
+  private final Encoder leftFrontMockEncoder = new Encoder(7, 8);
+  private final Encoder rightFrontMockEncoder = new Encoder(5, 6);
+  private final EncoderSim m_leftEncoderSim = new EncoderSim(leftFrontMockEncoder);
+  private final EncoderSim m_rightEncoderSim = new EncoderSim(rightFrontMockEncoder);
+  private final Field2d fieldDashboardWidget = new Field2d();
+  private final DifferentialDrivetrainSim m_drivetrainSimulator = createDrivetrainSim();
+
+  private static final double DRIVE_METERS_PER_PULSE = 1 / 22.756;
+  
   public DriveTrain() {
-    leftFront = new CANSparkMax(Constants.DriveTrain.LeftFront, MotorType.kBrushless);
+    leftFront = new CANSparkMax(DRIVE_LEFT_FRONT_CAN_ID, MotorType.kBrushless);
     leftFront.setInverted(true);
-    leftBack = new CANSparkMax(Constants.DriveTrain.LeftBack, MotorType.kBrushless);
-    rightFront = new CANSparkMax(Constants.DriveTrain.RightFront, MotorType.kBrushless);
+    leftBack = new CANSparkMax(DRIVE_LEFT_BACK_CAN_ID, MotorType.kBrushless);
+    rightFront = new CANSparkMax(DRIVE_RIGHT_FRONT_CAN_ID, MotorType.kBrushless);
     rightFront.setInverted(false);
-    rightBack = new CANSparkMax(Constants.DriveTrain.RightBack, MotorType.kBrushless);
+    rightBack = new CANSparkMax(DRIVE_RIGHT_BACK_CAN_ID, MotorType.kBrushless);
     
     leftBack.follow(leftFront);
     rightBack.follow(rightFront);
     drive = new DifferentialDrive(leftFront, rightFront);
+
+    // Setup odometry
+    double metersPerRevolution = Units.inchesToMeters(Math.PI * WHEEL_DIAMETER_INCHES);
+    leftFrontMockEncoder.setDistancePerPulse(DRIVE_METERS_PER_PULSE);
+    rightFrontMockEncoder.setDistancePerPulse(DRIVE_METERS_PER_PULSE);
+    leftFront.getEncoder().setPositionConversionFactor(DRIVE_METERS_PER_PULSE);
+    rightFront.getEncoder().setPositionConversionFactor(DRIVE_METERS_PER_PULSE);
+    gyro = new AHRS();
+    odometry = new DifferentialDriveOdometry(gyro.getRotation2d());
+    resetOdometry(new Pose2d());
+    SmartDashboard.putData("Field", fieldDashboardWidget);
+  }
+
+  private DifferentialDrivetrainSim createDrivetrainSim() {
+    return new DifferentialDrivetrainSim(
+      LinearSystemId.identifyDrivetrainSystem(DRIVE_LINEAR_KV, DRIVE_LINEAR_KA, DRIVE_ANGULAR_KV, DRIVE_ANGULAR_KA),
+      DCMotor.getNEO(2),
+      GEARBOX_RATIO,
+      TRACK_WIDTH_METERS,
+      WHEEL_DIAMETER_METERS,
+      // The standard deviations for measurement noise:
+      // x and y:          0.001 m
+      // heading:          0.001 rad
+      // l and r velocity: 0.1   m/s
+      // l and r position: 0.005 m
+      VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
+    );
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    if (RobotBase.isReal()) {
+      odometry.update(getGyroRotation2D(), getLeftDriveMeters(), getRightDriveMeters());
+    } else {
+      odometry.update(gyro.getRotation2d(), leftFrontMockEncoder.getDistance(), rightFrontMockEncoder.getDistance());
+    }
+    fieldDashboardWidget.setRobotPose(odometry.getPoseMeters());
+    SmartDashboard.putNumber("Left Meters", getLeftDriveMeters());
+    SmartDashboard.putNumber("Right Meters", getRightDriveMeters());
+
   }
 
   public void driveWithJoysticks(double throttle, double turn) {
@@ -54,5 +123,130 @@ public class DriveTrain extends SubsystemBase {
 
   public void stop() {
     drive.stopMotor();
+  }
+
+  public void setDriveMotorVoltage(double leftVoltage, double rightVoltage) {
+    leftFront.setVoltage(leftVoltage);
+    rightFront.setVoltage(rightVoltage);
+    drive.feedWatchdog();
+  }
+
+  /**
+   * Returns the currently-estimated pose of the robot.
+   *
+   * @return The pose.
+   */
+  public Pose2d getPose() {
+    return odometry.getPoseMeters();
+  }
+
+  /**
+   * Returns the current wheel speeds of the robot.
+   *
+   * @return The current wheel speeds.
+   */
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(leftFront.getEncoder().getVelocity(), rightFront.getEncoder().getVelocity());
+  }
+
+  /**
+   * Resets the odometry to the specified pose.
+   *
+   * @param pose The pose to which to set the odometry.
+   */
+  public void resetOdometry(Pose2d pose) {
+    resetEncoders();
+    odometry.resetPosition(pose, getGyroRotation2D());
+  }
+
+  /** Resets the drive encoders to currently read a position of 0. */
+  public void resetEncoders() {
+    leftFront.getEncoder().setPosition(0.0);
+    rightFront.getEncoder().setPosition(0.0);
+  }
+
+  /**
+   * Gets the average distance of the two encoders.
+   *
+   * @return the average of the two encoder readings
+   */
+  public double getAverageEncoderDistance() {
+    return (getLeftDriveMeters() + getRightDriveMeters()) / 2.0;
+  }
+
+  public double getLeftDriveMeters() {
+    return -1 * leftFront.getEncoder().getPosition();
+  }
+
+  public double getRightDriveMeters() {
+    return -1 * rightFront.getEncoder().getPosition();
+  }
+
+  public Rotation2d getGyroRotation2D() {
+    return Rotation2d.fromDegrees(gyro.getAngle());
+  }
+
+
+  /**
+   * Sets the max output of the drive. Useful for scaling the drive to drive more slowly.
+   *
+   * @param maxOutput the maximum output to which the drive will be constrained
+   */
+  public void setMaxOutput(double maxOutput) {
+    drive.setMaxOutput(maxOutput);
+  }
+
+  /** Zeroes the heading of the robot. */
+  public void zeroHeading() {
+    gyro.reset();
+  }
+
+  /**
+   * Returns the heading of the robot.
+   *
+   * @return the robot's heading in degrees, from -180 to 180
+   */
+  public double getHeading() {
+    return getGyroRotation2D().getDegrees();
+  }
+
+  /**
+   * Returns the turn rate of the robot.
+   *
+   * @return The turn rate of the robot, in degrees per second
+   */
+  public double getTurnRate() {
+    // AHRS::getRate is clockwise positive, we want everything to be counterclockwise positive
+    return -1 * gyro.getRate();
+  }
+
+  /** Update our simulation. This should be run every robot loop in simulation. */
+  @Override
+  public void simulationPeriodic() {
+    // To update our simulation, we set motor voltage inputs, update the
+    // simulation, and write the simulated positions and velocities to our
+    // simulated encoder and gyro. We negate the right side so that positive
+    // voltages make the right side move forward.
+    if (DriverStation.isTeleop()) {
+      m_drivetrainSimulator.setInputs(
+        leftFront.get() * RobotController.getInputVoltage(),
+        rightFront.get() * RobotController.getInputVoltage());
+    } else {
+      m_drivetrainSimulator.setInputs(
+        leftFront.getAppliedOutput() * RobotController.getInputVoltage(),
+        rightFront.getAppliedOutput() * RobotController.getInputVoltage());
+    }
+
+    m_drivetrainSimulator.update(0.02);
+
+    m_leftEncoderSim.setDistance(m_drivetrainSimulator.getLeftPositionMeters());
+    m_leftEncoderSim.setRate(m_drivetrainSimulator.getLeftVelocityMetersPerSecond());
+    m_rightEncoderSim.setDistance(m_drivetrainSimulator.getRightPositionMeters());
+    m_rightEncoderSim.setRate(m_drivetrainSimulator.getRightVelocityMetersPerSecond());
+
+    // m_gyroSim.setAngle(-m_drivetrainSimulator.getHeading().getDegrees());
+    int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
+    SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Yaw"));
+    angle.set(-1 * m_drivetrainSimulator.getHeading().getDegrees());
   }
 }
