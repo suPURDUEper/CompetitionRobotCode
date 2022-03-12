@@ -108,7 +108,7 @@ public class RobotContainer {
     Button operatorRightBumper = new JoystickButton(operatorJoyStick , XboxController.Button.kRightBumper.value);
     operatorRightBumper.whenHeld(new IntakeIn(intake));
     Button operatorYButton = new JoystickButton(operatorJoyStick, XboxController.Button.kY.value);
-    operatorYButton.whenHeld(new SetFlywheelToFarShot(shooter));
+    operatorYButton.whenHeld(new SetFlywheelToFarShot(shooter, vision));
     Button operatorXButton = new JoystickButton(operatorJoyStick, XboxController.Button.kX.value);
     operatorXButton.whenHeld(new SetFlywheelToFenderShot(shooter));
     Button operatorAButton = new JoystickButton(operatorJoyStick, XboxController.Button.kA.value);
