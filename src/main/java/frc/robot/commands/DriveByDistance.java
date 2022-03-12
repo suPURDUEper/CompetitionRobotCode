@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.subsystems.DriveTrain;
 
@@ -15,14 +16,17 @@ public class DriveByDistance extends PIDCommand {
   /** Creates a new DriveByDistance. */
   public DriveByDistance(double targetDistance, DriveTrain mDriveTrain) {  
     super(
-        // The controller that the command will use
-        new PIDController(0.015, 0, 0),
-        // This should return the measurement
-        mDriveTrain::getAverageEncoderDistance,
-        // This should return the setpoint (can also be a constant)
-        targetDistance + mDriveTrain.getAverageEncoderDistance(),
-        // This uses the output
-        output -> mDriveTrain.arcadeDrive(output, 0));
+      // The controller that the command will use
+      new PIDController(0.4, 0, 0),
+      // This should return the measurement
+      mDriveTrain::getAverageEncoderDistance,
+      // This should return the setpoint (can also be a constant)
+      targetDistance + mDriveTrain.getAverageEncoderDistance(),
+      // This uses the output
+      output -> mDriveTrain.arcadeDrive(-output + Math.copySign(getFeedforward(), -output), 0),
+      // Requirements
+      mDriveTrain
+    );
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
     getController().setTolerance(0.1);
@@ -31,6 +35,12 @@ public class DriveByDistance extends PIDCommand {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return getController().atSetpoint();
+  }
+
+  private static double getFeedforward() {
+    double goalVoltage = 2.5; 
+    double percentOutput = goalVoltage / RobotController.getBatteryVoltage();
+    return percentOutput;
   }
 }
