@@ -30,7 +30,7 @@ public class TurnByAngleProfiled extends CommandBase {
    */
   public TurnByAngleProfiled(double angle, DriveTrain drive) {
     controller = new ProfiledPIDController(
-      0.008,  //kP
+      0.015,  //kP
       0,      //kI
       0,      //kD
       new TrapezoidProfile.Constraints(
@@ -73,11 +73,12 @@ public class TurnByAngleProfiled extends CommandBase {
   private double getFeedforward(State setpoint) {
     // Setpoint is in units of degrees and degrees/s, so we need to convert to
     // // wheel velocities for these gains to make sense.
-    double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
-    return DRIVE_LINEAR_FF.calculate(
-      rotationalToTangential(setpoint.velocity), 
-      rotationalToTangential(acceleration)
-    );
+    // double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
+    // return DRIVE_LINEAR_FF.calculate(
+    //   rotationalToTangential(setpoint.velocity), 
+    //   rotationalToTangential(acceleration)
+    // );
+    return 0.3;
   }
 
   private double tangentialToRotational(double tangentialMeters) {

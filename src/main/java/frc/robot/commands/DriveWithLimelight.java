@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.ShuffleboardInfo;
 import frc.robot.subsystems.DriveTrain;
@@ -16,12 +17,12 @@ public class DriveWithLimelight extends CommandBase {
   private final Vision mVision;
 
   // Constants
-  private double mSteeringKp = 0.05;
+  private double mSteeringKp = 0.015;
   private double mDriveKp = 0.80;
   private double steeringAdjust;
   private double mTx;
-  private double headingError;
-  private double minCommand = 0.0;
+  private double headingError = 0;
+  private double minCommand = 0.3;
   private double turnCommand;
   // Network Table Entries
   NetworkTableEntry mKpSteer, mMinTa, mDrive_Kp;
@@ -33,36 +34,30 @@ public class DriveWithLimelight extends CommandBase {
     mVision = v;
     addRequirements(dt, v);
 
-    mKpSteer = ShuffleboardInfo.getInstance().getKpSteer();
-    mDrive_Kp = ShuffleboardInfo.getInstance().getKpDrive();
+
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    mSteeringKp = mKpSteer.getDouble(0);
-    mDriveKp = mDrive_Kp.getDouble(0);
-    steeringAdjust = 0;
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    double throttle = RobotContainer.driverJoyStick.getLeftY();
     if (mVision.isTargetValid()) {
-      double throttle = RobotContainer.driverJoyStick.getLeftY();
       mTx = mVision.getTx();
-      steeringAdjust = 0;
-      turnCommand = 0;
-      headingError = mTx;
-      if (mTx < -0.5) {
-        turnCommand = mSteeringKp * headingError - minCommand;
-      } else if (mTx > 0.5) {
-        turnCommand = mSteeringKp * headingError + minCommand;
-      } else if (mTx < 0.5 && mTx > -0.5) {
+      headingError = -mTx;
+      if (Math.abs(headingError) > 1) {
+        turnCommand = mSteeringKp * headingError + Math.copySign(minCommand, headingError);
+      } else {
         turnCommand = 0;
       }
       mDriveTrain.arcadeDrive(throttle, turnCommand);
     }
+    else mDriveTrain.arcadeDrive(throttle, -RobotContainer.driverJoyStick.getRightX());
   }
 
   // Called once the command ends or is interrupted.
