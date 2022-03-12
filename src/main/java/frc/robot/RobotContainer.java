@@ -22,6 +22,7 @@ import frc.robot.commands.FreeClimb;
 import frc.robot.commands.Index;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
+import frc.robot.commands.Purge;
 import frc.robot.commands.SetFlywheelToFarShot;
 import frc.robot.commands.SetFlywheelToFenderShot;
 import frc.robot.commands.SetFlywheelToLowShot;
@@ -113,8 +114,8 @@ public class RobotContainer {
     operatorXButton.whenHeld(new SetFlywheelToFenderShot(shooter));
     Button operatorAButton = new JoystickButton(operatorJoyStick, XboxController.Button.kA.value);
     operatorAButton.whenHeld(new SetFlywheelToLowShot(shooter));
-    Button operatorBButton = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
-    //operatorBButton.whenHeld(new Purge());
+    Button operatorRightTrigger = new Button(() -> operatorJoyStick.getRightTriggerAxis() > 0.5);
+    operatorRightTrigger.whenHeld(new Purge(intake,lowerCon,upperCon,shooter));
     climber.setDefaultCommand(new FreeClimb(climber));
 
     Button operatorDPadRight = new Button(() -> operatorJoyStick.getPOV() == 90);
