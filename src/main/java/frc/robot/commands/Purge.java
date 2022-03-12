@@ -32,9 +32,9 @@ public class Purge extends CommandBase {
   @Override
   public void execute() {
     shooter.setAcceleratorTargetRPM(-6300);
-    upperCon.ConveyorMotorSet(-0.5);
-    lowCon.PooperMotorSet(-0.3);
-    lowCon.LowConMotorSet(-1);
+    upperCon.setPercentOutput(-0.5);
+    lowCon.setPooperPercentOutput(-0.3);
+    lowCon.setLowerConveyorPercentOutput(-1);
     intake.IndexerMotorSet(-1);
     intake.IntakeMotorSet(-1);
   }
@@ -43,9 +43,9 @@ public class Purge extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     shooter.setAcceleratorTargetRPM(-6300);
-    upperCon.ConveyorMotorSet(0);
-    lowCon.PooperMotorSet(0);
-    lowCon.LowConMotorSet(0);
+    upperCon.setPercentOutput(0);
+    lowCon.setLowerConveyorPercentOutput(0);
+    lowCon.setPooperPercentOutput(0);
     intake.IndexerMotorSet(0);
     intake.IntakeMotorSet(0);
   }

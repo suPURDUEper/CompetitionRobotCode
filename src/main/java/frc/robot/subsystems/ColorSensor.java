@@ -45,5 +45,7 @@ public class ColorSensor extends SubsystemBase {
       if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
 
       }
-}
+    }
+    return false;
+  }
 }
