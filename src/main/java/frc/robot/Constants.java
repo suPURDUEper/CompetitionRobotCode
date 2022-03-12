@@ -108,9 +108,9 @@ public final class Constants {
         public static final int RIGHT_FLYWHEEL_CAN_ID = 2;
         public static final int ACCELERATOR_CAN_ID = 3;
         public static final int SHOOTER_CURRENT_LIMIT_AMPS = 40;
-        public static final int SHOOTER_FENDER_SHOT_RPM = 2250;
-        public static final int SHOOTER_FAR_SHOT_RPM = 3750;
-        public static final int SHOOTER_RPM_TOLERANCE = 30;
+        public static final int SHOOTER_FENDER_SHOT_RPM = 2175;
+        public static final int SHOOTER_FAR_SHOT_RPM = 2750;
+        public static final int SHOOTER_RPM_TOLERANCE = 300;
         public static final long SHOOTER_RPM_STABLE_TIME = 300 * 1000; // This needs to be in microseconds
     }
 

@@ -25,6 +25,7 @@ import frc.robot.commands.IntakeOut;
 import frc.robot.commands.Purge;
 import frc.robot.commands.SetFlywheelToFarShot;
 import frc.robot.commands.SetFlywheelToFenderShot;
+import frc.robot.commands.SetFlywheelToLimelightShot;
 import frc.robot.commands.SetFlywheelToLowShot;
 import frc.robot.commands.ShootBall;
 import frc.robot.commands.TurnByAngleProfiled;
@@ -91,7 +92,10 @@ public class RobotContainer {
     // Driver Joystick
     driveTrain.setDefaultCommand(new DriveWithJoysticks(driveTrain));
     Button driverAButton = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);
-    driverAButton.whenHeld(new DriveWithLimelight(driveTrain, vision));
+    driverAButton.whenHeld(new ParallelCommandGroup(
+      new DriveWithLimelight(driveTrain, vision),
+      new SetFlywheelToLimelightShot(shooter, vision)
+    ));
     Button driverRightTrigger = new Button(() -> driverJoyStick.getRightTriggerAxis() > 0.5);
     driverRightTrigger.whenHeld(new ShootBall(upperCon, lowerCon, shooter::isShooterAtSpeed));
     Button driverRightBumper = new JoystickButton(driverJoyStick, XboxController.Button.kRightBumper.value);
@@ -109,7 +113,7 @@ public class RobotContainer {
     Button operatorRightBumper = new JoystickButton(operatorJoyStick , XboxController.Button.kRightBumper.value);
     operatorRightBumper.whenHeld(new IntakeIn(intake));
     Button operatorYButton = new JoystickButton(operatorJoyStick, XboxController.Button.kY.value);
-    operatorYButton.whenHeld(new SetFlywheelToFarShot(shooter, vision));
+    operatorYButton.whenHeld(new SetFlywheelToFarShot(shooter));
     Button operatorXButton = new JoystickButton(operatorJoyStick, XboxController.Button.kX.value);
     operatorXButton.whenHeld(new SetFlywheelToFenderShot(shooter));
     Button operatorAButton = new JoystickButton(operatorJoyStick, XboxController.Button.kA.value);

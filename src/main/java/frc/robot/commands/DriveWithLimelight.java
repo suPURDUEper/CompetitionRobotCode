@@ -32,7 +32,7 @@ public class DriveWithLimelight extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     mDriveTrain = dt;
     mVision = v;
-    addRequirements(dt, v);
+    addRequirements(dt);
 
 
   }

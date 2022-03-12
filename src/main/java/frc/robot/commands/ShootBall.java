@@ -31,14 +31,14 @@ public class ShootBall extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (true) {
+    if (safeToFire.get()) {
       lowerConveyor.setLowerConveyorPercentOutput(0.7);
       lowerConveyor.setPooperPercentOutput(0.7);
       upperConveyor.setPercentOutput(1);
     } else {
-      lowerConveyor.setLowerConveyorPercentOutput(0.7);
-      lowerConveyor.setPooperPercentOutput(0.7);
-      upperConveyor.setPercentOutput(1);
+      lowerConveyor.setLowerConveyorPercentOutput(0);
+      lowerConveyor.setPooperPercentOutput(0);
+      upperConveyor.setPercentOutput(0);
     }
   }
 

@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ShuffleboardInfo;
+import frc.robot.util.LookupTable;
 import frc.robot.util.TalonUtils;
 
 
@@ -54,6 +55,8 @@ public class Shooter extends SubsystemBase {
   
   boolean isShooterEnabled = false;
   double atSpeedTimer;
+
+  LookupTable lookupTable;
   
   /**
    * Create a new shooter subsystem
@@ -90,6 +93,14 @@ public class Shooter extends SubsystemBase {
 
     flywheNetworkTableEntry = ShuffleboardInfo.getInstance().getFlywheelSpeed();
 
+    lookupTable = new LookupTable();
+    lookupTable.addValue(17.1, 2200);
+    lookupTable.addValue(10.9, 2300);
+    lookupTable.addValue(4.9, 2400);
+    lookupTable.addValue(-1.33, 2650);
+    lookupTable.addValue(-4.9, 2800);
+    lookupTable.addValue(-5.9, 2900);
+
   }
 
   /**
@@ -113,6 +124,25 @@ public class Shooter extends SubsystemBase {
   public void setFlywheelTargetRPM(int rpm) {
     targetFlywheelRpm = rpm;
     flywheNetworkTableEntry.setNumber(rpm);
+  }
+
+    /**
+   * Set the flywheel speed based on limelight
+   * @param speed taken in units of RPM
+   */
+  public void setFlywheelDistanceRPM(double tx) {
+    int rpm = (int) lookupTable.getValue(tx);
+    targetFlywheelRpm = rpm;
+    flywheNetworkTableEntry.setNumber(rpm);
+  }
+
+  /**
+   * Set the flywheel speed based on limelight
+   * @param speed taken in units of RPM
+   */
+  public void setAcceleratorDistanceRPM(double tx) {
+    int rpm = (int) lookupTable.getValue(tx);
+    targetAcceleratorRpm = rpm;
   }
 
   /**
@@ -161,7 +191,6 @@ public class Shooter extends SubsystemBase {
     flywheelLeftMotorSim.setSupplyCurrent(flywheelSim.getCurrentDrawAmps() * -1);
     flywheelRightMotorSim.setSupplyCurrent(flywheelSim.getCurrentDrawAmps() * -1);
     SmartDashboard.putNumber("Flywheel Speed", flywheelSim.getAngularVelocityRPM());
-
   }
 
   @Override
