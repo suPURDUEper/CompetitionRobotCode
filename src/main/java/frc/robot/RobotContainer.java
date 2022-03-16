@@ -14,6 +14,9 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.lowerCon;
+import frc.robot.commands.AutoAim;
+import frc.robot.commands.AutoIndex;
+import frc.robot.commands.AutoShoot;
 import frc.robot.commands.CheckButton;
 import frc.robot.commands.ClimberDown;
 import frc.robot.commands.ClimberUp;
@@ -25,11 +28,14 @@ import frc.robot.commands.Index;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
 import frc.robot.commands.Purge;
+import frc.robot.commands.ResetDriveTrainEncoders;
 import frc.robot.commands.SetFlywheelToFarShot;
 import frc.robot.commands.SetFlywheelToFenderShot;
 import frc.robot.commands.SetFlywheelToLimelightShot;
+import frc.robot.commands.SetFlywheelToLimelightShotTimed;
 import frc.robot.commands.SetFlywheelToLowShot;
 import frc.robot.commands.ShootBall;
+import frc.robot.commands.TurnByAngle;
 import frc.robot.commands.TurnByAngleProfiled;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
@@ -153,14 +159,20 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
+  public Command twoBallAuto() {
 
     return new SequentialCommandGroup(
         new IntakeOut(intake),
-        new ParallelCommandGroup(new Index(lowerCon, upperCon),new DriveByDistance(1.21, driveTrain)),
-        new ParallelCommandGroup(new DriveWithLimelight(driveTrain, vision), new SetFlywheelToLimelightShot(shooter, vision),
-        new ShootBall(upperCon, lowerCon, shooter::isShooterAtSpeed))
-        
+        new ResetDriveTrainEncoders(driveTrain),
+        new ParallelCommandGroup(new Index(lowerCon, upperCon),new DriveByDistance(1.16, driveTrain)),
+        new IntakeIn(intake),
+        new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
+        new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
+        new ParallelCommandGroup(new AutoAim(driveTrain, vision, 2),
+        new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
+        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
+        new ResetDriveTrainEncoders(driveTrain),
+        new DriveByDistance(0.3, driveTrain)
         );
     // Create a voltage constraint to ensure we don't accelerate too fast
     // var autoVoltageConstraint =
@@ -223,4 +235,23 @@ public class RobotContainer {
     // // Run path following command, then stop at the end.
     // return ramseteCommand.andThen(() -> driveTrain.setDriveMotorVoltage(0, 0));
   }
+  public Command threeBallAuto() {
+
+    return new SequentialCommandGroup(
+      new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5),
+        new ParallelCommandGroup(new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
+        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
+        new IntakeOut(intake),
+        new ResetDriveTrainEncoders(driveTrain),
+        new ParallelCommandGroup(new AutoIndex(lowerCon, upperCon, 3),
+         new DriveByDistance(1.16, driveTrain)),
+        new ResetDriveTrainEncoders(driveTrain),
+        new DriveByDistance(-0.3, driveTrain),
+        new ResetDriveTrainEncoders(driveTrain),
+        new TurnByAngle(-105, driveTrain),
+        new ResetDriveTrainEncoders(driveTrain),
+        new WaitCommand(2),
+        new ParallelCommandGroup (new AutoIndex(lowerCon, upperCon, 3), new DriveByDistance(2.8, driveTrain))
+        );
+      }
 }
