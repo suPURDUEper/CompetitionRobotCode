@@ -13,7 +13,7 @@ public class TurnByAngle extends PIDCommand {
    */
   public TurnByAngle(double targetAngleDegrees, DriveTrain drive) {
     super(
-        new PIDController(0.006, 0, 0),
+        new PIDController(0.005, 0, 0),
         // Close loop on heading
         drive::getHeading,
         // Set reference to target
@@ -27,7 +27,7 @@ public class TurnByAngle extends PIDCommand {
     getController().enableContinuousInput(-180, 180);
     // Set the controller tolerance - the delta tolerance ensures the robot is stationary at the
     // setpoint before it is considered as having reached the reference
-    getController().setTolerance(2, 0.05);
+    getController().setTolerance(4, 0.05);
   }
 
   @Override
