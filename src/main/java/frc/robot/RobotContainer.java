@@ -164,7 +164,8 @@ public class RobotContainer {
     return new SequentialCommandGroup(
         new IntakeOut(intake),
         new ResetDriveTrainEncoders(driveTrain),
-        new ParallelCommandGroup(new Index(lowerCon, upperCon),new DriveByDistance(1.16, driveTrain)),
+        new WaitCommand(0.1),
+        new ParallelCommandGroup(new Index(lowerCon, upperCon),new DriveByDistance(1, driveTrain)),
         new IntakeIn(intake),
         new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
         new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
@@ -238,20 +239,33 @@ public class RobotContainer {
   public Command threeBallAuto() {
 
     return new SequentialCommandGroup(
-      new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5),
-        new ParallelCommandGroup(new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
-        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
         new IntakeOut(intake),
         new ResetDriveTrainEncoders(driveTrain),
-        new ParallelCommandGroup(new AutoIndex(lowerCon, upperCon, 3),
-         new DriveByDistance(1.16, driveTrain)),
+        new WaitCommand(0.1),
+        new ParallelCommandGroup(new AutoIndex(lowerCon, upperCon, 3),new DriveByDistance(1, driveTrain)),
+        new IntakeIn(intake),
+        new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
+        new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
+        new ParallelCommandGroup(new AutoAim(driveTrain, vision, 2),
+        new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
+        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
         new ResetDriveTrainEncoders(driveTrain),
         new DriveByDistance(-0.3, driveTrain),
         new ResetDriveTrainEncoders(driveTrain),
-        new TurnByAngle(-105, driveTrain),
+        new WaitCommand(.1),
+        new TurnByAngle(-108, driveTrain),
         new ResetDriveTrainEncoders(driveTrain),
-        new WaitCommand(2),
-        new ParallelCommandGroup (new AutoIndex(lowerCon, upperCon, 3), new DriveByDistance(2.8, driveTrain))
+        new WaitCommand(0.1),
+        new IntakeOut(intake),
+        new ParallelCommandGroup(new AutoIndex(lowerCon, upperCon, 3), new DriveByDistance(2.75, driveTrain)),
+        new ResetDriveTrainEncoders(driveTrain),
+        new WaitCommand(0.1),
+        new TurnByAngle(-58, driveTrain), 
+        new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
+        new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
+        new ParallelCommandGroup(new AutoAim(driveTrain, vision, 2),
+        new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
+        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2))
         );
       }
 }

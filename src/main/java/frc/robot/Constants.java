@@ -99,7 +99,7 @@ public final class Constants {
         public static final int HOOD_SERVO_CHANNEL = 1;
         public static final int FlywheelSpeed = 5700;
         public static final double FLYWHEEL_KD = 0.7;
-        public static final double FLYWHEEL_KI = 0.001;
+        public static final double FLYWHEEL_KI = 0.0001;
         public static final double FLYWHEEL_KF = 0.0589;
         public static final double FLYWHEEL_KP = 0.21;
         public static final int PID_LOOP_INDEX = 0;
