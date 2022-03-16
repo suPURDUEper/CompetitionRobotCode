@@ -14,6 +14,7 @@ import frc.robot.subsystems.DriveTrain;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class DriveByDistance extends PIDCommand {
   /** Creates a new DriveByDistance. */
+  DriveTrain driveTrain;
   public DriveByDistance(double targetDistance, DriveTrain mDriveTrain) {  
     super(
       // The controller that the command will use
