@@ -26,11 +26,14 @@ public class Purge extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    shooter.enableShooter();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    shooter.setFlywheelTargetRPM(-6300);
     shooter.setAcceleratorTargetRPM(-6300);
     upperCon.setPercentOutput(-0.5);
     lowCon.setPooperPercentOutput(-0.3);
@@ -42,7 +45,8 @@ public class Purge extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.setAcceleratorTargetRPM(-6300);
+    shooter.disableShooter();
+    shooter.setAcceleratorTargetRPM(0);
     upperCon.setPercentOutput(0);
     lowCon.setLowerConveyorPercentOutput(0);
     lowCon.setPooperPercentOutput(0);
