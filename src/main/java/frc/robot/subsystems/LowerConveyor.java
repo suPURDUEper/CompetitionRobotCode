@@ -63,6 +63,7 @@ public class LowerConveyor extends SubsystemBase {
     pooperMotor = new CANSparkMax(Constants.lowerCon.PooperMotor ,MotorType.kBrushless);
     pooperMotor.setSmartCurrentLimit(20);
     pooperMotor.enableVoltageCompensation(12.0);
+    pooperMotor.setInverted(true);
 
     lowConBreakBeam = new DigitalInput(Constants.lowerCon.LowConBreakBeam);
     pooperBreakBeam = new DigitalInput(Constants.lowerCon.PooperBreakBeam);
