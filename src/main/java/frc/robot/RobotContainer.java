@@ -264,6 +264,7 @@ public class RobotContainer {
         new ResetDriveTrainEncoders(driveTrain),
         new WaitCommand(0.1),
         new TurnByAngle(-58, driveTrain), 
+        new IntakeIn(intake),
         new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
         new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
         new ParallelCommandGroup(new AutoAim(driveTrain, vision, 2),
