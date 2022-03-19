@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
@@ -245,7 +246,7 @@ public class RobotContainer {
         new IntakeOut(intake),
         new ResetDriveTrainEncoders(driveTrain),
         new WaitCommand(0.1),
-        new ParallelCommandGroup(new AutoIndex(lowerCon, upperCon, 3),new DriveByDistance(1, driveTrain)),
+        new ParallelRaceGroup(new AutoIndex(lowerCon, upperCon, 3), new IntakeRun(intake), new DriveByDistance(1, driveTrain)),
         new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
         new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
         new ParallelCommandGroup(new AutoAim(driveTrain, vision, 2),
@@ -259,7 +260,7 @@ public class RobotContainer {
         new ResetDriveTrainEncoders(driveTrain),
         new WaitCommand(0.1),
         new IntakeOut(intake),
-        new ParallelCommandGroup(new AutoIndex(lowerCon, upperCon, 3), new DriveByDistance(3.0, driveTrain)),
+        new ParallelRaceGroup(new AutoIndex(lowerCon, upperCon, 3), new IntakeRun(intake), new DriveByDistance(3.0, driveTrain)),
         new ResetDriveTrainEncoders(driveTrain),
         new WaitCommand(0.1),
         new TurnByAngle(-58, driveTrain), 

@@ -26,7 +26,7 @@ import frc.robot.PicoColorSensor.RawColor;
 public class LowerConveyor extends SubsystemBase {
   /** Creates a new LowerConveyer. */
   CANSparkMax lowConMotor;
-  TalonSRX pooperMotor;
+  CANSparkMax pooperMotor;
   DigitalInput lowConBreakBeam;
   DigitalInput pooperBreakBeam;
   /** Color Sensor and I2C setup */
@@ -59,8 +59,8 @@ public class LowerConveyor extends SubsystemBase {
     mColorMatcher.addColorMatch(kYellowTarget);
     lowConMotor = new CANSparkMax(Constants.lowerCon.LowConMotor, MotorType.kBrushless);
     lowConMotor.enableVoltageCompensation(12.0);
-    pooperMotor = new TalonSRX(Constants.lowerCon.PooperMotor);
-
+    pooperMotor = new CANSparkMax(Constants.lowerCon.PooperMotor, MotorType.kBrushless);
+    pooperMotor.setInverted(true);
     lowConBreakBeam = new DigitalInput(Constants.lowerCon.LowConBreakBeam);
     pooperBreakBeam = new DigitalInput(Constants.lowerCon.PooperBreakBeam);
     mDetectedColor = Shuffleboard.getTab("Limelight Aim").add("Ball Color", "No Ball").getEntry();
@@ -97,7 +97,7 @@ public class LowerConveyor extends SubsystemBase {
    * @param speed
    */
   public void setPooperPercentOutput(double speed) {
-    pooperMotor.set(ControlMode.PercentOutput, speed);
+    pooperMotor.set(speed);
   }
 
   /**
