@@ -20,7 +20,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.math.util.Units;
+//import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -66,7 +66,7 @@ public class DriveTrain extends SubsystemBase {
     drive = new DifferentialDrive(leftFront, rightFront);
 
     // Setup odometry
-    double metersPerRevolution = Units.inchesToMeters(Math.PI * WHEEL_DIAMETER_INCHES);
+    //double metersPerRevolution = Units.inchesToMeters(Math.PI * WHEEL_DIAMETER_INCHES);
     leftFrontMockEncoder.setDistancePerPulse(DRIVE_METERS_PER_PULSE);
     rightFrontMockEncoder.setDistancePerPulse(DRIVE_METERS_PER_PULSE);
     leftFront.getEncoder().setPositionConversionFactor(DRIVE_METERS_PER_PULSE);

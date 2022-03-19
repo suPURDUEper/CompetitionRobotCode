@@ -4,9 +4,9 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+//import com.ctre.phoenix.motorcontrol.NeutralMode;
+//import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+//import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-import static frc.robot.Constants.Intake.*;
+//import static frc.robot.Constants.Intake.*;
 
 /**
  * The intake class envelops the 4 motors which run the intake as well as the color sensor to sense the color of ball.

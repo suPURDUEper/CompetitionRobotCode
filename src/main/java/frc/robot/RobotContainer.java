@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Constants.lowerCon;
+//import frc.robot.Constants.lowerCon;
 import frc.robot.commands.AutoAim;
 import frc.robot.commands.AutoIndex;
 import frc.robot.commands.AutoShoot;
@@ -27,6 +27,7 @@ import frc.robot.commands.FreeClimb;
 import frc.robot.commands.Index;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
+import frc.robot.commands.IntakeRun;
 import frc.robot.commands.Purge;
 import frc.robot.commands.ResetDriveTrainEncoders;
 import frc.robot.commands.SetFlywheelToFarShot;
@@ -36,7 +37,7 @@ import frc.robot.commands.SetFlywheelToLimelightShotTimed;
 import frc.robot.commands.SetFlywheelToLowShot;
 import frc.robot.commands.ShootBall;
 import frc.robot.commands.TurnByAngle;
-import frc.robot.commands.TurnByAngleProfiled;
+//import frc.robot.commands.TurnByAngleProfiled;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
@@ -105,9 +106,11 @@ public class RobotContainer {
         new SetFlywheelToLimelightShot(shooter, vision)));
     Button driverRightTrigger = new Button(() -> driverJoyStick.getRightTriggerAxis() > 0.5);
     driverRightTrigger.whenHeld(new ShootBall(upperCon, lowerCon, shooter::isShooterAtSpeed));
-    Button driverRightBumper = new JoystickButton(driverJoyStick, XboxController.Button.kRightBumper.value);
+    Button driverLeftBumper = new JoystickButton(driverJoyStick, XboxController.Button.kLeftBumper.value);
+    // Button driverRightBumper = new JoystickButton(driverJoyStick, XboxController.Button.kRightBumper.value);
     // driverRightBumper.whenHeld(manualConveyorForward);
     Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() > 0.5);
+    driverLeftTrigger.whileHeld(new IntakeRun(intake));
     // driverLeftTrigger.whileHeld(new LowerConveyorIntake(lowCon));
     // driverLeftTrigger.whileHeld(new UpperConveyorIntake(upperCon));
     // driverLeftTrigger.whenHeld(intakePause);
@@ -243,7 +246,6 @@ public class RobotContainer {
         new ResetDriveTrainEncoders(driveTrain),
         new WaitCommand(0.1),
         new ParallelCommandGroup(new AutoIndex(lowerCon, upperCon, 3),new DriveByDistance(1, driveTrain)),
-        new IntakeIn(intake),
         new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
         new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
         new ParallelCommandGroup(new AutoAim(driveTrain, vision, 2),
@@ -253,11 +255,11 @@ public class RobotContainer {
         new DriveByDistance(-0.3, driveTrain),
         new ResetDriveTrainEncoders(driveTrain),
         new WaitCommand(.1),
-        new TurnByAngle(-108, driveTrain),
+        new TurnByAngle(-108.5, driveTrain),
         new ResetDriveTrainEncoders(driveTrain),
         new WaitCommand(0.1),
         new IntakeOut(intake),
-        new ParallelCommandGroup(new AutoIndex(lowerCon, upperCon, 3), new DriveByDistance(2.75, driveTrain)),
+        new ParallelCommandGroup(new AutoIndex(lowerCon, upperCon, 3), new DriveByDistance(3.0, driveTrain)),
         new ResetDriveTrainEncoders(driveTrain),
         new WaitCommand(0.1),
         new TurnByAngle(-58, driveTrain), 
