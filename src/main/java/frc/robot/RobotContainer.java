@@ -133,9 +133,9 @@ public class RobotContainer {
     climber.setDefaultCommand(new FreeClimb(climber));
 
     Button operatorDPadRight = new Button(() -> operatorJoyStick.getPOV() == 90);
-    operatorDPadRight.whenPressed(new InstantCommand(climber::climberTilt));
+    operatorDPadRight.whenPressed(new InstantCommand(climber::climberStraight));
     Button operatorDPadLeft = new Button(() -> operatorJoyStick.getPOV() == 270);
-    operatorDPadLeft.whenPressed(new InstantCommand(climber::climberStraight));
+    operatorDPadLeft.whenPressed(new InstantCommand(climber::climberTilt));
     Button operatorDPadUp = new Button(() -> operatorJoyStick.getPOV() == 0);
     operatorDPadUp.whenPressed(new ClimberUp(climber));
     Button operatorDPadDown = new Button(() -> operatorJoyStick.getPOV() == 180);
