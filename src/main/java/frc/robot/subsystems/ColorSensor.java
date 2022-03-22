@@ -37,7 +37,7 @@ public class ColorSensor extends SubsystemBase {
     System.out.println("RED: " + color.red + " GREEN: " + color.green + " BLUE: " + color.blue + " IR: " + ir);
     return color;
   }
-  public boolean HasTeamBall() {
+  public boolean HasWrongBall() {
     
     // if the value is no where close to the desired
     // then null will be returned
@@ -47,5 +47,5 @@ public class ColorSensor extends SubsystemBase {
       }
     }
     return false;
-  }
+  } 
 }
