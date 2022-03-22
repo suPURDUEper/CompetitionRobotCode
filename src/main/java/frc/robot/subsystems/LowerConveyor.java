@@ -58,9 +58,13 @@ public class LowerConveyor extends SubsystemBase {
     mColorMatcher.addColorMatch(kGreenTarget);
     mColorMatcher.addColorMatch(kYellowTarget);
     lowConMotor = new CANSparkMax(Constants.lowerCon.LowConMotor, MotorType.kBrushless);
+    lowConMotor.setSmartCurrentLimit(20);
     lowConMotor.enableVoltageCompensation(12.0);
-    pooperMotor = new CANSparkMax(Constants.lowerCon.PooperMotor, MotorType.kBrushless);
+    pooperMotor = new CANSparkMax(Constants.lowerCon.PooperMotor ,MotorType.kBrushless);
+    pooperMotor.setSmartCurrentLimit(20);
+    pooperMotor.enableVoltageCompensation(12.0);
     pooperMotor.setInverted(true);
+
     lowConBreakBeam = new DigitalInput(Constants.lowerCon.LowConBreakBeam);
     pooperBreakBeam = new DigitalInput(Constants.lowerCon.PooperBreakBeam);
     mDetectedColor = Shuffleboard.getTab("Limelight Aim").add("Ball Color", "No Ball").getEntry();
