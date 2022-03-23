@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.autos.ThreeBallAuto;
 import frc.robot.autos.TwoBallAuto;
-import frc.robot.commands.CheckButton;
 import frc.robot.commands.ClimberDown;
 import frc.robot.commands.ClimberUp;
 import frc.robot.commands.DriveWithJoysticks;

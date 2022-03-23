@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.DriveByDistance;
 import frc.robot.commands.Index;
+import frc.robot.commands.IntakeRun;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LowerConveyor;
@@ -18,7 +19,8 @@ public class TwoBallAuto extends SequentialCommandGroup {
       new InstantCommand(intake::intakeOut),
       new WaitCommand(0.1),
       parallel(
-        new Index(lowerCon, upperCon), 
+        new Index(lowerCon, upperCon),
+        new IntakeRun(intake),
         new DriveByDistance(1, driveTrain)),
       new InstantCommand(intake::intakeIn),
       new SpinUpAndFireTwoBalls(driveTrain, lowerCon, upperCon, shooter, vision),
