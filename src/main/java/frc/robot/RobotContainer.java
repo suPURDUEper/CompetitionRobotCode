@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-//import frc.robot.Constants.lowerCon;
 import frc.robot.commands.AutoAim;
 import frc.robot.commands.AutoIndex;
 import frc.robot.commands.AutoShoot;
@@ -40,7 +39,6 @@ import frc.robot.commands.SetFlywheelToLimelightShotTimed;
 import frc.robot.commands.SetFlywheelToLowShot;
 import frc.robot.commands.ShootBall;
 import frc.robot.commands.TurnByAngle;
-//import frc.robot.commands.TurnByAngleProfiled;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
@@ -95,7 +93,7 @@ public class RobotContainer {
     autoChooser.setDefaultOption("Three Ball Auto", threeBallAuto());
     autoChooser.addOption("Two Ball Auto", twoBallAuto());
     SmartDashboard.putData(autoChooser);
-    
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -112,52 +110,56 @@ public class RobotContainer {
 
     // Driver Joystick
     driveTrain.setDefaultCommand(new DriveWithJoysticks(driveTrain));
+
     Button driverAButton = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);
     driverAButton.whenHeld(new ParallelCommandGroup(
         new DriveWithLimelight(driveTrain, vision),
         new SetFlywheelToLimelightShot(shooter, vision)));
+
     Button driverRightTrigger = new Button(() -> driverJoyStick.getRightTriggerAxis() > 0.5);
     driverRightTrigger.whenHeld(new ShootBall(upperCon, lowerCon, shooter::isShooterAtSpeed));
-    Button driverLeftBumper = new JoystickButton(driverJoyStick, XboxController.Button.kLeftBumper.value);
-    // Button driverRightBumper = new JoystickButton(driverJoyStick, XboxController.Button.kRightBumper.value);
-    // driverRightBumper.whenHeld(manualConveyorForward);
+
     Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() > 0.5);
     driverLeftTrigger.whileHeld(new IntakeRun(intake));
-    // driverLeftTrigger.whileHeld(new LowerConveyorIntake(lowCon));
-    // driverLeftTrigger.whileHeld(new UpperConveyorIntake(upperCon));
-    // driverLeftTrigger.whenHeld(intakePause);
 
     // Operator Joystick
     Button operatorLeftBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kLeftBumper.value);
     operatorLeftBumper.whenHeld(new IntakeOut(intake));
     operatorLeftBumper.whenPressed(new Index(lowerCon, upperCon).andThen(new IntakeIn(intake)));
+
     Button operatorRightBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kRightBumper.value);
     operatorRightBumper.whenHeld(new IntakeIn(intake));
+
     Button operatorYButton = new JoystickButton(operatorJoyStick, XboxController.Button.kY.value);
     operatorYButton.whenHeld(new SetFlywheelToFarShot(shooter));
+
     Button operatorXButton = new JoystickButton(operatorJoyStick, XboxController.Button.kX.value);
     operatorXButton.whenHeld(new SetFlywheelToFenderShot(shooter));
+
     Button operatorAButton = new JoystickButton(operatorJoyStick, XboxController.Button.kA.value);
     operatorAButton.whenHeld(new SetFlywheelToLowShot(shooter));
+
     Button operatorRightTrigger = new Button(() -> operatorJoyStick.getRightTriggerAxis() > 0.5);
     operatorRightTrigger.whenHeld(new Purge(intake, lowerCon, upperCon, shooter));
+
     climber.setDefaultCommand(new FreeClimb(climber));
 
     Button operatorDPadRight = new Button(() -> operatorJoyStick.getPOV() == 90);
     operatorDPadRight.whenPressed(new InstantCommand(climber::climberStraight));
+
     Button operatorDPadLeft = new Button(() -> operatorJoyStick.getPOV() == 270);
     operatorDPadLeft.whenPressed(new InstantCommand(climber::climberTilt));
+
     Button operatorDPadUp = new Button(() -> operatorJoyStick.getPOV() == 0);
     operatorDPadUp.whenPressed(new ClimberUp(climber));
+
     Button operatorDPadDown = new Button(() -> operatorJoyStick.getPOV() == 180);
     operatorDPadDown.whenPressed(new ClimberDown(climber));
+
     Button operatorStartButton = new JoystickButton(operatorJoyStick, XboxController.Button.kStart.value);
     operatorStartButton.whenHeld(moveToNextBarCommand()
         .andThen(new WaitCommand(1.5))
         .andThen(moveToNextBarCommand()));
-
-    // Auto climb
-
   }
 
   private Command moveToNextBarCommand() {
@@ -169,23 +171,22 @@ public class RobotContainer {
         new ClimberDown(climber));
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
   public Command twoBallAuto() {
     return new SequentialCommandGroup(
       new IntakeOut(intake),
       new ResetDriveTrainEncoders(driveTrain),
       new WaitCommand(0.1),
-      new ParallelCommandGroup(new Index(lowerCon, upperCon),new DriveByDistance(1, driveTrain)),
+      new ParallelCommandGroup(
+        new Index(lowerCon, upperCon), 
+        new DriveByDistance(1, driveTrain)),
       new IntakeIn(intake),
-      new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
-      new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
-      new ParallelCommandGroup(new AutoAim(driveTrain, vision, 2),
-      new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
-      new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
+      new ParallelCommandGroup(
+        new AutoAim(driveTrain, vision, 0.5),
+        new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
+      new ParallelCommandGroup(
+        new AutoAim(driveTrain, vision, 2),
+        new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
+        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
       new ResetDriveTrainEncoders(driveTrain),
       new DriveByDistance(0.3, driveTrain)
     );
@@ -196,12 +197,17 @@ public class RobotContainer {
       new IntakeOut(intake),
       new ResetDriveTrainEncoders(driveTrain),
       new WaitCommand(0.1),
-      new ParallelRaceGroup(new AutoIndex(lowerCon, upperCon, 3), new IntakeRun(intake), new DriveByDistance(1, driveTrain)),
-      new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
-      new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
-      new ParallelCommandGroup(new AutoAim(driveTrain, vision, 2),
-      new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
-      new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
+      new ParallelRaceGroup(
+        new AutoIndex(lowerCon, upperCon, 3), 
+        new IntakeRun(intake),
+        new DriveByDistance(1, driveTrain)),
+      new ParallelCommandGroup(
+        new AutoAim(driveTrain, vision, 0.5),
+        new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
+      new ParallelCommandGroup(
+        new AutoAim(driveTrain, vision, 2),
+        new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
+        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
       new ResetDriveTrainEncoders(driveTrain),
       new DriveByDistance(-0.3, driveTrain),
       new ResetDriveTrainEncoders(driveTrain),
@@ -210,16 +216,21 @@ public class RobotContainer {
       new ResetDriveTrainEncoders(driveTrain),
       new WaitCommand(0.1),
       new IntakeOut(intake),
-      new ParallelRaceGroup(new AutoIndex(lowerCon, upperCon, 3), new IntakeRun(intake), new DriveByDistance(3.0, driveTrain)),
+      new ParallelRaceGroup(
+        new AutoIndex(lowerCon, upperCon, 3), 
+        new IntakeRun(intake),
+        new DriveByDistance(3.0, driveTrain)),
       new ResetDriveTrainEncoders(driveTrain),
       new WaitCommand(0.1),
-      new TurnByAngle(-58, driveTrain), 
+      new TurnByAngle(-58, driveTrain),
       new IntakeIn(intake),
-      new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
-      new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
-      new ParallelCommandGroup(new AutoAim(driveTrain, vision, 2),
-      new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
-      new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2))
+      new ParallelCommandGroup(
+        new AutoAim(driveTrain, vision, 0.5),
+        new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
+      new ParallelCommandGroup(
+        new AutoAim(driveTrain, vision, 2),
+        new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
+        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2))
     );
   }
 
