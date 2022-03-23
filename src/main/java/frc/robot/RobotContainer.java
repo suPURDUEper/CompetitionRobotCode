@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.autos.ThreeBallAuto;
@@ -24,9 +25,8 @@ import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.DriveWithLimelight;
 import frc.robot.commands.FreeClimb;
 import frc.robot.commands.Index;
-import frc.robot.commands.IntakeIn;
-import frc.robot.commands.IntakeOut;
 import frc.robot.commands.IntakeRun;
+import frc.robot.commands.MoveToNextBar;
 import frc.robot.commands.Purge;
 import frc.robot.commands.SetFlywheelToFarShot;
 import frc.robot.commands.SetFlywheelToFenderShot;
@@ -118,11 +118,11 @@ public class RobotContainer {
 
     // Operator Joystick
     Button operatorLeftBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kLeftBumper.value);
-    operatorLeftBumper.whenHeld(new IntakeOut(intake));
-    operatorLeftBumper.whenPressed(new Index(lowerCon, upperCon).andThen(new IntakeIn(intake)));
+    operatorLeftBumper.whenHeld(new InstantCommand(intake::intakeOut));
+    operatorLeftBumper.whenPressed(new Index(lowerCon, upperCon).andThen(new InstantCommand(intake::intakeIn)));
 
     Button operatorRightBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kRightBumper.value);
-    operatorRightBumper.whenHeld(new IntakeIn(intake));
+    operatorRightBumper.whenHeld(new InstantCommand(intake::intakeIn));
 
     Button operatorYButton = new JoystickButton(operatorJoyStick, XboxController.Button.kY.value);
     operatorYButton.whenHeld(new SetFlywheelToFarShot(shooter));
@@ -151,19 +151,12 @@ public class RobotContainer {
     operatorDPadDown.whenPressed(new ClimberDown(climber));
 
     Button operatorStartButton = new JoystickButton(operatorJoyStick, XboxController.Button.kStart.value);
-    operatorStartButton.whenHeld(moveToNextBarCommand()
-        .andThen(new WaitCommand(1.5))
-        .andThen(moveToNextBarCommand()));
+    operatorStartButton.whenHeld(
+      new MoveToNextBar(climber, operatorStartButton::get)
+      .andThen(new WaitCommand(1.5))
+      .andThen((new MoveToNextBar(climber, operatorStartButton::get))));
   }
 
-  private Command moveToNextBarCommand() {
-    JoystickButton operatorBackButton = new JoystickButton(operatorJoyStick, XboxController.Button.kBack.value);
-    return new SequentialCommandGroup(
-        new ParallelCommandGroup(new ClimberUp(climber), new InstantCommand(climber::climberTilt)),
-        new InstantCommand(climber::climberStraight),
-        new ParallelCommandGroup(new WaitCommand(.5), new CheckButton(operatorBackButton)),
-        new ClimberDown(climber));
-  }
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
