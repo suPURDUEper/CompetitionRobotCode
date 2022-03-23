@@ -11,18 +11,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.AutoAim;
-import frc.robot.commands.AutoIndex;
-import frc.robot.commands.AutoShoot;
+import frc.robot.autos.ThreeBallAuto;
+import frc.robot.autos.TwoBallAuto;
 import frc.robot.commands.CheckButton;
 import frc.robot.commands.ClimberDown;
 import frc.robot.commands.ClimberUp;
-import frc.robot.commands.DriveByDistance;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.DriveWithLimelight;
 import frc.robot.commands.FreeClimb;
@@ -31,14 +28,11 @@ import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
 import frc.robot.commands.IntakeRun;
 import frc.robot.commands.Purge;
-import frc.robot.commands.ResetDriveTrainEncoders;
 import frc.robot.commands.SetFlywheelToFarShot;
 import frc.robot.commands.SetFlywheelToFenderShot;
 import frc.robot.commands.SetFlywheelToLimelightShot;
-import frc.robot.commands.SetFlywheelToLimelightShotTimed;
 import frc.robot.commands.SetFlywheelToLowShot;
 import frc.robot.commands.ShootBall;
-import frc.robot.commands.TurnByAngle;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
@@ -90,8 +84,8 @@ public class RobotContainer {
 
     // Create autonomous chooser
     autoChooser = new SendableChooser<>();
-    autoChooser.setDefaultOption("Three Ball Auto", threeBallAuto());
-    autoChooser.addOption("Two Ball Auto", twoBallAuto());
+    autoChooser.setDefaultOption("Three Ball Auto", new ThreeBallAuto(driveTrain, intake, lowerCon, upperCon, shooter, vision));
+    autoChooser.addOption("Two Ball Auto", new TwoBallAuto(driveTrain, intake, lowerCon, upperCon, shooter, vision));
     SmartDashboard.putData(autoChooser);
 
     // Configure the button bindings
@@ -169,69 +163,6 @@ public class RobotContainer {
         new InstantCommand(climber::climberStraight),
         new ParallelCommandGroup(new WaitCommand(.5), new CheckButton(operatorBackButton)),
         new ClimberDown(climber));
-  }
-
-  public Command twoBallAuto() {
-    return new SequentialCommandGroup(
-      new IntakeOut(intake),
-      new ResetDriveTrainEncoders(driveTrain),
-      new WaitCommand(0.1),
-      new ParallelCommandGroup(
-        new Index(lowerCon, upperCon), 
-        new DriveByDistance(1, driveTrain)),
-      new IntakeIn(intake),
-      new ParallelCommandGroup(
-        new AutoAim(driveTrain, vision, 0.5),
-        new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
-      new ParallelCommandGroup(
-        new AutoAim(driveTrain, vision, 2),
-        new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
-        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
-      new ResetDriveTrainEncoders(driveTrain),
-      new DriveByDistance(0.3, driveTrain)
-    );
-  }
-
-  public Command threeBallAuto() {
-    return new SequentialCommandGroup(
-      new IntakeOut(intake),
-      new ResetDriveTrainEncoders(driveTrain),
-      new WaitCommand(0.1),
-      new ParallelRaceGroup(
-        new AutoIndex(lowerCon, upperCon, 3), 
-        new IntakeRun(intake),
-        new DriveByDistance(1, driveTrain)),
-      new ParallelCommandGroup(
-        new AutoAim(driveTrain, vision, 0.5),
-        new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
-      new ParallelCommandGroup(
-        new AutoAim(driveTrain, vision, 2),
-        new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
-        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
-      new ResetDriveTrainEncoders(driveTrain),
-      new DriveByDistance(-0.3, driveTrain),
-      new ResetDriveTrainEncoders(driveTrain),
-      new WaitCommand(.1),
-      new TurnByAngle(-108.5, driveTrain),
-      new ResetDriveTrainEncoders(driveTrain),
-      new WaitCommand(0.1),
-      new IntakeOut(intake),
-      new ParallelRaceGroup(
-        new AutoIndex(lowerCon, upperCon, 3), 
-        new IntakeRun(intake),
-        new DriveByDistance(3.0, driveTrain)),
-      new ResetDriveTrainEncoders(driveTrain),
-      new WaitCommand(0.1),
-      new TurnByAngle(-58, driveTrain),
-      new IntakeIn(intake),
-      new ParallelCommandGroup(
-        new AutoAim(driveTrain, vision, 0.5),
-        new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
-      new ParallelCommandGroup(
-        new AutoAim(driveTrain, vision, 2),
-        new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
-        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2))
-    );
   }
 
   public Command getAutonomousCommand() {
