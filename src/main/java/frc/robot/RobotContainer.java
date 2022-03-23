@@ -6,6 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -70,6 +72,9 @@ public class RobotContainer {
   public static XboxController driverJoyStick;
   public static XboxController operatorJoyStick;
 
+  // Autonomous chooser
+  private final SendableChooser<Command> autoChooser;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -85,6 +90,12 @@ public class RobotContainer {
     upperCon = new UpperConveyor();
     vision = new Vision();
 
+    // Create autonomous chooser
+    autoChooser = new SendableChooser<>();
+    autoChooser.setDefaultOption("Three Ball Auto", threeBallAuto());
+    autoChooser.addOption("Two Ball Auto", twoBallAuto());
+    SmartDashboard.putData(autoChooser);
+    
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -164,112 +175,55 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command twoBallAuto() {
-
     return new SequentialCommandGroup(
-        new IntakeOut(intake),
-        new ResetDriveTrainEncoders(driveTrain),
-        new WaitCommand(0.1),
-        new ParallelCommandGroup(new Index(lowerCon, upperCon),new DriveByDistance(1, driveTrain)),
-        new IntakeIn(intake),
-        new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
-        new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
-        new ParallelCommandGroup(new AutoAim(driveTrain, vision, 2),
-        new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
-        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
-        new ResetDriveTrainEncoders(driveTrain),
-        new DriveByDistance(0.3, driveTrain)
-        );
-    // Create a voltage constraint to ensure we don't accelerate too fast
-    // var autoVoltageConstraint =
-    // new DifferentialDriveVoltageConstraint(
-    // Constants.DriveTrain.DRIVE_LINEAR_FF,
-    // Constants.DriveTrain.kDriveKinematics,
-    // 10
-    // );
-
-    // // Create config for trajectory
-    // TrajectoryConfig config =
-    // new TrajectoryConfig(
-    // Constants.DriveTrain.kMaxSpeedMetersPerSecond,
-    // Constants.DriveTrain.kMaxAccelerationMetersPerSecondSquared)
-    // // Add kinematics to ensure max speed is actually obeyed
-    // .setKinematics(Constants.DriveTrain.kDriveKinematics)
-    // // Apply the voltage constraint
-    // .addConstraint(autoVoltageConstraint);
-
-    // // An example trajectory to follow. All units in meters.
-    // Trajectory exampleTrajectory =
-    // TrajectoryGenerator.generateTrajectory(
-    // // Start at the origin facing the +X direction
-
-    // // Pass through these two interior waypoints, making an 's' curve path
-    // List.of(
-    // new Pose2d(0, 0, new Rotation2d(0)),
-    // FieldConstants.cargoA,
-    // FieldConstants.cargoB,
-    // FieldConstants.cargoC,
-    // FieldConstants.cargoD,
-    // FieldConstants.cargoE,
-    // FieldConstants.cargoF,
-    // FieldConstants.cargoG,
-    // new Pose2d(3, 0, new Rotation2d(0))
-    // ),
-    // // End 3 meters straight ahead of where we started, facing forward
-
-    // // Pass config
-    // config);
-
-    // RamseteCommand ramseteCommand =
-    // new RamseteCommand(
-    // exampleTrajectory,
-    // driveTrain::getPose,
-    // new RamseteController(Constants.DriveTrain.kRamseteB,
-    // Constants.DriveTrain.kRamseteZeta),
-    // Constants.DriveTrain.DRIVE_LINEAR_FF,
-    // Constants.DriveTrain.kDriveKinematics,
-    // driveTrain::getWheelSpeeds,
-    // new PIDController(Constants.DriveTrain.DRIVE_LINEAR_VELOCITY_KP, 0, 0),
-    // new PIDController(Constants.DriveTrain.DRIVE_LINEAR_VELOCITY_KP, 0, 0),
-    // // RamseteCommand passes volts to the callback
-    // driveTrain::setDriveMotorVoltage,
-    // driveTrain);
-
-    // // Reset odometry to the starting pose of the trajectory.
-    // driveTrain.resetOdometry(exampleTrajectory.getInitialPose());
-
-    // // Run path following command, then stop at the end.
-    // return ramseteCommand.andThen(() -> driveTrain.setDriveMotorVoltage(0, 0));
+      new IntakeOut(intake),
+      new ResetDriveTrainEncoders(driveTrain),
+      new WaitCommand(0.1),
+      new ParallelCommandGroup(new Index(lowerCon, upperCon),new DriveByDistance(1, driveTrain)),
+      new IntakeIn(intake),
+      new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
+      new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
+      new ParallelCommandGroup(new AutoAim(driveTrain, vision, 2),
+      new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
+      new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
+      new ResetDriveTrainEncoders(driveTrain),
+      new DriveByDistance(0.3, driveTrain)
+    );
   }
-  public Command threeBallAuto() {
 
+  public Command threeBallAuto() {
     return new SequentialCommandGroup(
-        new IntakeOut(intake),
-        new ResetDriveTrainEncoders(driveTrain),
-        new WaitCommand(0.1),
-        new ParallelRaceGroup(new AutoIndex(lowerCon, upperCon, 3), new IntakeRun(intake), new DriveByDistance(1, driveTrain)),
-        new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
-        new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
-        new ParallelCommandGroup(new AutoAim(driveTrain, vision, 2),
-        new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
-        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
-        new ResetDriveTrainEncoders(driveTrain),
-        new DriveByDistance(-0.3, driveTrain),
-        new ResetDriveTrainEncoders(driveTrain),
-        new WaitCommand(.1),
-        new TurnByAngle(-108.5, driveTrain),
-        new ResetDriveTrainEncoders(driveTrain),
-        new WaitCommand(0.1),
-        new IntakeOut(intake),
-        new ParallelRaceGroup(new AutoIndex(lowerCon, upperCon, 3), new IntakeRun(intake), new DriveByDistance(3.0, driveTrain)),
-        new ResetDriveTrainEncoders(driveTrain),
-        new WaitCommand(0.1),
-        new TurnByAngle(-58, driveTrain), 
-        new IntakeIn(intake),
-        new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
-        new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
-        new ParallelCommandGroup(new AutoAim(driveTrain, vision, 2),
-        new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
-        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2))
-        );
-      }
+      new IntakeOut(intake),
+      new ResetDriveTrainEncoders(driveTrain),
+      new WaitCommand(0.1),
+      new ParallelRaceGroup(new AutoIndex(lowerCon, upperCon, 3), new IntakeRun(intake), new DriveByDistance(1, driveTrain)),
+      new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
+      new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
+      new ParallelCommandGroup(new AutoAim(driveTrain, vision, 2),
+      new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
+      new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
+      new ResetDriveTrainEncoders(driveTrain),
+      new DriveByDistance(-0.3, driveTrain),
+      new ResetDriveTrainEncoders(driveTrain),
+      new WaitCommand(.1),
+      new TurnByAngle(-108.5, driveTrain),
+      new ResetDriveTrainEncoders(driveTrain),
+      new WaitCommand(0.1),
+      new IntakeOut(intake),
+      new ParallelRaceGroup(new AutoIndex(lowerCon, upperCon, 3), new IntakeRun(intake), new DriveByDistance(3.0, driveTrain)),
+      new ResetDriveTrainEncoders(driveTrain),
+      new WaitCommand(0.1),
+      new TurnByAngle(-58, driveTrain), 
+      new IntakeIn(intake),
+      new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
+      new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
+      new ParallelCommandGroup(new AutoAim(driveTrain, vision, 2),
+      new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
+      new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2))
+    );
+  }
+
+  public Command getAutonomousCommand() {
+    return autoChooser.getSelected();
+  }
 }
