@@ -30,6 +30,7 @@ import frc.robot.commands.Index;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
 import frc.robot.commands.IntakeRun;
+import frc.robot.commands.LowConRun;
 import frc.robot.commands.PoopCommand;
 import frc.robot.commands.Purge;
 import frc.robot.commands.ResetDriveTrainEncoders;
@@ -96,6 +97,7 @@ public class RobotContainer {
     autoChooser = new SendableChooser<>();
     autoChooser.setDefaultOption("Three Ball Auto", threeBallAuto());
     autoChooser.addOption("Two Ball Auto", twoBallAuto());
+    autoChooser.addOption("Two Ball + Poop", twoBallPoopAuto());
     SmartDashboard.putData(autoChooser);
 
     // Configure the button bindings
@@ -257,7 +259,9 @@ public class RobotContainer {
       new ResetDriveTrainEncoders(driveTrain),
       new TurnByAngle(-108, driveTrain),
       new ResetDriveTrainEncoders(driveTrain),
-      new ParallelRaceGroup(new DriveByDistance(1, driveTrain), new IntakeRun(intake))
+      new ParallelRaceGroup(new DriveByDistance(1, driveTrain),
+       new IntakeRun(intake), new LowConRun(lowerCon)),
+      new PoopCommand(lowerCon).withTimeout(3)
       
     );
   }
