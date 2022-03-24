@@ -40,6 +40,7 @@ import frc.robot.commands.ShootBall;
 import frc.robot.commands.TurnByAngle;
 //import frc.robot.commands.TurnByAngleProfiled;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.ColorSensor;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LowerConveyor;
@@ -65,6 +66,7 @@ public class RobotContainer {
   private final LowerConveyor lowerCon;
   private final UpperConveyor upperCon;
   private final Vision vision;
+  private final ColorSensor colorSensor;
 
   // controller declare
   public static XboxController driverJoyStick;
@@ -84,6 +86,7 @@ public class RobotContainer {
     lowerCon = new LowerConveyor();
     upperCon = new UpperConveyor();
     vision = new Vision();
+    colorSensor = new ColorSensor();
 
     // Configure the button bindings
     configureButtonBindings();
@@ -119,7 +122,7 @@ public class RobotContainer {
     // Operator Joystick
     Button operatorLeftBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kLeftBumper.value);
     operatorLeftBumper.whenHeld(new IntakeOut(intake));
-    operatorLeftBumper.whenPressed(new Index(lowerCon, upperCon).andThen(new IntakeIn(intake)));
+    operatorLeftBumper.whenPressed(new Index(lowerCon, upperCon, colorSensor).andThen(new IntakeIn(intake)));
     Button operatorRightBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kRightBumper.value);
     operatorRightBumper.whenHeld(new IntakeIn(intake));
     Button operatorYButton = new JoystickButton(operatorJoyStick, XboxController.Button.kY.value);
@@ -169,7 +172,7 @@ public class RobotContainer {
         new IntakeOut(intake),
         new ResetDriveTrainEncoders(driveTrain),
         new WaitCommand(0.1),
-        new ParallelCommandGroup(new Index(lowerCon, upperCon),new DriveByDistance(1, driveTrain)),
+        new ParallelCommandGroup(new Index(lowerCon, upperCon, colorSensor), new DriveByDistance(1, driveTrain)),
         new IntakeIn(intake),
         new ParallelCommandGroup(new AutoAim(driveTrain, vision, 0.5),
         new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),

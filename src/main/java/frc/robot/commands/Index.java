@@ -51,7 +51,7 @@ public class Index extends CommandBase {
     }
     long pooperEndReverseTime = pooperStartTimeUs + (1000 * POOPER_REVERSE_TIME_MS);
     int direction = (RobotController.getFPGATime() < pooperEndReverseTime) ? -1 : 1;
-    lowCon.setPooperPercentOutput(direction);
+    lowCon.setPooperPercentOutput(direction * 0.8);
   }
 
   // Called once the command ends or is interrupted.

@@ -5,24 +5,16 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ColorMatch;
-//import com.revrobotics.ColorMatchResult;
-//import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
-//import edu.wpi.first.wpilibj.DriverStation;
-//import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.PicoColorSensor;
-import frc.robot.PicoColorSensor.RawColor;
+
+import static frc.robot.Constants.lowerCon.*;
 
 public class LowerConveyor extends SubsystemBase {
   /** Creates a new LowerConveyer. */
@@ -30,69 +22,17 @@ public class LowerConveyor extends SubsystemBase {
   TalonFX pooperMotor;
   DigitalInput lowConBreakBeam;
   DigitalInput pooperBreakBeam;
-  /** Color Sensor and I2C setup */
-  //private final I2C.Port i2cPort = I2C.Port.kMXP;
-  private final PicoColorSensor colorSensor;
-  private final ColorMatch mColorMatcher;
-  /**
-   * Create the colors to store in the colormatcher to compare the ball color
-   * against
-   */
-  private final Color kBlueTarget = new Color(0.143, 0.427, 0.429);
-  private final Color kGreenTarget = new Color(0.197, 0.561, 0.240);
-  private final Color kRedTarget = new Color(0.561, 0.232, 0.114);
-  private final Color kYellowTarget = new Color(0.361, 0.524, 0.113);
-  /** Make A Detected Color Variable which is reset every Period */
-  private RawColor detectedColor;
-  private final NetworkTableEntry mDetectedColor;
 
   public LowerConveyor() {
-    // Color Sensor and Macther
-    colorSensor = new PicoColorSensor();
-    mColorMatcher = new ColorMatch();
-    // These are the defaul RGB values given for the color red from rev robotics
-    // example
-    // Init detected color
-    detectedColor = colorSensor.getRawColor0();
-    mColorMatcher.addColorMatch(kRedTarget);
-    mColorMatcher.addColorMatch(kBlueTarget);
-    mColorMatcher.addColorMatch(kGreenTarget);
-    mColorMatcher.addColorMatch(kYellowTarget);
-    lowConMotor = new CANSparkMax(Constants.lowerCon.LowConMotor, MotorType.kBrushless);
+    lowConMotor = new CANSparkMax(LOWER_CON_MOTOR_CAN_ID, MotorType.kBrushless);
     lowConMotor.setSmartCurrentLimit(20);
     lowConMotor.enableVoltageCompensation(12.0);
-    pooperMotor = new TalonFX(Constants.lowerCon.PooperMotor);    
+    pooperMotor = new TalonFX(POOPER_MOTOR_CAN_ID);
+    reinitTalonFx(pooperMotor);    
     pooperMotor.setInverted(true);
-
-    lowConBreakBeam = new DigitalInput(Constants.lowerCon.LowConBreakBeam);
-    pooperBreakBeam = new DigitalInput(Constants.lowerCon.PooperBreakBeam);
-    mDetectedColor = Shuffleboard.getTab("Limelight Aim").add("Ball Color", "No Ball").getEntry();
+    lowConBreakBeam = new DigitalInput(LOWER_CON_BREAK_BEAM_DIO_PORT);
+    pooperBreakBeam = new DigitalInput(POOPER_BREAK_BEAM_DIO_PORT);
   }
-
-  // public boolean HasTeamBall() {
-  //   ColorMatchResult match = mColorMatcher.matchColor(detectedColor);
-  //   // if the value is no where close to the desired
-  //   // then null will be returned
-  //   if (match.color != null) {
-  //     if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
-  //       if (match.color == kRedTarget) {
-  //         return true;
-  //       }
-  //     } else if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
-  //       if (match.color == kBlueTarget) {
-  //         return true;
-  //       }
-  //     }
-  //   }
-  //   return false;
-  // }
-
-  // public boolean ColorSensorHasTarget() {
-  //   if (mColorMatcher.matchColor(detectedColor) != null) {
-  //     return true;
-  //   }
-  //   return false;
-  // }
 
   /**
    * 1.0 is intaking, -1.0 is pooping
@@ -130,23 +70,15 @@ public class LowerConveyor extends SubsystemBase {
     return !pooperBreakBeam.get();
   }
 
-  /**
-   * Check if the blue ball is in the intake
-   * 
-   * @return boolean
-   */
-  @Override
-  public void periodic() {
-  //   // This method will be called once per scheduler run
-  //   detectedColor = colorSensor.getColor();
-  //   if (ColorSensorHasTarget()) {
-  //     if (HasTeamBall()) {
-  //       mDetectedColor.forceSetString("Team Ball");
-  //     } else if (!HasTeamBall()) {
-  //       mDetectedColor.forceSetString("Enemy Ball");
-  //     }
-  //   } else {
-  //     mDetectedColor.forceSetString("No Ball");
-  //   }
+  private void reinitTalonFx(TalonFX talonFX) {
+    talonFX.configFactoryDefault();
+    talonFX.configNeutralDeadband(0.001);
+    talonFX.setNeutralMode(NeutralMode.Coast);
+    talonFX.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 
+    POOPER_CURRENT_LIMIT, POOPER_CURRENT_LIMIT + 5, 1));
+    talonFX.configNominalOutputReverse(0, 30);
+    talonFX.configPeakOutputForward(1, 30);
+    talonFX.configPeakOutputReverse(-1, 30);
   }
+
 }
