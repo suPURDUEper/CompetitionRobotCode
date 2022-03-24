@@ -235,6 +235,29 @@ public class RobotContainer {
         new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2))
     );
   }
+  public Command twoBallPoopAuto() {
+    return new SequentialCommandGroup(
+      new IntakeOut(intake),
+      new ResetDriveTrainEncoders(driveTrain),
+      new WaitCommand(0.1),
+      new ParallelRaceGroup(
+        new AutoIndex(lowerCon, upperCon, 3),  
+        new DriveByDistance(1, driveTrain),
+        new IntakeRun(intake)),
+      new ParallelCommandGroup(
+        new AutoAim(driveTrain, vision, 0.5), 
+        new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
+      new ParallelCommandGroup(
+        new AutoAim(driveTrain, vision, 2),
+        new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
+        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
+      new ResetDriveTrainEncoders(driveTrain),
+      new TurnByAngle(-108, driveTrain),
+      new ResetDriveTrainEncoders(driveTrain),
+      new ParallelRaceGroup(new DriveByDistance(1, driveTrain), new IntakeRun(intake))
+      
+    );
+  }
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
