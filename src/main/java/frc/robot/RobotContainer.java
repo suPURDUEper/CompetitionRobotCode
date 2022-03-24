@@ -178,12 +178,12 @@ public class RobotContainer {
       new IntakeOut(intake),
       new ResetDriveTrainEncoders(driveTrain),
       new WaitCommand(0.1),
+      new ParallelRaceGroup(
+        new AutoIndex(lowerCon, upperCon, 3),  
+        new DriveByDistance(1, driveTrain),
+        new IntakeRun(intake)),
       new ParallelCommandGroup(
-        new Index(lowerCon, upperCon, colorSensor), 
-        new DriveByDistance(1, driveTrain)),
-      new IntakeIn(intake),
-      new ParallelCommandGroup(
-        new AutoAim(driveTrain, vision, 0.5),
+        new AutoAim(driveTrain, vision, 0.5), 
         new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
       new ParallelCommandGroup(
         new AutoAim(driveTrain, vision, 2),
