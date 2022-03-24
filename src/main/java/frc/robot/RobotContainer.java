@@ -257,7 +257,7 @@ public class RobotContainer {
         new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
         new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
       new ResetDriveTrainEncoders(driveTrain),
-      new TurnByAngle(-108, driveTrain),
+      new TurnByAngle(-90, driveTrain),
       new ResetDriveTrainEncoders(driveTrain),
       new ParallelRaceGroup(new DriveByDistance(1, driveTrain),
        new IntakeRun(intake), new LowConRun(lowerCon)),
