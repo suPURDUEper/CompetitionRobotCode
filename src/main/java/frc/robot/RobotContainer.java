@@ -30,6 +30,7 @@ import frc.robot.commands.Index;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
 import frc.robot.commands.IntakeRun;
+import frc.robot.commands.PoopCommand;
 import frc.robot.commands.Purge;
 import frc.robot.commands.ResetDriveTrainEncoders;
 import frc.robot.commands.SetFlywheelToFarShot;
@@ -143,6 +144,8 @@ public class RobotContainer {
 
     Button operatorRightTrigger = new Button(() -> operatorJoyStick.getRightTriggerAxis() > 0.5);
     operatorRightTrigger.whenHeld(new Purge(intake, lowerCon, upperCon, shooter));
+    Button operatorLeftTrigger = new Button(() -> operatorJoyStick.getLeftTriggerAxis() > 0.5);
+    operatorLeftTrigger.whenHeld(new PoopCommand(lowerCon));
 
     climber.setDefaultCommand(new FreeClimb(climber));
 
