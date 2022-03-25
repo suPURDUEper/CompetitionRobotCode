@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
@@ -16,17 +18,19 @@ public class Index extends CommandBase {
   private final LowerConveyor lowCon;
   private final UpperConveyor upperCon;
   private final ColorSensor colorSensor;
+  private final BooleanSupplier reversePooper;
 
   private long pooperStartTimeUs = 0;
   private static final int POOPER_REVERSE_TIME_MS = 1000;
 
-  public Index(LowerConveyor mLowerConveyor, UpperConveyor mUpperConveyor, ColorSensor colorSensor) {
+  public Index(LowerConveyor mLowerConveyor, UpperConveyor mUpperConveyor, ColorSensor colorSensor, BooleanSupplier reversePooper) {
     // Use addRequirements() here to declare subsystem dependencies.
     lowCon = mLowerConveyor;
     addRequirements(mLowerConveyor);
     upperCon = mUpperConveyor;
     addRequirements(mUpperConveyor);
     this.colorSensor = colorSensor;
+    this.reversePooper = reversePooper;
   }
 
   // Called when the command is initially scheduled.
@@ -43,14 +47,18 @@ public class Index extends CommandBase {
     // Run lower conveyor always, command will end when we have two balls
     lowCon.setLowerConveyorPercentOutput(1);
 
-    // Run pooper as long as we don't have two balls.
-    // Switch direction momentarily for wrong color ball
-    if (colorSensor.HasWrongBall()) {
-      // Switch the direction of the pooper for a second
-      pooperStartTimeUs = RobotController.getFPGATime();
+    // // Run pooper as long as we don't have two balls.
+    // // Switch direction momentarily for wrong color ball
+    // if (colorSensor.HasWrongBall()) {
+    //   // Switch the direction of the pooper for a second
+    //   pooperStartTimeUs = RobotController.getFPGATime();
+    // }
+    // long pooperEndReverseTime = pooperStartTimeUs + (1000 * POOPER_REVERSE_TIME_MS);
+    // int direction = (RobotController.getFPGATime() < pooperEndReverseTime) ? -1 : 1;
+    int direction = 1;
+    if (reversePooper != null && reversePooper.getAsBoolean()) {
+      direction = -1;
     }
-    long pooperEndReverseTime = pooperStartTimeUs + (1000 * POOPER_REVERSE_TIME_MS);
-    int direction = (RobotController.getFPGATime() < pooperEndReverseTime) ? -1 : 1;
     lowCon.setPooperPercentOutput(direction * 0.8 * 0.7);
   }
 

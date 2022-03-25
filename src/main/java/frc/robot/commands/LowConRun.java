@@ -13,6 +13,7 @@ public class LowConRun extends CommandBase {
   public LowConRun(LowerConveyor mLowerConveyor) {
     // Use addRequirements() here to declare subsystem dependencies.
     lowCon = mLowerConveyor;
+    addRequirements(mLowerConveyor);
   }
 
   // Called when the command is initially scheduled.

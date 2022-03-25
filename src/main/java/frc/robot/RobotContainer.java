@@ -97,7 +97,7 @@ public class RobotContainer {
     autoChooser = new SendableChooser<>();
     autoChooser.setDefaultOption("Three Ball Auto", threeBallAuto());
     autoChooser.addOption("Two Ball Auto", twoBallAuto());
-    autoChooser.addOption("Two Ball + Poop", twoBallPoopAuto());
+    // autoChooser.addOption("Two Ball + Poop", twoBallPoopAuto());
     SmartDashboard.putData(autoChooser);
 
     // Configure the button bindings
@@ -129,9 +129,10 @@ public class RobotContainer {
     driverLeftTrigger.whileHeld(new IntakeRun(intake));
 
     // Operator Joystick
+    Button operatorLeftTrigger = new Button(() -> operatorJoyStick.getLeftTriggerAxis() > 0.5);
     Button operatorLeftBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kLeftBumper.value);
     operatorLeftBumper.whenHeld(new IntakeOut(intake));
-    operatorLeftBumper.whenPressed(new Index(lowerCon, upperCon, colorSensor).andThen(new IntakeIn(intake)));
+    operatorLeftBumper.whenPressed(new Index(lowerCon, upperCon, colorSensor, operatorLeftTrigger::getAsBoolean).andThen(new IntakeIn(intake)));
     Button operatorRightBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kRightBumper.value);
     operatorRightBumper.whenHeld(new IntakeIn(intake));
 
@@ -146,8 +147,7 @@ public class RobotContainer {
 
     Button operatorRightTrigger = new Button(() -> operatorJoyStick.getRightTriggerAxis() > 0.5);
     operatorRightTrigger.whenHeld(new Purge(intake, lowerCon, upperCon, shooter));
-    Button operatorLeftTrigger = new Button(() -> operatorJoyStick.getLeftTriggerAxis() > 0.5);
-    operatorLeftTrigger.whenHeld(new PoopCommand(lowerCon));
+    // operatorLeftTrigger.whenHeld(new PoopCommand(lowerCon));
 
     climber.setDefaultCommand(new FreeClimb(climber));
 
@@ -259,10 +259,11 @@ public class RobotContainer {
       new ResetDriveTrainEncoders(driveTrain),
       new TurnByAngle(-90, driveTrain),
       new ResetDriveTrainEncoders(driveTrain),
-      new ParallelRaceGroup(new DriveByDistance(1, driveTrain),
-       new IntakeRun(intake), new LowConRun(lowerCon)),
+      new ParallelRaceGroup(
+        new DriveByDistance(1, driveTrain),
+        new IntakeRun(intake), 
+        new LowConRun(lowerCon)),
       new PoopCommand(lowerCon).withTimeout(3)
-      
     );
   }
 
