@@ -219,7 +219,7 @@ public class RobotContainer {
       new DriveByDistance(-0.3, driveTrain),
       new ResetDriveTrainEncoders(driveTrain),
       new WaitCommand(.1),
-      new TurnByAngle(-108.5, driveTrain),
+      new TurnByAngle(-111.5, driveTrain),
       new ResetDriveTrainEncoders(driveTrain),
       new WaitCommand(0.1),
       new IntakeOut(intake),
