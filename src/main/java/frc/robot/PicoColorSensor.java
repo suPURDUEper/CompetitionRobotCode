@@ -7,6 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.hal.SerialPortJNI;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 
 public class PicoColorSensor implements AutoCloseable {
@@ -90,16 +91,19 @@ public class PicoColorSensor implements AutoCloseable {
 
   private void threadMain() {
     // Using JNI for a non allocating read
-    int port = SerialPortJNI.serialInitializePort((byte)1);
-    SerialPortJNI.serialSetBaudRate(port, 115200);
-    SerialPortJNI.serialSetDataBits(port, (byte)8);
-    SerialPortJNI.serialSetParity(port, (byte)0);
-    SerialPortJNI.serialSetStopBits(port, (byte)10);
+    SerialPort serialPort = new SerialPort(115200, SerialPort.Port.kUSB1);
+    serialPort.enableTermination('\n');
+    serialPort.setTimeout(1);
+    // int port = SerialPortJNI.serialInitializePort((byte)1);
+    // SerialPortJNI.serialSetBaudRate(port, 115200);
+    // SerialPortJNI.serialSetDataBits(port, (byte)8);
+    // SerialPortJNI.serialSetParity(port, (byte)0);
+    // SerialPortJNI.serialSetStopBits(port, (byte)10);
 
-    SerialPortJNI.serialSetTimeout(port, 1);
-    SerialPortJNI.serialEnableTermination(port, '\n');
+    // SerialPortJNI.serialSetTimeout(port, 1);
+    // SerialPortJNI.serialEnableTermination(port, '\n');
 
-    HAL.report(tResourceType.kResourceType_SerialPort, 2);
+    // HAL.report(tResourceType.kResourceType_SerialPort, 2);
 
     byte[] buffer = new byte[257];
     SingleCharSequence charSeq = new SingleCharSequence();
@@ -110,8 +114,10 @@ public class PicoColorSensor implements AutoCloseable {
     RawColor color1 = new RawColor();
 
     while (threadRunning.get()) {
-      int read = SerialPortJNI.serialRead(port, buffer, buffer.length - 1);
-      if (read <= 0) {
+      // int read = SerialPortJNI.serialRead(port, buffer, buffer.length - 1);
+      String readString = serialPort.readString();
+      // if (read <= 0) {
+      if (readString != null && !readString.isEmpty()) {
         try {
           threadLock.lock();
           this.hasColor0 = false;
@@ -126,32 +132,62 @@ public class PicoColorSensor implements AutoCloseable {
       }
 
       // Trim trailing newline if exists
-      if (buffer[read - 1] == '\n') {
-        read--;
+      // if (buffer[read - 1] == '\n') {
+      //   read--;
+      // }
+      if (readString.charAt(0) == '\n') {
+        readString = readString.substring(1);
       }
 
-      if (read == 0) {
+      //if (read == 0) {
+      if (readString.isEmpty()) {
         continue;
       }
 
       if (debugPrints.get()) {
-        System.out.println(new String(buffer, 0, read, StandardCharsets.UTF_8));
+        // System.out.println(new String(buffer, 0, read, StandardCharsets.UTF_8));
+        System.out.println(readString);
       }
 
-      lastComma.value = -1;
+      // lastComma.value = -1;
 
-      boolean hasColor0 = parseIntFromIndex(charSeq, read, lastComma) != 0;
-      boolean hasColor1 = parseIntFromIndex(charSeq, read, lastComma) != 0;
-      color0.red = parseIntFromIndex(charSeq, read, lastComma);
-      color0.green = parseIntFromIndex(charSeq, read, lastComma);
-      color0.blue = parseIntFromIndex(charSeq, read, lastComma);
-      color0.ir = parseIntFromIndex(charSeq, read, lastComma);
-      int prox0 = parseIntFromIndex(charSeq, read, lastComma);
-      color1.red = parseIntFromIndex(charSeq, read, lastComma);
-      color1.green = parseIntFromIndex(charSeq, read, lastComma);
-      color1.blue = parseIntFromIndex(charSeq, read, lastComma);
-      color1.ir = parseIntFromIndex(charSeq, read, lastComma);
-      int prox1 = parseIntFromIndex(charSeq, read, lastComma);
+      // boolean hasColor0 = parseIntFromIndex(charSeq, read, lastComma) != 0;
+      // boolean hasColor1 = parseIntFromIndex(charSeq, read, lastComma) != 0;
+      // color0.red = parseIntFromIndex(charSeq, read, lastComma);
+      // color0.green = parseIntFromIndex(charSeq, read, lastComma);
+      // color0.blue = parseIntFromIndex(charSeq, read, lastComma);
+      // color0.ir = parseIntFromIndex(charSeq, read, lastComma);
+      // int prox0 = parseIntFromIndex(charSeq, read, lastComma);
+      // color1.red = parseIntFromIndex(charSeq, read, lastComma);
+      // color1.green = parseIntFromIndex(charSeq, read, lastComma);
+      // color1.blue = parseIntFromIndex(charSeq, read, lastComma);
+      // color1.ir = parseIntFromIndex(charSeq, read, lastComma);
+      // int prox1 = parseIntFromIndex(charSeq, read, lastComma);
+
+      String[] intStrings = readString.split(",");
+
+      int[] ints = new int[intStrings.length];
+      
+      for (int i = 0; i < intStrings.length; i++) {
+        try {
+          ints[i] = Integer.parseInt(intStrings[i]);
+        } catch (NumberFormatException e) {
+          ints[i] = -1;
+        }
+      }
+
+      boolean hasColor0 = ints[0] == 1 ? true : false;
+      boolean hasColor1 = ints[1] == 1 ? true : false;;
+      color0.red = ints[2];
+      color0.green = ints[3];
+      color0.blue = ints[4];
+      color0.ir = ints[5];
+      int prox0 = ints[6];
+      color1.red = ints[7];
+      color1.green = ints[8];
+      color1.blue = ints[9];
+      color1.ir = ints[10];
+      int prox1 = ints[11];
 
       double ts = Timer.getFPGATimestamp();
 
@@ -179,7 +215,8 @@ public class PicoColorSensor implements AutoCloseable {
       }
     }
 
-    SerialPortJNI.serialClose(port);
+    // SerialPortJNI.serialClose(port);
+    serialPort.close();
   }
 
   public PicoColorSensor() {
