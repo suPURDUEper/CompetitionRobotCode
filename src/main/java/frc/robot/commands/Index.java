@@ -59,6 +59,9 @@ public class Index extends CommandBase {
     if (reversePooper != null && reversePooper.getAsBoolean()) {
       direction = -1;
     }
+    if (colorSensor.HasWrongBall()) {
+      direction = -1;
+    }
     lowCon.setPooperPercentOutput(direction * 0.8 * 0.7);
   }
 

@@ -27,23 +27,26 @@ public class ColorSensor extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    color = getColor();
   }
 
   public Color getColor() {
     rawColor = colorSensor.getRawColor0();
     double colorsum = rawColor.red + rawColor.green + rawColor.blue;
     final Color color = new Color(rawColor.red/colorsum, rawColor.green/colorsum, rawColor.blue/colorsum);
-    System.out.println("RED: " + color.red + " GREEN: " + color.green + " BLUE: " + color.blue + " IR: " + ir);
+    // System.out.println("RED: " + color.red + " GREEN: " + color.green + " BLUE: " + color.blue + " IR: " + ir);
     return color;
   }
   public boolean HasWrongBall() {
-    
     // if the value is no where close to the desired
     // then null will be returned
-    if (ir <= 5) {
-      if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
-
+    if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
+      if (color.green > 0.4) {
+        return true;
+      }
+    } else if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
+      if (color.red > 0.4) {
+        return true;
       }
     }
     return false;
