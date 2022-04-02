@@ -47,7 +47,7 @@ public final class Constants {
         public static final double DRIVE_LINEAR_KV = 2.8751;
         public static final double DRIVE_LINEAR_KA = 0.58882;
         public static final SimpleMotorFeedforward DRIVE_LINEAR_FF = new SimpleMotorFeedforward(DRIVE_LINEAR_KS, DRIVE_LINEAR_KV, DRIVE_LINEAR_KA);
-        public static final double DRIVE_LINEAR_VELOCITY_KP = 3.9922;
+        public static final double DRIVE_LINEAR_VELOCITY_KP = .002;
         public static final double DRIVE_LINAER_VELOCTIY_MAX_ERR = 1;
         public static final double DRIVE_MAX_CONTROL_EFFORT = 7;
         public static final double DRIVE_LINEAR_POSITION_KP = 138.24;
