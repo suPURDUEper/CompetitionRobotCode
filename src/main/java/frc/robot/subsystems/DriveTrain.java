@@ -20,10 +20,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-//import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
@@ -44,14 +42,16 @@ public class DriveTrain extends SubsystemBase {
 
 
   // Simulation classes help us simulate our robot
-  private final Encoder leftFrontMockEncoder = new Encoder(7, 8);
-  private final Encoder rightFrontMockEncoder = new Encoder(5, 6);
-  private final EncoderSim m_leftEncoderSim = new EncoderSim(leftFrontMockEncoder);
-  private final EncoderSim m_rightEncoderSim = new EncoderSim(rightFrontMockEncoder);
+  private final Encoder leftEncoder = new Encoder(1, 0);
+  private final Encoder rightEncoder = new Encoder(4, 5);
+  private final EncoderSim m_leftEncoderSim = new EncoderSim(leftEncoder);
+  private final EncoderSim m_rightEncoderSim = new EncoderSim(rightEncoder);
   private final Field2d fieldDashboardWidget = new Field2d();
   private final DifferentialDrivetrainSim m_drivetrainSimulator = createDrivetrainSim();
 
-  private static final double DRIVE_METERS_PER_PULSE = 1 / 22.756;
+  private static final double DRIVE_METERS_PER_PULSE_BUILTIN = 1 / 22.756;
+  private static final double DRIVE_METERS_PER_PULSE_EXTERNAL = 1;
+
   
   public DriveTrain() {
     leftFront = new CANSparkMax(DRIVE_LEFT_FRONT_CAN_ID, MotorType.kBrushless);
@@ -67,12 +67,12 @@ public class DriveTrain extends SubsystemBase {
 
     // Setup odometry
     //double metersPerRevolution = Units.inchesToMeters(Math.PI * WHEEL_DIAMETER_INCHES);
-    leftFrontMockEncoder.setDistancePerPulse(DRIVE_METERS_PER_PULSE);
-    rightFrontMockEncoder.setDistancePerPulse(DRIVE_METERS_PER_PULSE);
-    leftFront.getEncoder().setPositionConversionFactor(DRIVE_METERS_PER_PULSE);
-    rightFront.getEncoder().setPositionConversionFactor(DRIVE_METERS_PER_PULSE);
+    leftFront.getEncoder().setPositionConversionFactor(DRIVE_METERS_PER_PULSE_BUILTIN);
+    rightFront.getEncoder().setPositionConversionFactor(DRIVE_METERS_PER_PULSE_BUILTIN);
+    leftEncoder.setDistancePerPulse(Math.PI * WHEEL_DIAMETER_METERS / ENCODER_RESOLUTION);
+    rightEncoder.setDistancePerPulse(Math.PI * WHEEL_DIAMETER_METERS / ENCODER_RESOLUTION);
     gyro = new AHRS();
-    odometry = new DifferentialDriveOdometry(gyro.getRotation2d());
+    odometry = new DifferentialDriveOdometry(getGyroRotation2D());
     resetOdometry(new Pose2d());
     SmartDashboard.putData("Field", fieldDashboardWidget);
   }
@@ -95,14 +95,13 @@ public class DriveTrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (RobotBase.isReal()) {
-      odometry.update(getGyroRotation2D(), getLeftDriveMeters(), getRightDriveMeters());
-    } else {
-      odometry.update(gyro.getRotation2d(), leftFrontMockEncoder.getDistance(), rightFrontMockEncoder.getDistance());
-    }
+    odometry.update(getGyroRotation2D(), leftEncoder.getDistance(), rightEncoder.getDistance());
     fieldDashboardWidget.setRobotPose(odometry.getPoseMeters());
     SmartDashboard.putNumber("Left Meters", getLeftDriveMeters());
     SmartDashboard.putNumber("Right Meters", getRightDriveMeters());
+    SmartDashboard.putNumber("Left Current", leftFront.getOutputCurrent());
+    SmartDashboard.putNumber("Right Current", rightFront.getOutputCurrent());
+
 
   }
 
@@ -175,11 +174,11 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public double getLeftDriveMeters() {
-    return -1 * leftFront.getEncoder().getPosition();
+    return leftEncoder.getDistance();
   }
 
   public double getRightDriveMeters() {
-    return -1 * rightFront.getEncoder().getPosition();
+    return rightEncoder.getDistance();
   }
 
   public Rotation2d getGyroRotation2D() {
@@ -217,7 +216,8 @@ public class DriveTrain extends SubsystemBase {
    */
   public double getTurnRate() {
     // AHRS::getRate is clockwise positive, we want everything to be counterclockwise positive
-    return -1 * gyro.getRate();
+    // but we are mounted upsidedown, so it works out. 
+    return gyro.getRate();
   }
 
   /** Update our simulation. This should be run every robot loop in simulation. */
