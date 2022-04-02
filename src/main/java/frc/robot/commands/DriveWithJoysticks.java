@@ -44,7 +44,7 @@ public class DriveWithJoysticks extends CommandBase {
       turnInput = -1 * RobotContainer.driverJoyStick.getRawAxis(0);
       throttleInput = -1 * RobotContainer.driverJoyStick.getRawAxis(1);
     }
-    driveTrain.driveWithJoysticks(speed * squareJoystick(throttleInput), speed * squareJoystick(-1*turnInput));
+    driveTrain.driveWithJoysticks(speed * squareJoystick(-throttleInput), speed * squareJoystick(turnInput));
   }
 
   private double squareJoystick(double original) {

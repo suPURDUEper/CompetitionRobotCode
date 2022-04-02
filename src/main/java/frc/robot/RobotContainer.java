@@ -4,6 +4,19 @@
 
 package frc.robot;
 
+import java.util.Collections;
+import java.util.List;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -12,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
@@ -40,6 +54,8 @@ import frc.robot.commands.SetFlywheelToLimelightShot;
 import frc.robot.commands.SetFlywheelToLimelightShotTimed;
 import frc.robot.commands.SetFlywheelToLowShot;
 import frc.robot.commands.ShootBall;
+import frc.robot.commands.TestArcadeDrive;
+import frc.robot.commands.TestDriveVoltageCommand;
 import frc.robot.commands.TurnByAngle;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.ColorSensor;
@@ -268,6 +284,65 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    // return autoChooser.getSelected();
+    return new TestArcadeDrive(driveTrain).withTimeout(1);
+  }
+
+  public Command testPathCommand() {
+
+    // Create a voltage constraint to ensure we don't accelerate too fast
+    var autoVoltageConstraint =
+        new DifferentialDriveVoltageConstraint(
+            new SimpleMotorFeedforward(
+                Constants.DriveTrain.DRIVE_LINEAR_KS,
+                Constants.DriveTrain.DRIVE_LINEAR_KV,
+                Constants.DriveTrain.DRIVE_LINEAR_KA),
+            Constants.DriveTrain.kDriveKinematics,
+            6);
+
+    // Create config for trajectory
+    TrajectoryConfig config =
+        new TrajectoryConfig(
+                Constants.DriveTrain.kMaxSpeedMetersPerSecond,
+                Constants.DriveTrain.kMaxAccelerationMetersPerSecondSquared)
+            // Add kinematics to ensure max speed is actually obeyed
+            .setKinematics(Constants.DriveTrain.kDriveKinematics)
+            // Apply the voltage constraint
+            .addConstraint(autoVoltageConstraint);
+
+    // An example trajectory to follow.  All units in meters.
+    Trajectory exampleTrajectory =
+        TrajectoryGenerator.generateTrajectory(
+            // Start at the origin facing the +X direction
+            new Pose2d(0, 0, new Rotation2d(0)),
+            // Pass through these two interior waypoints, making an 's' curve path
+            Collections.emptyList(),
+            // End 3 meters straight ahead of where we started, facing forward
+            new Pose2d(1, 0, new Rotation2d(0)),
+            // Pass config
+            config);
+
+    RamseteCommand ramseteCommand =
+        new RamseteCommand(
+            exampleTrajectory,
+            driveTrain::getPose,
+            new RamseteController(Constants.DriveTrain.kRamseteB, Constants.DriveTrain.kRamseteZeta),
+            new SimpleMotorFeedforward(
+              Constants.DriveTrain.DRIVE_LINEAR_KS,
+              Constants.DriveTrain.DRIVE_LINEAR_KV,
+              Constants.DriveTrain.DRIVE_LINEAR_KA),
+            Constants.DriveTrain.kDriveKinematics,
+            driveTrain::getWheelSpeeds,
+            new PIDController(Constants.DriveTrain.DRIVE_LINEAR_VELOCITY_KP, 0, 0),
+            new PIDController(Constants.DriveTrain.DRIVE_LINEAR_VELOCITY_KP, 0, 0),
+            // RamseteCommand passes volts to the callback
+            driveTrain::setDriveMotorVoltage,
+            driveTrain);
+
+    // Reset odometry to the starting pose of the trajectory.
+    driveTrain.resetOdometry(exampleTrajectory.getInitialPose());
+
+    // Run path following command, then stop at the end.
+    return ramseteCommand.andThen(() -> driveTrain.setDriveMotorVoltage(0, 0));
   }
 }

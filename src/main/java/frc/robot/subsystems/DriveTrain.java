@@ -55,10 +55,10 @@ public class DriveTrain extends SubsystemBase {
   
   public DriveTrain() {
     leftFront = new CANSparkMax(DRIVE_LEFT_FRONT_CAN_ID, MotorType.kBrushless);
-    leftFront.setInverted(true);
+    leftFront.setInverted(false);
     leftBack = new CANSparkMax(DRIVE_LEFT_BACK_CAN_ID, MotorType.kBrushless);
     rightFront = new CANSparkMax(DRIVE_RIGHT_FRONT_CAN_ID, MotorType.kBrushless);
-    rightFront.setInverted(false);
+    rightFront.setInverted(true);
     rightBack = new CANSparkMax(DRIVE_RIGHT_BACK_CAN_ID, MotorType.kBrushless);
     
     leftBack.follow(leftFront);
@@ -72,8 +72,7 @@ public class DriveTrain extends SubsystemBase {
     leftEncoder.setDistancePerPulse(Math.PI * WHEEL_DIAMETER_METERS / ENCODER_RESOLUTION);
     rightEncoder.setDistancePerPulse(Math.PI * WHEEL_DIAMETER_METERS / ENCODER_RESOLUTION);
     gyro = new AHRS();
-    odometry = new DifferentialDriveOdometry(getGyroRotation2D());
-    resetOdometry(new Pose2d());
+    odometry = new DifferentialDriveOdometry(new Rotation2d());
     SmartDashboard.putData("Field", fieldDashboardWidget);
   }
 
