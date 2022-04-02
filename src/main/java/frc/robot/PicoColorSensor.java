@@ -7,6 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.hal.SerialPortJNI;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 
 public class PicoColorSensor implements AutoCloseable {
@@ -90,7 +91,7 @@ public class PicoColorSensor implements AutoCloseable {
 
   private void threadMain() {
     // Using JNI for a non allocating read
-    int port = SerialPortJNI.serialInitializePort((byte)1);
+    int port = SerialPortJNI.serialInitializePort((byte)2);
     SerialPortJNI.serialSetBaudRate(port, 115200);
     SerialPortJNI.serialSetDataBits(port, (byte)8);
     SerialPortJNI.serialSetParity(port, (byte)0);
