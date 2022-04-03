@@ -4,7 +4,12 @@
 
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
+import frc.robot.subsystems.ColorSensor;
 import frc.robot.subsystems.LowerConveyor;
 import frc.robot.subsystems.UpperConveyor;
 
@@ -12,13 +17,20 @@ public class Index extends CommandBase {
   /** Creates a new IntakeRun. */
   private final LowerConveyor lowCon;
   private final UpperConveyor upperCon;
+  private final ColorSensor colorSensor;
+  private final BooleanSupplier reversePooper;
 
-  public Index(LowerConveyor mLowerConveyor, UpperConveyor mUpperConveyor) {
+  private long pooperStartTimeUs = 0;
+  private static final int POOPER_REVERSE_TIME_MS = 1000;
+
+  public Index(LowerConveyor mLowerConveyor, UpperConveyor mUpperConveyor, ColorSensor colorSensor, BooleanSupplier reversePooper) {
     // Use addRequirements() here to declare subsystem dependencies.
     lowCon = mLowerConveyor;
     addRequirements(mLowerConveyor);
     upperCon = mUpperConveyor;
     addRequirements(mUpperConveyor);
+    this.colorSensor = colorSensor;
+    this.reversePooper = reversePooper;
   }
 
   // Called when the command is initially scheduled.
@@ -29,17 +41,25 @@ public class Index extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (!upperCon.hasTopBall()) {
-      // We have no balls, run everything
-      lowCon.setPooperPercentOutput(.8);
-      lowCon.setLowerConveyorPercentOutput(1);
-      upperCon.setPercentOutput(1);
-    } else if (upperCon.hasTopBall() && !upperCon.hasTwoBalls()) {
-      // We have one ball, run everything but upper con
-      upperCon.setPercentOutput(0);
-      lowCon.setPooperPercentOutput(.8);
-      lowCon.setLowerConveyorPercentOutput(1);
-    } 
+    // Run upper conveyor if we have no balls, stop otherwise
+    upperCon.setPercentOutput(upperCon.hasTopBall() ? 0 : 1);
+
+    // Run lower conveyor always, command will end when we have two balls
+    lowCon.setLowerConveyorPercentOutput(1);
+
+    // // Run pooper as long as we don't have two balls.
+    // // Switch direction momentarily for wrong color ball
+    // if (colorSensor.HasWrongBall()) {
+    //   // Switch the direction of the pooper for a second
+    //   pooperStartTimeUs = RobotController.getFPGATime();
+    // }
+    // long pooperEndReverseTime = pooperStartTimeUs + (1000 * POOPER_REVERSE_TIME_MS);
+    // int direction = (RobotController.getFPGATime() < pooperEndReverseTime) ? -1 : 1;
+    int direction = 1;
+    if (reversePooper != null && reversePooper.getAsBoolean()) {
+      direction = -1;
+    }
+    lowCon.setPooperPercentOutput(direction * 0.8 * 0.7);
   }
 
   // Called once the command ends or is interrupted.

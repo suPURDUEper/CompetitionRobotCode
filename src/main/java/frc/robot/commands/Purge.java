@@ -36,7 +36,7 @@ public class Purge extends CommandBase {
     shooter.setFlywheelTargetRPM(-6300);
     shooter.setAcceleratorTargetRPM(-6300);
     upperCon.setPercentOutput(-0.5);
-    lowCon.setPooperPercentOutput(-0.3);
+    lowCon.setPooperPercentOutput(-0.7);
     lowCon.setLowerConveyorPercentOutput(-1);
     intake.IndexerMotorSet(-1);
     intake.IntakeMotorSet(-1);

@@ -87,10 +87,11 @@ public final class Constants {
     }
 
     public static class lowerCon {
-        public static final int LowConBreakBeam = 0;
-        public static final int PooperBreakBeam = 1;
-        public static final int LowConMotor = 6;
-        public static final int PooperMotor = 7;
+        public static final int LOWER_CON_BREAK_BEAM_DIO_PORT = 0;
+        public static final int POOPER_BREAK_BEAM_DIO_PORT = 1;
+        public static final int LOWER_CON_MOTOR_CAN_ID = 6;
+        public static final int POOPER_MOTOR_CAN_ID = 7;
+        public static final int POOPER_CURRENT_LIMIT = 40;
     }
 
     public static class Shooter {
