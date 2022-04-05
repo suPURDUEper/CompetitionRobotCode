@@ -19,7 +19,7 @@ public class TurnByAngle extends PIDCommand {
         // Set reference to target
         targetAngleDegrees + drive.getHeading(),
         // Pipe output to turn robot
-        output -> drive.arcadeDrive(0, output + Math.copySign(0.3, output)),
+        output -> drive.arcadeDrive(0, -output + Math.copySign(0.3, -output)),
         // Require the drive
         drive);
 

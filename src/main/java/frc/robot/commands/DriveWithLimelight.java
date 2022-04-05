@@ -18,10 +18,6 @@ public class DriveWithLimelight extends CommandBase {
 
   // Constants
   private double mSteeringKp = 0.015;
-  private double mDriveKp = 0.80;
-  private double steeringAdjust;
-  private double mTx;
-  private double headingError = 0;
   private double minCommand = 0.3;
   private double turnCommand;
   // Network Table Entries
@@ -44,14 +40,14 @@ public class DriveWithLimelight extends CommandBase {
   }
 
   // Called every time the scheduler runs while the command is scheduled.
+  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     double throttle = RobotContainer.driverJoyStick.getLeftY();
     if (mVision.isTargetValid()) {
-      mTx = mVision.getTx();
-      headingError = -mTx;
-      if (Math.abs(headingError) > 1) {
-        turnCommand = mSteeringKp * headingError + Math.copySign(minCommand, headingError);
+      double mTx = mVision.getTx();
+      if (Math.abs(mTx) > 1) {
+        turnCommand = mSteeringKp * mTx + Math.copySign(minCommand, mTx);
       } else {
         turnCommand = 0;
       }
