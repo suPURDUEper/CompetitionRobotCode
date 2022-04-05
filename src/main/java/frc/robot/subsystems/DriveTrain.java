@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.DriveTrain.*;
 
+import java.util.Collections;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -20,10 +22,12 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -82,13 +86,8 @@ public class DriveTrain extends SubsystemBase {
       DCMotor.getNEO(2),
       GEARBOX_RATIO,
       TRACK_WIDTH_METERS,
-      WHEEL_DIAMETER_METERS,
-      // The standard deviations for measurement noise:
-      // x and y:          0.001 m
-      // heading:          0.001 rad
-      // l and r velocity: 0.1   m/s
-      // l and r position: 0.005 m
-      VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
+      WHEEL_DIAMETER_METERS/2,
+      null
     );
   }
 
@@ -100,7 +99,14 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Right Meters", getRightDriveMeters());
     SmartDashboard.putNumber("Left Current", leftFront.getOutputCurrent());
     SmartDashboard.putNumber("Right Current", rightFront.getOutputCurrent());
+  }
 
+  public void addTrajectoryToDashboard(Trajectory trajectory) {
+    fieldDashboardWidget.getObject("traj").setTrajectory(trajectory);
+  }
+
+  public void removeTrajectoryFromDashboard() {
+    fieldDashboardWidget.getObject("traj").setPoses(Collections.emptyList());
 
   }
 
@@ -144,7 +150,7 @@ public class DriveTrain extends SubsystemBase {
    * @return The current wheel speeds.
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(leftFront.getEncoder().getVelocity(), rightFront.getEncoder().getVelocity());
+    return new DifferentialDriveWheelSpeeds(leftEncoder.getRate(), rightEncoder.getRate());
   }
 
   /**
@@ -246,6 +252,6 @@ public class DriveTrain extends SubsystemBase {
     // m_gyroSim.setAngle(-m_drivetrainSimulator.getHeading().getDegrees());
     int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
     SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Yaw"));
-    angle.set(-1 * m_drivetrainSimulator.getHeading().getDegrees());
+    angle.set(m_drivetrainSimulator.getHeading().getDegrees());
   }
 }

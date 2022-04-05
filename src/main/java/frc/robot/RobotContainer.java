@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstraint;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -39,11 +40,13 @@ import frc.robot.commands.ClimberUp;
 import frc.robot.commands.DriveByDistance;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.DriveWithLimelight;
+import frc.robot.commands.FiveBallAuto;
 import frc.robot.commands.FreeClimb;
 import frc.robot.commands.Index;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
 import frc.robot.commands.IntakeRun;
+import frc.robot.commands.LoggingRamseteCommand;
 import frc.robot.commands.LowConRun;
 import frc.robot.commands.PoopCommand;
 import frc.robot.commands.Purge;
@@ -65,6 +68,7 @@ import frc.robot.subsystems.LowerConveyor;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.UpperConveyor;
 import frc.robot.subsystems.Vision;
+import frc.robot.util.GeomUtil;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -285,64 +289,50 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     // return autoChooser.getSelected();
-    return testPathCommand();
+    // return testPathCommand();
+    return new FiveBallAuto(driveTrain, intake, lowerCon, upperCon, shooter, vision, colorSensor);
   }
 
   public Command testPathCommand() {
 
-    // Create a voltage constraint to ensure we don't accelerate too fast
-    var autoVoltageConstraint =
-        new DifferentialDriveVoltageConstraint(
-            new SimpleMotorFeedforward(
-                Constants.DriveTrain.DRIVE_LINEAR_KS,
-                Constants.DriveTrain.DRIVE_LINEAR_KV,
-                Constants.DriveTrain.DRIVE_LINEAR_KA),
-            Constants.DriveTrain.kDriveKinematics,
-            6);
+    Pose2d start = new Pose2d(0, 0, new Rotation2d(0));
+    Pose2d end = new Pose2d(3, 0, new Rotation2d(0));
+    List<Translation2d> interiorPoints = List.of(new Translation2d(1, 1), new Translation2d(2, -1));
 
-    // Create config for trajectory
-    TrajectoryConfig config =
-        new TrajectoryConfig(
-                Constants.DriveTrain.kMaxSpeedMetersPerSecond,
-                Constants.DriveTrain.kMaxAccelerationMetersPerSecondSquared)
-            // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(Constants.DriveTrain.kDriveKinematics)
-            // Apply the voltage constraint
-            .addConstraint(autoVoltageConstraint);
-
-    // An example trajectory to follow.  All units in meters.
-    Trajectory exampleTrajectory =
-        TrajectoryGenerator.generateTrajectory(
-            // Start at the origin facing the +X direction
-            new Pose2d(0, 0, new Rotation2d(0)),
-            // Pass through these two interior waypoints, making an 's' curve path
-            List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-            // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(3, 0, new Rotation2d(0)),
-            // Pass config
-            config);
-
-    RamseteCommand ramseteCommand =
-        new RamseteCommand(
-            exampleTrajectory,
-            driveTrain::getPose,
-            new RamseteController(Constants.DriveTrain.kRamseteB, Constants.DriveTrain.kRamseteZeta),
-            new SimpleMotorFeedforward(
-              Constants.DriveTrain.DRIVE_LINEAR_KS,
-              Constants.DriveTrain.DRIVE_LINEAR_KV,
-              Constants.DriveTrain.DRIVE_LINEAR_KA),
-            Constants.DriveTrain.kDriveKinematics,
-            driveTrain::getWheelSpeeds,
-            new PIDController(Constants.DriveTrain.DRIVE_LINEAR_VELOCITY_KP, 0, 0),
-            new PIDController(Constants.DriveTrain.DRIVE_LINEAR_VELOCITY_KP, 0, 0),
-            // RamseteCommand passes volts to the callback
-            driveTrain::setDriveMotorVoltage,
-            driveTrain);
-
-    // Reset odometry to the starting pose of the trajectory.
-    driveTrain.resetOdometry(exampleTrajectory.getInitialPose());
+    LoggingRamseteCommand ramseteCommand = new LoggingRamseteCommand(driveTrain, start, interiorPoints, end);
 
     // Run path following command, then stop at the end.
     return ramseteCommand.andThen(() -> driveTrain.setDriveMotorVoltage(0, 0));
+  }
+
+  public static enum AutoPosition {
+    ORIGIN, TARMAC_A, TARMAC_B, TARMAC_C, TARMAC_D, FENDER_A, FENDER_B;
+
+    public Pose2d getPose() {
+      switch (this) {
+        case ORIGIN:
+          return new Pose2d();
+        case TARMAC_A:
+          return FieldConstants.referenceA
+              .transformBy(GeomUtil.transformFromTranslation(-0.5, 0.7));
+        case TARMAC_B:
+          return FieldConstants.referenceB
+              .transformBy(GeomUtil.transformFromTranslation(-0.5, -0.2));
+        case TARMAC_C:
+          return FieldConstants.referenceC
+              .transformBy(GeomUtil.transformFromTranslation(-0.5, -0.1));
+        case TARMAC_D:
+          return FieldConstants.referenceD
+              .transformBy(GeomUtil.transformFromTranslation(-0.5, -0.7));
+        case FENDER_A:
+          return FieldConstants.fenderA
+              .transformBy(GeomUtil.transformFromTranslation(0.5, 0.0));
+        case FENDER_B:
+          return FieldConstants.fenderB
+              .transformBy(GeomUtil.transformFromTranslation(0.5, 0.0));
+        default:
+          return new Pose2d();
+      }
+    }
   }
 }

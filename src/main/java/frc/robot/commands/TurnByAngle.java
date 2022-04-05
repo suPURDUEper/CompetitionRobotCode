@@ -13,7 +13,7 @@ public class TurnByAngle extends PIDCommand {
    */
   public TurnByAngle(double targetAngleDegrees, DriveTrain drive) {
     super(
-        new PIDController(0.005, 0, 0),
+        new PIDController(0.005, 0, 0.001),
         // Close loop on heading
         drive::getHeading,
         // Set reference to target
