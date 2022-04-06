@@ -37,12 +37,12 @@ public class FiveBallAuto extends SequentialCommandGroup {
             LoggingRamseteCommand driveToFirstBall = new LoggingRamseteCommand(driveTrain, start, Collections.emptyList(), firstBallAimed);
 
             // Turn away from wall
-            TurnByAngle turnToBall2 = new TurnByAngle(-120, driveTrain);
+            TurnByAngle turnTowardsSecondBall = new TurnByAngle(-120, driveTrain);
 
             // Drive to second ball
-            Pose2d startToDriveTo2ndBall = firstBallAimed.transformBy(new Transform2d(new Translation2d(), new Rotation2d(-120)));
+            Pose2d secondBallPathStart = firstBallAimed.transformBy(new Transform2d(new Translation2d(), new Rotation2d(-120)));
             Pose2d secondBallAimed = calcAimedPose(FieldConstants.cargoD.transformBy(new Transform2d(new Translation2d(-0.2, 0.2), new Rotation2d())));
-            LoggingRamseteCommand driveToSecondBall = new LoggingRamseteCommand(driveTrain, startToDriveTo2ndBall, Collections.emptyList(), secondBallAimed);
+            LoggingRamseteCommand driveToSecondBall = new LoggingRamseteCommand(driveTrain, secondBallPathStart, Collections.emptyList(), secondBallAimed);
 
             // Drive to terminal
             Pose2d terminalCargoPosition = FieldConstants.cargoG.transformBy(new Transform2d(new Translation2d(0.5, 0.0), Rotation2d.fromDegrees(180.0)));
@@ -61,18 +61,15 @@ public class FiveBallAuto extends SequentialCommandGroup {
                 resetOdometryCommand,
                 new IntakeOut(intake),
 
-                // Drive to first ball
-                deadline(driveToFirstBall, 
+                // Drive to first ball and shoot preload/first ball. Spin up shooter on the way
+                deadline(driveToFirstBall.andThen(new ShootBall(upperConveyor, lowerConveyor).withTimeout(1.5)), 
                     new IntakeRun(intake),
-                    new Index(lowerConveyor, upperConveyor, colorSensor)),
-
-                // Shoot preload and first ball
-                deadline(new WaitCommand(0.25).andThen(new ShootBall(upperConveyor, lowerConveyor).withTimeout(1.5)),
+                    new Index(lowerConveyor, upperConveyor, colorSensor),
                     new SetFlywheelToLimelightShot(shooter, vision)),
 
                 // Drive to second ball
-                turnToBall2.withTimeout(0.5), 
-                deadline(driveToSecondBall, 
+                turnTowardsSecondBall.withTimeout(0.5), 
+                deadline(driveToSecondBall,  
                     new IntakeRun(intake),
                     new Index(lowerConveyor, upperConveyor, colorSensor)),
 
