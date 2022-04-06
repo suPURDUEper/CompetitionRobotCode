@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -20,17 +22,22 @@ public class DriveWithLimelight extends CommandBase {
   private double mSteeringKp = 0.015;
   private double minCommand = 0.3;
   private double turnCommand;
+  private Supplier<Double> throttle;
   // Network Table Entries
   NetworkTableEntry mKpSteer, mMinTa, mDrive_Kp;
 
   /** Creates a new LimelightAim. */
+
   public DriveWithLimelight(DriveTrain dt, Vision v) {
+    this(dt, v, () -> 0.0);
+  }
+
+  public DriveWithLimelight(DriveTrain dt, Vision v, Supplier<Double> throttle) {
     // Use addRequirements() here to declare subsystem dependencies.
     mDriveTrain = dt;
     mVision = v;
     addRequirements(dt);
-
-
+    this.throttle = throttle;
   }
 
   // Called when the command is initially scheduled.
@@ -43,7 +50,6 @@ public class DriveWithLimelight extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double throttle = RobotContainer.driverJoyStick.getLeftY();
     if (mVision.isTargetValid()) {
       double mTx = mVision.getTx();
       if (Math.abs(mTx) > 1) {
@@ -51,9 +57,9 @@ public class DriveWithLimelight extends CommandBase {
       } else {
         turnCommand = 0;
       }
-      mDriveTrain.arcadeDrive(throttle, turnCommand);
+      mDriveTrain.arcadeDrive(throttle.get(), turnCommand);
     }
-    else mDriveTrain.arcadeDrive(throttle, -RobotContainer.driverJoyStick.getRightX());
+    else mDriveTrain.arcadeDrive(throttle.get(), -RobotContainer.driverJoyStick.getRightX());
   }
 
   // Called once the command ends or is interrupted.

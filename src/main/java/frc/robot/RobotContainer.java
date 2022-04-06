@@ -139,7 +139,7 @@ public class RobotContainer {
 
     Button driverAButton = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);
     driverAButton.whenHeld(new ParallelCommandGroup(
-        new DriveWithLimelight(driveTrain, vision),
+        new DriveWithLimelight(driveTrain, vision, driverJoyStick::getLeftY),
         new SetFlywheelToLimelightShot(shooter, vision)));
 
     Button driverRightTrigger = new Button(() -> driverJoyStick.getRightTriggerAxis() > 0.5);

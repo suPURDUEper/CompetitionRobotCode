@@ -16,6 +16,10 @@ public class ShootBall extends CommandBase {
   private Supplier<Boolean> safeToFire;
 
   /** Creates a new ShootBall. */
+  public ShootBall(UpperConveyor mUpperCon, LowerConveyor mLowCon) {
+    this(mUpperCon, mLowCon, () -> true);
+  }
+
   public ShootBall(UpperConveyor mUpperCon, LowerConveyor mLowCon, Supplier<Boolean> safeToFire) {
     // Use addRequirements() here to declare subsystem dependencies.
     upperConveyor = mUpperCon;
