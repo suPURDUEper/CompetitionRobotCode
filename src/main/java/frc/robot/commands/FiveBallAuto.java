@@ -34,24 +34,25 @@ public class FiveBallAuto extends SequentialCommandGroup {
             // Drive from start to first ball
             Pose2d start = AutoPosition.TARMAC_D.getPose();
             Pose2d firstBallAimed = calcAimedPose(FieldConstants.cargoE.transformBy(GeomUtil.transformFromTranslation(-0.5, 0.0)));
-            LoggingRamseteCommand driveToFirstBall = new LoggingRamseteCommand(driveTrain, start, Collections.emptyList(), firstBallAimed);
+            LoggingRamseteCommand driveToFirstBall = new LoggingRamseteCommand(driveTrain, start, Collections.emptyList(), firstBallAimed, false);
 
             // Turn away from wall
             TurnByAngle turnTowardsSecondBall = new TurnByAngle(-120, driveTrain);
 
             // Drive to second ball
             Pose2d secondBallPathStart = firstBallAimed.transformBy(new Transform2d(new Translation2d(), new Rotation2d(-120)));
-            Pose2d secondBallAimed = calcAimedPose(FieldConstants.cargoD.transformBy(new Transform2d(new Translation2d(-0.2, 0.2), new Rotation2d())));
-            LoggingRamseteCommand driveToSecondBall = new LoggingRamseteCommand(driveTrain, secondBallPathStart, Collections.emptyList(), secondBallAimed);
+            Pose2d secondBallAimed = calcAimedPose(FieldConstants.cargoD.transformBy(new Transform2d(new Translation2d(0.0, -0.2), new Rotation2d())));
+            LoggingRamseteCommand driveToSecondBall = new LoggingRamseteCommand(driveTrain, secondBallPathStart, Collections.emptyList(), secondBallAimed, false);
 
             // Drive to terminal
             Pose2d terminalCargoPosition = FieldConstants.cargoG.transformBy(new Transform2d(new Translation2d(0.5, 0.0), Rotation2d.fromDegrees(180.0)));
             Translation2d terminalCargoApproachPosition = terminalCargoPosition.transformBy(GeomUtil.transformFromTranslation(-0.8, 0.0)).getTranslation();
-            LoggingRamseteCommand driveToTerminalBall = new LoggingRamseteCommand(driveTrain, secondBallAimed, Collections.emptyList(), terminalCargoPosition);
+            LoggingRamseteCommand driveToTerminalBall = new LoggingRamseteCommand(driveTrain, secondBallAimed, Collections.emptyList(), terminalCargoPosition, false);
 
+            
             // Drive to final shot location
-            Pose2d finalShotLocation = new Pose2d(); // todo
-            LoggingRamseteCommand driveToFinalShot = new LoggingRamseteCommand(driveTrain, terminalCargoPosition, Collections.emptyList(), finalShotLocation);
+            Pose2d finalShotLocation = calcAimedPose(secondBallAimed.transformBy(new Transform2d(new Translation2d(0.5, -1), new Rotation2d())));
+            LoggingRamseteCommand driveToFinalShot = new LoggingRamseteCommand(driveTrain, terminalCargoPosition, Collections.emptyList(), finalShotLocation, true);
 
             driveTrain.addTrajectoryToDashboard(driveToFirstBall.getTrajectory());
             driveTrain.addTrajectoryToDashboard(driveToSecondBall.getTrajectory());
@@ -62,9 +63,13 @@ public class FiveBallAuto extends SequentialCommandGroup {
                 new IntakeOut(intake),
 
                 // Drive to first ball and shoot preload/first ball. Spin up shooter on the way
-                deadline(driveToFirstBall.andThen(new ShootBall(upperConveyor, lowerConveyor).withTimeout(1.5)), 
+                deadline(driveToFirstBall, 
                     new IntakeRun(intake),
                     new Index(lowerConveyor, upperConveyor, colorSensor),
+                    new SetFlywheelToLimelightShot(shooter, vision)),
+
+                deadline(new ShootBall(upperConveyor, lowerConveyor).withTimeout(1.5), 
+                    new IntakeRun(intake),
                     new SetFlywheelToLimelightShot(shooter, vision)),
 
                 // Drive to second ball
@@ -84,12 +89,16 @@ public class FiveBallAuto extends SequentialCommandGroup {
                     new Index(lowerConveyor, upperConveyor, colorSensor)),
 
                 // Drive to final shot location
-                parallel(
+                deadline(
+                    driveToFinalShot, 
+                    new IntakeRun(intake),
+                    new Index(lowerConveyor, upperConveyor, colorSensor),
+                    new SetFlywheelToLimelightShot(shooter, vision)),
+
+                // Shoot final ball
+                parallel(new ShootBall(upperConveyor, lowerConveyor),
                     new SetFlywheelToLimelightShot(shooter, vision),
-                    deadline(new DriveWithLimelight(driveTrain, vision, () -> 0.8).withTimeout(1),
-                        new Index(lowerConveyor, upperConveyor, colorSensor))
-                    .andThen(new ShootBall(upperConveyor, lowerConveyor))
-                )
+                    new DriveWithLimelight(driveTrain, vision))
 
 
             );

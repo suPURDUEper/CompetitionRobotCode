@@ -299,7 +299,7 @@ public class RobotContainer {
     Pose2d end = new Pose2d(3, 0, new Rotation2d(0));
     List<Translation2d> interiorPoints = List.of(new Translation2d(1, 1), new Translation2d(2, -1));
 
-    LoggingRamseteCommand ramseteCommand = new LoggingRamseteCommand(driveTrain, start, interiorPoints, end);
+    LoggingRamseteCommand ramseteCommand = new LoggingRamseteCommand(driveTrain, start, interiorPoints, end, false);
 
     // Run path following command, then stop at the end.
     return ramseteCommand.andThen(() -> driveTrain.setDriveMotorVoltage(0, 0));

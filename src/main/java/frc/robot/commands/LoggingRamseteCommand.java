@@ -148,7 +148,7 @@ public class LoggingRamseteCommand extends CommandBase {
     addRequirements(requirements);
   }
 
-  public LoggingRamseteCommand(DriveTrain drivetrain, Pose2d start, List<Translation2d> interiorWaypoints, Pose2d end) {
+  public LoggingRamseteCommand(DriveTrain drivetrain, Pose2d start, List<Translation2d> interiorWaypoints, Pose2d end, boolean isReversed) {
     // Create a voltage constraint to ensure we don't accelerate too fast
     var autoVoltageConstraint =
         new DifferentialDriveVoltageConstraint(
@@ -167,7 +167,8 @@ public class LoggingRamseteCommand extends CommandBase {
             .setKinematics(Constants.DriveTrain.kDriveKinematics)
             // Apply the voltage constraint
             .addConstraint(autoVoltageConstraint)
-            .addConstraint(centripitalAccelerationConstraint);
+            .addConstraint(centripitalAccelerationConstraint)
+            .setReversed(isReversed);
 
     // An example trajectory to follow.  All units in meters.
     Trajectory exampleTrajectory =
