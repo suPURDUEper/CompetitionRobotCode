@@ -165,7 +165,7 @@ public class RobotContainer {
 
     Button operatorStartButton = new JoystickButton(operatorJoyStick, XboxController.Button.kStart.value);
     operatorStartButton.whenHeld(moveToNextBarCommand()
-        .andThen(new WaitCommand(1.5))
+        .andThen(new WaitCommand(0.5))
         .andThen(moveToNextBarCommand()));
   }
 

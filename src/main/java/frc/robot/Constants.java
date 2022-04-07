@@ -80,8 +80,8 @@ public final class Constants {
         public static final double CLIMB_SYNC_KP = 0.00007;
         public static final double CLIMB_SYNC_KI = 0;
         public static final double CLIMB_SYNC_KD = 0;
-        public static final double CLIMB_LEFT_MAX_HEIGHT = 358000;
-        public static final double CLIMB_RIGHT_MAX_HEIGHT = 366000;
+        public static final double CLIMB_LEFT_MAX_HEIGHT = 358000 * 0.75;
+        public static final double CLIMB_RIGHT_MAX_HEIGHT = 366000 * 0.75;
         public static final double LEFT_CLIMB_EXTEND_HEIGHT = 0;
         public static final int CLIMB_CURRENT_LIMIT = 60;
     }
