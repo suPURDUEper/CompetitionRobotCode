@@ -143,7 +143,7 @@ public class RobotContainer {
         new SetFlywheelToLimelightShot(shooter, vision)));
 
     Button driverRightTrigger = new Button(() -> driverJoyStick.getRightTriggerAxis() > 0.5);
-    driverRightTrigger.whenHeld(new ShootBall(upperCon, lowerCon, shooter::isShooterAtSpeed));
+    driverRightTrigger.whenHeld(new ShootBall(upperCon, lowerCon, shooter::isShooterAtSpeed, colorSensor));
 
     Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() > 0.5);
     driverLeftTrigger.whileHeld(new IntakeRun(intake));

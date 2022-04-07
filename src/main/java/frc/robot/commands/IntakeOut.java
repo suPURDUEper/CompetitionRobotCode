@@ -12,7 +12,6 @@ public class IntakeOut extends InstantCommand {
   /** Creates a new IntakeOut. */
   public IntakeOut(Intake mIntake) {
     intake = mIntake;
-    addRequirements(mIntake);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

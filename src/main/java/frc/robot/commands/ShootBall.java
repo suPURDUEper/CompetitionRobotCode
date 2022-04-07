@@ -7,6 +7,7 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.ColorSensor;
 import frc.robot.subsystems.LowerConveyor;
 import frc.robot.subsystems.UpperConveyor;
 
@@ -14,17 +15,19 @@ public class ShootBall extends CommandBase {
   private final UpperConveyor upperConveyor;
   private final LowerConveyor lowerConveyor;
   private Supplier<Boolean> safeToFire;
+  private ColorSensor colorSensor;
 
   /** Creates a new ShootBall. */
-  public ShootBall(UpperConveyor mUpperCon, LowerConveyor mLowCon) {
-    this(mUpperCon, mLowCon, () -> true);
+  public ShootBall(UpperConveyor mUpperCon, LowerConveyor mLowCon, ColorSensor colorSensor) {
+    this(mUpperCon, mLowCon, () -> true, colorSensor);
   }
 
-  public ShootBall(UpperConveyor mUpperCon, LowerConveyor mLowCon, Supplier<Boolean> safeToFire) {
+  public ShootBall(UpperConveyor mUpperCon, LowerConveyor mLowCon, Supplier<Boolean> safeToFire, ColorSensor colorSensor) {
     // Use addRequirements() here to declare subsystem dependencies.
     upperConveyor = mUpperCon;
     lowerConveyor = mLowCon;
     this.safeToFire = safeToFire;
+    this.colorSensor = colorSensor;
     addRequirements(mUpperCon, mLowCon);
   }
 
@@ -37,7 +40,8 @@ public class ShootBall extends CommandBase {
   public void execute() {
     if (safeToFire.get()) {
       lowerConveyor.setLowerConveyorPercentOutput(0.7);
-      lowerConveyor.setPooperPercentOutput(0.7);
+      int direction = colorSensor.HasWrongBall() ? -1 : 1;
+      lowerConveyor.setPooperPercentOutput(0.7 * direction);
       upperConveyor.setPercentOutput(1);
     } else {
       lowerConveyor.setLowerConveyorPercentOutput(0);

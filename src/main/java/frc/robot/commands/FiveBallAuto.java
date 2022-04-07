@@ -60,15 +60,14 @@ public class FiveBallAuto extends SequentialCommandGroup {
 
             addCommands(
                 resetOdometryCommand,
-                new IntakeOut(intake),
-
                 // Drive to first ball and shoot preload/first ball. Spin up shooter on the way
-                deadline(driveToFirstBall, 
+                deadline(driveToFirstBall,
+                    new IntakeOut(intake), 
                     new IntakeRun(intake),
                     new Index(lowerConveyor, upperConveyor, colorSensor),
                     new SetFlywheelToLimelightShot(shooter, vision)),
 
-                deadline(new ShootBall(upperConveyor, lowerConveyor).withTimeout(1.5), 
+                deadline(new ShootBall(upperConveyor, lowerConveyor, colorSensor).withTimeout(1.5), 
                     new IntakeRun(intake),
                     new SetFlywheelToLimelightShot(shooter, vision)),
 
@@ -79,7 +78,7 @@ public class FiveBallAuto extends SequentialCommandGroup {
                     new Index(lowerConveyor, upperConveyor, colorSensor)),
 
                 // Shoot second ball
-                deadline(new WaitCommand(0.25).andThen(new ShootBall(upperConveyor, lowerConveyor).withTimeout(.75)),
+                deadline(new WaitCommand(0.25).andThen(new ShootBall(upperConveyor, lowerConveyor, colorSensor).withTimeout(.75)),
                     new SetFlywheelToLimelightShot(shooter, vision),
                     new DriveWithLimelight(driveTrain, vision)),
 
@@ -96,7 +95,7 @@ public class FiveBallAuto extends SequentialCommandGroup {
                     new SetFlywheelToLimelightShot(shooter, vision)),
 
                 // Shoot final ball
-                parallel(new ShootBall(upperConveyor, lowerConveyor),
+                parallel(new ShootBall(upperConveyor, lowerConveyor, colorSensor),
                     new SetFlywheelToLimelightShot(shooter, vision),
                     new DriveWithLimelight(driveTrain, vision))
 
