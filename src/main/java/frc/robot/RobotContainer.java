@@ -117,7 +117,8 @@ public class RobotContainer {
     autoChooser = new SendableChooser<>();
     autoChooser.setDefaultOption("Three Ball Auto", threeBallAuto());
     autoChooser.addOption("Two Ball Auto", twoBallAuto());
-    // autoChooser.addOption("Two Ball + Poop", twoBallPoopAuto());
+    autoChooser.addOption("Two Ball + Poop", twoBallPoopAuto());
+    autoChooser.addOption("Five Ball Auto", new FiveBallAuto(driveTrain, intake, lowerCon, upperCon, shooter, vision, colorSensor));
     SmartDashboard.putData(autoChooser);
 
     // Configure the button bindings
@@ -215,7 +216,7 @@ public class RobotContainer {
         new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
         new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
       new ResetDriveTrainEncoders(driveTrain),
-      new DriveByDistance(0.3, driveTrain)
+      new DriveByDistance(1.7, driveTrain)
     );
   }
 
@@ -236,10 +237,10 @@ public class RobotContainer {
         new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
         new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
       new ResetDriveTrainEncoders(driveTrain),
-      new DriveByDistance(-0.3, driveTrain),
+      new DriveByDistance(0.5, driveTrain),
       new ResetDriveTrainEncoders(driveTrain),
       new WaitCommand(.1),
-      new TurnByAngle(-111.5, driveTrain),
+      new TurnByAngle(-127.5, driveTrain),
       new ResetDriveTrainEncoders(driveTrain),
       new WaitCommand(0.1),
       new IntakeOut(intake),
@@ -249,7 +250,7 @@ public class RobotContainer {
         new DriveByDistance(3.0, driveTrain)),
       new ResetDriveTrainEncoders(driveTrain),
       new WaitCommand(0.1),
-      new TurnByAngle(-58, driveTrain),
+      new TurnByAngle(-58, driveTrain).withTimeout(0.5),
       new ParallelCommandGroup(
         new AutoAim(driveTrain, vision, 0.5),
         new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
@@ -288,9 +289,9 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    // return autoChooser.getSelected();
+    return autoChooser.getSelected();
     // return testPathCommand();
-    return new FiveBallAuto(driveTrain, intake, lowerCon, upperCon, shooter, vision, colorSensor);
+    // return new FiveBallAuto(driveTrain, intake, lowerCon, upperCon, shooter, vision, colorSensor);
   }
 
   public Command testPathCommand() {
