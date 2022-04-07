@@ -124,7 +124,7 @@ public class Climber extends SubsystemBase {
 
   private TalonFXConfiguration getClimberTalonConfig() {
     TalonFXConfiguration config = TalonUtils.getDefaultTalonConfig();
-    config.supplyCurrLimit = new SupplyCurrentLimitConfiguration(true, 60, 40, 0.5);
+    config.supplyCurrLimit = new SupplyCurrentLimitConfiguration(true, 80, 80, 0.5);
     config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
     config.reverseLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
     return config;
