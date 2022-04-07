@@ -4,6 +4,20 @@
 
 package frc.robot;
 
+import java.util.Collections;
+import java.util.List;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstraint;
+import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -12,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
@@ -25,11 +40,13 @@ import frc.robot.commands.ClimberUp;
 import frc.robot.commands.DriveByDistance;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.DriveWithLimelight;
+import frc.robot.commands.FiveBallAuto;
 import frc.robot.commands.FreeClimb;
 import frc.robot.commands.Index;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
 import frc.robot.commands.IntakeRun;
+import frc.robot.commands.LoggingRamseteCommand;
 import frc.robot.commands.LowConRun;
 import frc.robot.commands.PoopCommand;
 import frc.robot.commands.Purge;
@@ -40,6 +57,8 @@ import frc.robot.commands.SetFlywheelToLimelightShot;
 import frc.robot.commands.SetFlywheelToLimelightShotTimed;
 import frc.robot.commands.SetFlywheelToLowShot;
 import frc.robot.commands.ShootBall;
+import frc.robot.commands.TestArcadeDrive;
+import frc.robot.commands.TestDriveVoltageCommand;
 import frc.robot.commands.TurnByAngle;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.ColorSensor;
@@ -49,6 +68,7 @@ import frc.robot.subsystems.LowerConveyor;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.UpperConveyor;
 import frc.robot.subsystems.Vision;
+import frc.robot.util.GeomUtil;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -119,11 +139,11 @@ public class RobotContainer {
 
     Button driverAButton = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);
     driverAButton.whenHeld(new ParallelCommandGroup(
-        new DriveWithLimelight(driveTrain, vision),
+        new DriveWithLimelight(driveTrain, vision, driverJoyStick::getLeftY),
         new SetFlywheelToLimelightShot(shooter, vision)));
 
     Button driverRightTrigger = new Button(() -> driverJoyStick.getRightTriggerAxis() > 0.5);
-    driverRightTrigger.whenHeld(new ShootBall(upperCon, lowerCon, shooter::isShooterAtSpeed));
+    driverRightTrigger.whenHeld(new ShootBall(upperCon, lowerCon, shooter::isShooterAtSpeed, colorSensor));
 
     Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() > 0.5);
     driverLeftTrigger.whileHeld(new IntakeRun(intake));
@@ -268,6 +288,51 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    // return autoChooser.getSelected();
+    // return testPathCommand();
+    return new FiveBallAuto(driveTrain, intake, lowerCon, upperCon, shooter, vision, colorSensor);
+  }
+
+  public Command testPathCommand() {
+
+    Pose2d start = new Pose2d(0, 0, new Rotation2d(0));
+    Pose2d end = new Pose2d(3, 0, new Rotation2d(0));
+    List<Translation2d> interiorPoints = List.of(new Translation2d(1, 1), new Translation2d(2, -1));
+
+    LoggingRamseteCommand ramseteCommand = new LoggingRamseteCommand(driveTrain, start, interiorPoints, end, false);
+
+    // Run path following command, then stop at the end.
+    return ramseteCommand.andThen(() -> driveTrain.setDriveMotorVoltage(0, 0));
+  }
+
+  public static enum AutoPosition {
+    ORIGIN, TARMAC_A, TARMAC_B, TARMAC_C, TARMAC_D, FENDER_A, FENDER_B;
+
+    public Pose2d getPose() {
+      switch (this) {
+        case ORIGIN:
+          return new Pose2d();
+        case TARMAC_A:
+          return FieldConstants.referenceA
+              .transformBy(GeomUtil.transformFromTranslation(-0.5, 0.7));
+        case TARMAC_B:
+          return FieldConstants.referenceB
+              .transformBy(GeomUtil.transformFromTranslation(-0.5, -0.2));
+        case TARMAC_C:
+          return FieldConstants.referenceC
+              .transformBy(GeomUtil.transformFromTranslation(-0.5, -0.1));
+        case TARMAC_D:
+          return FieldConstants.referenceD
+              .transformBy(GeomUtil.transformFromTranslation(-0.5, -0.7));
+        case FENDER_A:
+          return FieldConstants.fenderA
+              .transformBy(GeomUtil.transformFromTranslation(0.5, 0.0));
+        case FENDER_B:
+          return FieldConstants.fenderB
+              .transformBy(GeomUtil.transformFromTranslation(0.5, 0.0));
+        default:
+          return new Pose2d();
+      }
+    }
   }
 }

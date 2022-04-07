@@ -23,6 +23,10 @@ public class Index extends CommandBase {
   private long pooperStartTimeUs = 0;
   private static final int POOPER_REVERSE_TIME_MS = 1000;
 
+  public Index(LowerConveyor mLowerConveyor, UpperConveyor mUpperConveyor, ColorSensor colorSensor) {
+    this(mLowerConveyor, mUpperConveyor, colorSensor, () -> false);
+  }
+
   public Index(LowerConveyor mLowerConveyor, UpperConveyor mUpperConveyor, ColorSensor colorSensor, BooleanSupplier reversePooper) {
     // Use addRequirements() here to declare subsystem dependencies.
     lowCon = mLowerConveyor;

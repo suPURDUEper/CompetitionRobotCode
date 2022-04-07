@@ -24,7 +24,7 @@ public class DriveByDistance extends PIDCommand {
       // This should return the setpoint (can also be a constant)
       targetDistance + mDriveTrain.getAverageEncoderDistance(),
       // This uses the output
-      output -> mDriveTrain.arcadeDrive(-output + Math.copySign(getFeedforward(), -output), 0),
+      output -> mDriveTrain.arcadeDrive(output + Math.copySign(getFeedforward(), output), 0),
       // Requirements
       mDriveTrain
     );
