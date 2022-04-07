@@ -115,10 +115,10 @@ public class RobotContainer {
 
     // Create autonomous chooser
     autoChooser = new SendableChooser<>();
-    autoChooser.setDefaultOption("Three Ball Auto", threeBallAuto());
+    autoChooser.addOption("Three Ball Auto", threeBallAuto());
     autoChooser.addOption("Two Ball Auto", twoBallAuto());
     autoChooser.addOption("Two Ball + Poop", twoBallPoopAuto());
-    autoChooser.addOption("Five Ball Auto", new FiveBallAuto(driveTrain, intake, lowerCon, upperCon, shooter, vision, colorSensor));
+    autoChooser.setDefaultOption("Five Ball Auto", new FiveBallAuto(driveTrain, intake, lowerCon, upperCon, shooter, vision, colorSensor));
     SmartDashboard.putData(autoChooser);
 
     // Configure the button bindings
