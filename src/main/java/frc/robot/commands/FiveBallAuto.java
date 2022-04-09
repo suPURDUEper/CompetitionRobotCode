@@ -41,7 +41,7 @@ public class FiveBallAuto extends SequentialCommandGroup {
 
             // Drive to second ball
             Pose2d secondBallPathStart = firstBallAimed.transformBy(new Transform2d(new Translation2d(), new Rotation2d(-120)));
-            Pose2d secondBallAimed = calcAimedPose(FieldConstants.cargoD.transformBy(new Transform2d(new Translation2d(0.0, -0.2), new Rotation2d())));
+            Pose2d secondBallAimed = calcAimedPose(FieldConstants.cargoD.transformBy(new Transform2d(new Translation2d(0.0, 0.2), new Rotation2d())));
             LoggingRamseteCommand driveToSecondBall = new LoggingRamseteCommand(driveTrain, secondBallPathStart, Collections.emptyList(), secondBallAimed, false);
 
             // Drive to terminal
@@ -78,7 +78,7 @@ public class FiveBallAuto extends SequentialCommandGroup {
                     new Index(lowerConveyor, upperConveyor, colorSensor)),
 
                 // Shoot second ball
-                deadline(new WaitCommand(0.25).andThen(new ShootBall(upperConveyor, lowerConveyor, colorSensor).withTimeout(.75)),
+                deadline(new WaitCommand(0.25).andThen(new ShootBall(upperConveyor, lowerConveyor, colorSensor).withTimeout(1)),
                     new SetFlywheelToLimelightShot(shooter, vision),
                     new DriveWithLimelight(driveTrain, vision)),
 
