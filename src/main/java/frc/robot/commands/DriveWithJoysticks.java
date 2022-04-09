@@ -29,8 +29,12 @@ public class DriveWithJoysticks extends CommandBase {
   @Override
   public void execute() {
     double speed = Constants.DriveTrain.BoostInactive;
-    if (RobotContainer.driverJoyStick.getLeftStickButton() || RobotContainer.driverJoyStick.getRightStickButton() || RobotContainer.driverJoyStick.getRightBumper())
+    if (RobotContainer.driverJoyStick.getLeftStickButton() || 
+    RobotContainer.driverJoyStick.getRightStickButton() || 
+    RobotContainer.driverJoyStick.getRightBumper() || 
+    RobotContainer.driverJoyStick.getLeftBumper()) {
       speed = Constants.DriveTrain.BoostActive;
+    }
       // drive math currently not working
     // driveTrain.driveWithJoysticks(
     //     DriveController.getThrottleMap(RobotContainer.driverJoyStick.getLeftY(), speed),
