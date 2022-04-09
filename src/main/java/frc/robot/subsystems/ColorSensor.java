@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.PicoColorSensor;
@@ -34,6 +35,9 @@ public class ColorSensor extends SubsystemBase {
     rawColor = colorSensor.getRawColor0();
     double colorsum = rawColor.red + rawColor.green + rawColor.blue;
     final Color color = new Color(rawColor.red/colorsum, rawColor.green/colorsum, rawColor.blue/colorsum);
+    SmartDashboard.putNumber("Color Sensor Red", color.red);
+    SmartDashboard.putNumber("Color Sensor Blue", color.blue);
+    SmartDashboard.putNumber("Color Sensor Green", color.green);
     // System.out.println("RED: " + color.red + " GREEN: " + color.green + " BLUE: " + color.blue + " IR: " + ir);
     return color;
   }

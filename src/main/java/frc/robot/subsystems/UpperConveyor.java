@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.DigitalInput;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,7 +21,10 @@ public class UpperConveyor extends SubsystemBase {
   public UpperConveyor() {
     ConveyorMotor = new CANSparkMax(Constants.UpperCon.UpperConMotor, MotorType.kBrushless);
     ConveyorMotor.setInverted(true);
+    ConveyorMotor.setSmartCurrentLimit(20);
+    ConveyorMotor.setIdleMode(IdleMode.kBrake);
     ConveyorMotor.enableVoltageCompensation(12.0);
+    ConveyorMotor.burnFlash();
     UpperConveyorSensor = new DigitalInput(Constants.UpperCon.UpperConBreakBeam);
     MidConveyorSensor = new DigitalInput(Constants.UpperCon.MidConBreakBeam);
   }

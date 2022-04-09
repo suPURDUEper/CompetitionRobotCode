@@ -24,7 +24,7 @@ public final class Constants {
     public static int TALON_TIMEOUT = 30;
     public static class DriveTrain {
         public static final double BoostActive = 1.0;
-        public static final double BoostInactive = 0.7;
+        public static final double BoostInactive = 0.75;
         public static final double DriveTrainCurve = 0.15;
         public static final double BaseVelocity = 0.14;
         public static final double DriveTrainSpeed = 0.7;
