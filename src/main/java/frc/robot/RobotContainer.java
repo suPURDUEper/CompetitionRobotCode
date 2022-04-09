@@ -186,7 +186,7 @@ public class RobotContainer {
 
     Button operatorStartButton = new JoystickButton(operatorJoyStick, XboxController.Button.kStart.value);
     operatorStartButton.whenHeld(moveToNextBarCommand()
-        .andThen(new WaitCommand(1.5))
+        .andThen(new WaitCommand(0.25))
         .andThen(moveToNextBarCommand()));
   }
 
@@ -195,7 +195,7 @@ public class RobotContainer {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(new ClimberUp(climber), new InstantCommand(climber::climberTilt)),
         new InstantCommand(climber::climberStraight),
-        new ParallelCommandGroup(new WaitCommand(.5), new CheckButton(operatorBackButton)),
+        new CheckButton(operatorBackButton),
         new ClimberDown(climber));
   }
 
