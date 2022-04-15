@@ -31,7 +31,13 @@ public class SetFlywheelToLimelightShot extends CommandBase {
   
   @Override
   public void execute() {
-    shooter.setFlywheelDistanceRPM(vision.getTy());
+    if (vision.isTargetValid()) {
+      shooter.setFlywheelDistanceRPM(vision.getTy());
+      shooter.setAcceleratorDistanceRPM(vision.getTy());
+    } else {
+      shooter.setFlywheelTargetRPM(2350);
+      shooter.setAcceleratorTargetRPM(2350);
+    }
   }
 
   // Called once the command ends or is interrupted.

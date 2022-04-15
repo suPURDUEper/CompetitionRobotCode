@@ -98,8 +98,8 @@ public class Shooter extends SubsystemBase {
     lookupTable.addValue(10.9, 2300);
     lookupTable.addValue(4.9, 2400);
     lookupTable.addValue(-1.33, 2650);
-    lookupTable.addValue(-4.9, 2800);
-    lookupTable.addValue(-5.9, 2900);
+    lookupTable.addValue(-4.4, 2800);
+    lookupTable.addValue(-4.75, 2900);
 
   }
 

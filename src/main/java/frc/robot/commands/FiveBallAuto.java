@@ -45,7 +45,7 @@ public class FiveBallAuto extends SequentialCommandGroup {
             LoggingRamseteCommand driveToSecondBall = new LoggingRamseteCommand(driveTrain, secondBallPathStart, Collections.emptyList(), secondBallAimed, false);
 
             // Drive to terminal
-            Pose2d terminalCargoPosition = FieldConstants.cargoG.transformBy(new Transform2d(new Translation2d(1, 0.5), Rotation2d.fromDegrees(180.0)));
+            Pose2d terminalCargoPosition = FieldConstants.cargoG.transformBy(new Transform2d(new Translation2d(0, 0.3), Rotation2d.fromDegrees(180.0)));
             Translation2d terminalCargoApproachPosition = terminalCargoPosition.transformBy(GeomUtil.transformFromTranslation(-0.8, 0.0)).getTranslation();
             LoggingRamseteCommand driveToTerminalBall = new LoggingRamseteCommand(driveTrain, secondBallAimed, Collections.emptyList(), terminalCargoPosition, false);
 
