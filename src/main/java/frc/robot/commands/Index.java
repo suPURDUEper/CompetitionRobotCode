@@ -21,7 +21,7 @@ public class Index extends CommandBase {
   private final BooleanSupplier reversePooper;
 
   private long pooperStartTimeUs = 0;
-  private static final int POOPER_REVERSE_TIME_MS = 1000;
+  private static final int POOPER_REVERSE_TIME_MS = 250;
 
   public Index(LowerConveyor mLowerConveyor, UpperConveyor mUpperConveyor, ColorSensor colorSensor) {
     this(mLowerConveyor, mUpperConveyor, colorSensor, () -> false);
@@ -53,17 +53,13 @@ public class Index extends CommandBase {
 
     // // Run pooper as long as we don't have two balls.
     // // Switch direction momentarily for wrong color ball
-    // if (colorSensor.HasWrongBall()) {
-    //   // Switch the direction of the pooper for a second
-    //   pooperStartTimeUs = RobotController.getFPGATime();
-    // }
-    // long pooperEndReverseTime = pooperStartTimeUs + (1000 * POOPER_REVERSE_TIME_MS);
-    // int direction = (RobotController.getFPGATime() < pooperEndReverseTime) ? -1 : 1;
-    int direction = 1;
-    if (reversePooper != null && reversePooper.getAsBoolean()) {
-      direction = -1;
-    }
     if (colorSensor.HasWrongBall()) {
+      // Switch the direction of the pooper for a second
+      pooperStartTimeUs = RobotController.getFPGATime();
+    }
+    long pooperEndReverseTime = pooperStartTimeUs + (1000 * POOPER_REVERSE_TIME_MS);
+    int direction = (RobotController.getFPGATime() < pooperEndReverseTime) ? -1 : 1;
+    if (reversePooper != null && reversePooper.getAsBoolean()) {
       direction = -1;
     }
     lowCon.setPooperPercentOutput(direction * 0.8 * 0.7);
