@@ -57,9 +57,9 @@ public class DriveWithLimelight extends CommandBase {
       } else {
         turnCommand = 0;
       }
-      mDriveTrain.arcadeDrive(throttle.get(), turnCommand);
+      mDriveTrain.arcadeDrive(-1 * throttle.get(), turnCommand);
     }
-    else mDriveTrain.arcadeDrive(throttle.get(), -RobotContainer.driverJoyStick.getRightX());
+    else mDriveTrain.arcadeDrive(-1 * throttle.get(), RobotContainer.driverJoyStick.getRightX());
   }
 
   // Called once the command ends or is interrupted.
