@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -153,7 +154,14 @@ public class RobotContainer {
     Button operatorLeftTrigger = new Button(() -> operatorJoyStick.getLeftTriggerAxis() > 0.5);
     Button operatorLeftBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kLeftBumper.value);
     operatorLeftBumper.whenHeld(new IntakeOut(intake));
-    operatorLeftBumper.whenPressed(new Index(lowerCon, upperCon, colorSensor, operatorLeftTrigger::getAsBoolean).andThen(new IntakeIn(intake)));
+    operatorLeftBumper.whenPressed(
+      new Index(lowerCon, upperCon, colorSensor, operatorLeftTrigger::getAsBoolean)
+      .andThen(new IntakeIn(intake))
+      .andThen(new WaitCommand(0.4))
+      .andThen(new StartEndCommand(
+        () -> lowerCon.setLowerConveyorPercentOutput(-0.7), 
+        () -> lowerCon.setLowerConveyorPercentOutput(0),
+        lowerCon).withTimeout(1)));
     Button operatorRightBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kRightBumper.value);
     operatorRightBumper.whenHeld(new IntakeIn(intake));
 
