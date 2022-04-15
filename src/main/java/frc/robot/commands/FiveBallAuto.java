@@ -51,7 +51,7 @@ public class FiveBallAuto extends SequentialCommandGroup {
 
             
             // Drive to final shot location
-            Pose2d finalShotLocation = calcAimedPose(secondBallAimed.transformBy(new Transform2d(new Translation2d(1, -1), new Rotation2d())));
+            Pose2d finalShotLocation = calcAimedPose(secondBallAimed.transformBy(new Transform2d(new Translation2d(0.5, -1), new Rotation2d())));
             LoggingRamseteCommand driveToFinalShot = new LoggingRamseteCommand(driveTrain, terminalCargoPosition, Collections.emptyList(), finalShotLocation, true);
 
             driveTrain.addTrajectoryToDashboard(driveToFirstBall.getTrajectory());
