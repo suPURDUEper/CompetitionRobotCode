@@ -46,7 +46,7 @@ public class Index extends CommandBase {
   @Override
   public void execute() {
     // Run upper conveyor if we have no balls, stop otherwise
-    upperCon.setPercentOutput(upperCon.hasTopBall() ? 0 : 1);
+    upperCon.setPercentOutput(upperCon.hasTopBall() ? 0 : .75);
 
     // Run lower conveyor always, command will end when we have two balls
     lowCon.setLowerConveyorPercentOutput(1);
