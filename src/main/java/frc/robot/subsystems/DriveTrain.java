@@ -5,7 +5,18 @@
 package frc.robot.subsystems;
 
 
-import static frc.robot.Constants.DriveTrain.*;
+import static frc.robot.Constants.DriveTrain.DRIVE_ANGULAR_KA;
+import static frc.robot.Constants.DriveTrain.DRIVE_ANGULAR_KV;
+import static frc.robot.Constants.DriveTrain.DRIVE_LEFT_BACK_CAN_ID;
+import static frc.robot.Constants.DriveTrain.DRIVE_LEFT_FRONT_CAN_ID;
+import static frc.robot.Constants.DriveTrain.DRIVE_LINEAR_KA;
+import static frc.robot.Constants.DriveTrain.DRIVE_LINEAR_KV;
+import static frc.robot.Constants.DriveTrain.DRIVE_RIGHT_BACK_CAN_ID;
+import static frc.robot.Constants.DriveTrain.DRIVE_RIGHT_FRONT_CAN_ID;
+import static frc.robot.Constants.DriveTrain.ENCODER_RESOLUTION;
+import static frc.robot.Constants.DriveTrain.GEARBOX_RATIO;
+import static frc.robot.Constants.DriveTrain.TRACK_WIDTH_METERS;
+import static frc.robot.Constants.DriveTrain.WHEEL_DIAMETER_METERS;
 
 import java.util.Collections;
 
@@ -15,7 +26,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -27,7 +37,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
