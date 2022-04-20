@@ -50,6 +50,7 @@ import frc.robot.commands.IntakeRun;
 import frc.robot.commands.LoggingRamseteCommand;
 import frc.robot.commands.LowConRun;
 import frc.robot.commands.PoopCommand;
+import frc.robot.commands.PoopTwoAuto;
 import frc.robot.commands.Purge;
 import frc.robot.commands.ResetDriveTrainEncoders;
 import frc.robot.commands.SetFlywheelToFarShot;
@@ -118,7 +119,7 @@ public class RobotContainer {
     autoChooser = new SendableChooser<>();
     autoChooser.addOption("Three Ball Auto", threeBallAuto());
     autoChooser.addOption("Two Ball Auto", twoBallAuto());
-    autoChooser.addOption("Two Ball + Poop", twoBallPoopAuto());
+    autoChooser.addOption("Two Ball + Poop", new PoopTwoAuto(driveTrain, intake, lowerCon, upperCon, shooter, vision, colorSensor));
     autoChooser.setDefaultOption("Five Ball Auto", new FiveBallAuto(driveTrain, intake, lowerCon, upperCon, shooter, vision, colorSensor));
     SmartDashboard.putData(autoChooser);
 
