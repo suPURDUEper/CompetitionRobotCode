@@ -63,18 +63,15 @@ public class FiveBallAuto extends SequentialCommandGroup {
                 // Drive to first ball and shoot preload/first ball. Spin up shooter on the way
                 deadline(driveToFirstBall,
                     new IntakeOut(intake), 
-                    new IntakeRun(intake),
                     new Index(lowerConveyor, upperConveyor, colorSensor),
                     new SetFlywheelToLimelightShot(shooter, vision)),
 
                 deadline(new ShootBall(upperConveyor, lowerConveyor, colorSensor).withTimeout(1.5), 
-                    new IntakeRun(intake),
                     new SetFlywheelToLimelightShot(shooter, vision)),
 
                 // Drive to second ball
                 turnTowardsSecondBall.withTimeout(0.5), 
                 deadline(driveToSecondBall,  
-                    new IntakeRun(intake),
                     new Index(lowerConveyor, upperConveyor, colorSensor)),
 
                 // Shoot second ball
@@ -84,16 +81,14 @@ public class FiveBallAuto extends SequentialCommandGroup {
 
                 // Drive to terminal with slight pause
                 deadline(driveToTerminalBall.andThen(new WaitCommand(0.5)), 
-                    new IntakeRun(intake), 
                     new Index(lowerConveyor, upperConveyor, colorSensor)),
 
                 // Drive to final shot location
                 deadline(
                     driveToFinalShot, 
-                    new IntakeRun(intake),
                     new Index(lowerConveyor, upperConveyor, colorSensor),
                     new SetFlywheelToLimelightShot(shooter, vision)),
-
+                new IntakeIn(intake),
                 // Shoot final ball
                 parallel(new ShootBall(upperConveyor, lowerConveyor, colorSensor),
                     new SetFlywheelToLimelightShot(shooter, vision),

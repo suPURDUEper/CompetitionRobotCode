@@ -28,6 +28,7 @@ public class Purge extends CommandBase {
   @Override
   public void initialize() {
     shooter.enableShooter();
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.

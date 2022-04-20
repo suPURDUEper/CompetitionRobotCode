@@ -19,7 +19,7 @@ public class IntakeOut extends InstantCommand {
   @Override
   public void initialize() {
     intake.intakeOut();
-    // intake.IntakeMotorSet(1);
-    // intake.IndexerMotorSet(1);
+    intake.IntakeMotorSet(1);
+    intake.IndexerMotorSet(1);
   }
 }

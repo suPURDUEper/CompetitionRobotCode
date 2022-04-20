@@ -47,7 +47,6 @@ import frc.robot.commands.FreeClimb;
 import frc.robot.commands.Index;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
-import frc.robot.commands.IntakeRun;
 import frc.robot.commands.LoggingRamseteCommand;
 import frc.robot.commands.LowConRun;
 import frc.robot.commands.PoopCommand;
@@ -151,16 +150,13 @@ public class RobotContainer {
     Button operatorRightTrigger = new Button(() -> operatorJoyStick.getRightTriggerAxis() > 0.5);
     Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() > 0.5);
     Trigger intakeTrigger = driverLeftTrigger.and(operatorRightTrigger.negate());
-    // This is while active continuouous so that when purge interrupts this command,
-    // it will automatically be rescheduled whne purge ends
-    intakeTrigger.whileActiveContinuous(new IntakeRun(intake)); 
 
     // Operator Joystick
     Button operatorLeftTrigger = new Button(() -> operatorJoyStick.getLeftTriggerAxis() > 0.5);
     Button operatorLeftBumper = new JoystickButton(operatorJoyStick, XboxController.Button.kLeftBumper.value);
-    operatorLeftBumper.whenHeld(new IntakeOut(intake));
     operatorLeftBumper.whenPressed(
-      new Index(lowerCon, upperCon, colorSensor, operatorLeftTrigger::getAsBoolean)
+      new IntakeOut(intake)
+      .andThen(new Index(lowerCon, upperCon, colorSensor, operatorLeftTrigger::getAsBoolean))
       .andThen(new IntakeIn(intake))
       .andThen(new WaitCommand(0.4))
       .andThen(new StartEndCommand(
@@ -219,7 +215,6 @@ public class RobotContainer {
       new ParallelRaceGroup(
         new AutoIndex(lowerCon, upperCon, 3),  
         new DriveByDistance(1, driveTrain),
-        new IntakeRun(intake)),
       new ParallelCommandGroup(
         new AutoAim(driveTrain, vision, 0.5), 
         new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
@@ -227,8 +222,9 @@ public class RobotContainer {
         new AutoAim(driveTrain, vision, 2),
         new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
         new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2)),
+      new IntakeIn(intake),
       new ResetDriveTrainEncoders(driveTrain),
-      new DriveByDistance(1.7, driveTrain)
+      new DriveByDistance(1.7, driveTrain))
     );
   }
 
@@ -239,7 +235,6 @@ public class RobotContainer {
       new WaitCommand(0.1),
       new ParallelRaceGroup(
         new AutoIndex(lowerCon, upperCon, 3), 
-        new IntakeRun(intake),
         new DriveByDistance(1, driveTrain)),
       new ParallelCommandGroup(
         new AutoAim(driveTrain, vision, 0.5),
@@ -258,7 +253,6 @@ public class RobotContainer {
       new IntakeOut(intake),
       new ParallelRaceGroup(
         new AutoIndex(lowerCon, upperCon, 3), 
-        new IntakeRun(intake),
         new DriveByDistance(3.0, driveTrain)),
       new ResetDriveTrainEncoders(driveTrain),
       new WaitCommand(0.1),
@@ -269,8 +263,7 @@ public class RobotContainer {
       new ParallelCommandGroup(
         new AutoAim(driveTrain, vision, 2),
         new SetFlywheelToLimelightShotTimed(shooter, vision, 2),
-        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2),
-        new IntakeRun(intake).withTimeout(2))
+        new AutoShoot(upperCon, lowerCon, shooter::isShooterAtSpeed, 2))
     );
   }
   public Command twoBallPoopAuto() {
@@ -281,7 +274,6 @@ public class RobotContainer {
       new ParallelRaceGroup(
         new AutoIndex(lowerCon, upperCon, 3),  
         new DriveByDistance(1, driveTrain),
-        new IntakeRun(intake)),
       new ParallelCommandGroup(
         new AutoAim(driveTrain, vision, 0.5), 
         new SetFlywheelToLimelightShotTimed(shooter, vision, 0.5)),
@@ -294,9 +286,8 @@ public class RobotContainer {
       new ResetDriveTrainEncoders(driveTrain),
       new ParallelRaceGroup(
         new DriveByDistance(1, driveTrain),
-        new IntakeRun(intake), 
         new LowConRun(lowerCon)),
-      new PoopCommand(lowerCon).withTimeout(3)
+      new PoopCommand(lowerCon).withTimeout(3))
     );
   }
 
