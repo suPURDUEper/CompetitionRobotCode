@@ -94,12 +94,12 @@ public class Shooter extends SubsystemBase {
     flywheNetworkTableEntry = ShuffleboardInfo.getInstance().getFlywheelSpeed();
 
     lookupTable = new LookupTable();
-    lookupTable.addValue(17.1, 2200);
-    lookupTable.addValue(10.9, 2300);
-    lookupTable.addValue(4.9, 2400);
-    lookupTable.addValue(-1.33, 2650);
-    lookupTable.addValue(-4.4, 2800);
-    lookupTable.addValue(-4.75, 2900);
+    lookupTable.addValue(17.1, 2250);
+    lookupTable.addValue(10.9, 2350);
+    lookupTable.addValue(4.9, 2450);
+    lookupTable.addValue(-1.33, 2700);
+    lookupTable.addValue(-4.4, 2850);
+    lookupTable.addValue(-4.75, 2950);
 
   }
 
