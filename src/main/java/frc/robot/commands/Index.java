@@ -21,6 +21,7 @@ public class Index extends CommandBase {
   private final BooleanSupplier reversePooper;
 
   private long pooperStartTimeUs = 0;
+  private BooleanSupplier overrideColorSensor;
   private static final int POOPER_REVERSE_TIME_MS = 250;
 
   public Index(LowerConveyor mLowerConveyor, UpperConveyor mUpperConveyor, ColorSensor colorSensor) {
@@ -28,13 +29,18 @@ public class Index extends CommandBase {
   }
 
   public Index(LowerConveyor mLowerConveyor, UpperConveyor mUpperConveyor, ColorSensor colorSensor, BooleanSupplier reversePooper) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    lowCon = mLowerConveyor;
-    addRequirements(mLowerConveyor);
-    upperCon = mUpperConveyor;
-    addRequirements(mUpperConveyor);
-    this.colorSensor = colorSensor;
-    this.reversePooper = reversePooper;
+    this(mLowerConveyor, mUpperConveyor, colorSensor, reversePooper, () -> false);
+  }
+
+  public Index(LowerConveyor mLowerConveyor, UpperConveyor mUpperConveyor, ColorSensor colorSensor, BooleanSupplier reversePooper, BooleanSupplier overrideColorSensor) {
+        // Use addRequirements() here to declare subsystem dependencies.
+        lowCon = mLowerConveyor;
+        addRequirements(mLowerConveyor);
+        upperCon = mUpperConveyor;
+        addRequirements(mUpperConveyor);
+        this.colorSensor = colorSensor;
+        this.reversePooper = reversePooper;
+        this.overrideColorSensor = overrideColorSensor;
   }
 
   // Called when the command is initially scheduled.
@@ -53,7 +59,7 @@ public class Index extends CommandBase {
 
     // // Run pooper as long as we don't have two balls.
     // // Switch direction momentarily for wrong color ball
-    if (colorSensor.HasWrongBall()) {
+    if (colorSensor.HasWrongBall() && !overrideColorSensor.getAsBoolean()) {
       // Switch the direction of the pooper for a second
       pooperStartTimeUs = RobotController.getFPGATime();
     }
