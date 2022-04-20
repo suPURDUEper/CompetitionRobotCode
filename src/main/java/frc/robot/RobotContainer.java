@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoAim;
 import frc.robot.commands.AutoIndex;
 import frc.robot.commands.AutoShoot;
@@ -147,8 +148,12 @@ public class RobotContainer {
     Button driverRightTrigger = new Button(() -> driverJoyStick.getRightTriggerAxis() > 0.5);
     driverRightTrigger.whenHeld(new ShootBall(upperCon, lowerCon, shooter::isShooterAtSpeed, colorSensor));
 
+    Button operatorRightTrigger = new Button(() -> operatorJoyStick.getRightTriggerAxis() > 0.5);
     Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() > 0.5);
-    driverLeftTrigger.whileHeld(new IntakeRun(intake));
+    Trigger intakeTrigger = driverLeftTrigger.and(operatorRightTrigger.negate());
+    // This is while active continuouous so that when purge interrupts this command,
+    // it will automatically be rescheduled whne purge ends
+    intakeTrigger.whileActiveContinuous(new IntakeRun(intake)); 
 
     // Operator Joystick
     Button operatorLeftTrigger = new Button(() -> operatorJoyStick.getLeftTriggerAxis() > 0.5);
@@ -174,7 +179,6 @@ public class RobotContainer {
     Button operatorAButton = new JoystickButton(operatorJoyStick, XboxController.Button.kA.value);
     operatorAButton.whenHeld(new SetFlywheelToLowShot(shooter));
 
-    Button operatorRightTrigger = new Button(() -> operatorJoyStick.getRightTriggerAxis() > 0.5);
     operatorRightTrigger.whenHeld(new Purge(intake, lowerCon, upperCon, shooter));
     // operatorLeftTrigger.whenHeld(new PoopCommand(lowerCon));
 
