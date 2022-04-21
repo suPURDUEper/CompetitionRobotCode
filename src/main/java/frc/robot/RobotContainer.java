@@ -145,7 +145,7 @@ public class RobotContainer {
     Button operatorBButton = new JoystickButton(operatorJoyStick, XboxController.Button.kB.value);
     operatorLeftBumper.whenHeld(new IntakeOut(intake));
     operatorLeftBumper.whenPressed(
-      new Index(lowerCon, upperCon, colorSensor, operatorLeftTrigger::getAsBoolean, operatorBButton::getAsBoolean)
+      new Index(lowerCon, upperCon, colorSensor, operatorLeftTrigger::getAsBoolean, operatorBButton::get)
       .andThen(new IntakeIn(intake))
       .andThen(new WaitCommand(0.4))
       .andThen(new StartEndCommand(
