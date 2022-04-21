@@ -58,7 +58,7 @@ public class Index extends CommandBase {
 
     // // Run pooper as long as we don't have two balls.
     // // Switch direction momentarily for wrong color ball
-    if (colorSensor.HasWrongBall() && !overrideColorSensor.getAsBoolean()) {
+    if (colorSensor.HasWrongBall()) {
       // Switch the direction of the pooper for a second
       pooperStartTimeUs = RobotController.getFPGATime();
     }
@@ -66,6 +66,9 @@ public class Index extends CommandBase {
     int direction = (RobotController.getFPGATime() < pooperEndReverseTime) ? -1 : 1;
     if (reversePooper != null && reversePooper.getAsBoolean()) {
       direction = -1;
+    }
+    if (overrideColorSensor.getAsBoolean()) {
+      direction = 1;
     }
     lowCon.setPooperPercentOutput(direction * 0.8 * 0.7);
   }
