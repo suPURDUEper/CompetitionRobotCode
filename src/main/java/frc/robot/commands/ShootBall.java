@@ -6,6 +6,8 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ColorSensor;
 import frc.robot.subsystems.LowerConveyor;
@@ -33,7 +35,11 @@ public class ShootBall extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    if (DriverStation.isFMSAttached()) {
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("snapshot").setNumber(1);
+    }
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -56,6 +62,9 @@ public class ShootBall extends CommandBase {
     lowerConveyor.setLowerConveyorPercentOutput(0);
     lowerConveyor.setPooperPercentOutput(0);
     upperConveyor.setPercentOutput(0);
+    if (DriverStation.isFMSAttached()) {
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("snapshot").setNumber(0);
+    }
   }
 
   // Returns true when the command should end.
