@@ -37,7 +37,7 @@ public class PoopTwoAuto extends SequentialCommandGroup{
             new Transform2d(new Translation2d(), Rotation2d.fromDegrees(-90.0)));
     private static final Pose2d shootPosition =
         FieldConstants.referenceA.transformBy(new Transform2d(
-            new Translation2d(2.0, 1.0), Rotation2d.fromDegrees(30.0)));
+            new Translation2d(2.0, 1.0), Rotation2d.fromDegrees(-120.0)));
 
     public PoopTwoAuto(
         DriveTrain driveTrain, 
@@ -53,9 +53,9 @@ public class PoopTwoAuto extends SequentialCommandGroup{
         LoggingRamseteCommand driveToOurBall = new LoggingRamseteCommand(driveTrain, start, Collections.emptyList(), ourCargoAimed, false);
 
         // Turn away from wall
-        TurnByAngle turnTowardsFirstBall = new TurnByAngle(-120, driveTrain);
+        TurnByAngle turnTowardsFirstBall = new TurnByAngle(90, driveTrain);
         LoggingRamseteCommand driveToFirstBall = new LoggingRamseteCommand(driveTrain, firstCargoTurnPosition, Collections.emptyList(), firstCargoPosition, false);
-        TurnByAngle turnTowardsSecondball = new TurnByAngle(-180, driveTrain);
+        TurnByAngle turnTowardsSecondball = new TurnByAngle(180, driveTrain);
         LoggingRamseteCommand driveToSecondnBall = new LoggingRamseteCommand(driveTrain, secondCargoTurnPosition, Collections.emptyList(), secondCargoPosition, false);
         LoggingRamseteCommand driveToHanger = new LoggingRamseteCommand(driveTrain, secondCargoPosition, Collections.emptyList(), shootPosition, true);
 
@@ -74,7 +74,7 @@ public class PoopTwoAuto extends SequentialCommandGroup{
             deadline(driveToFirstBall,  
                     new IntakeRun(intake),
                     new Index(lowerConveyor, upperConveyor, colorSensor, () -> false, () -> true)),
-            turnTowardsSecondball.withTimeout(1),
+            // turnTowardsSecondball.withTimeout(1),
             deadline(driveToSecondnBall,  
                     new IntakeRun(intake),
                     new Index(lowerConveyor, upperConveyor, colorSensor, () -> false, () -> true)),
