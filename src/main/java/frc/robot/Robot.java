@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.util.net.PortForwarder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -31,6 +32,10 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     if (Robot.isReal()) {
       CameraServer.startAutomaticCapture();
+    }
+
+    for (int port = 5800; port <= 5805; port++) {
+      PortForwarder.add(port, "limelight.local", port);
     }
   }
 
