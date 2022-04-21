@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
@@ -12,12 +13,16 @@ import frc.robot.subsystems.Vision;
 public class SetFlywheelToLimelightShot extends CommandBase {
   private final Shooter shooter;
   private final Vision vision;
+  private MedianFilter filter;
+  private double lastKnownTy; 
   /** Creates a new ShootBall. */
   public SetFlywheelToLimelightShot(Shooter mShooter, Vision vision) {
     // Use addRequirements() here to declare subsystem dependencies.
     shooter = mShooter;
     this.vision = vision;
     addRequirements(mShooter);
+    filter = new MedianFilter(10);
+    lastKnownTy = 0.0;
   }
 
   // Called when the command is initially scheduled.
@@ -27,16 +32,19 @@ public class SetFlywheelToLimelightShot extends CommandBase {
     shooter.setDistanceHoodPosition();
     shooter.setFlywheelDistanceRPM(vision.getTy());
     shooter.setAcceleratorDistanceRPM(vision.getTy());
+    filter.reset();
   }
   
   @Override
   public void execute() {
     if (vision.isTargetValid()) {
-      shooter.setFlywheelDistanceRPM(vision.getTy());
-      shooter.setAcceleratorDistanceRPM(vision.getTy());
+      double filteredTy = filter.calculate(vision.getTy());
+      shooter.setFlywheelDistanceRPM(filteredTy);
+      shooter.setAcceleratorDistanceRPM(filteredTy);
+      lastKnownTy = filteredTy;
     } else {
-      shooter.setFlywheelTargetRPM(2350);
-      shooter.setAcceleratorTargetRPM(2350);
+      shooter.setFlywheelDistanceRPM(lastKnownTy);
+      shooter.setFlywheelDistanceRPM(lastKnownTy);
     }
   }
 
