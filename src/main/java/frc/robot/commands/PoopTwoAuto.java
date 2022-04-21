@@ -37,7 +37,7 @@ public class PoopTwoAuto extends SequentialCommandGroup{
             new Transform2d(new Translation2d(), Rotation2d.fromDegrees(-90.0)));
     private static final Pose2d shootPosition =
         FieldConstants.referenceA.transformBy(new Transform2d(
-            new Translation2d(2.0, 1.0), Rotation2d.fromDegrees(-120.0)));
+            new Translation2d(2.0, 1.0), Rotation2d.fromDegrees(-100.0)));
 
     public PoopTwoAuto(
         DriveTrain driveTrain, 
