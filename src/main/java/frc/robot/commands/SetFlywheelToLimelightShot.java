@@ -22,7 +22,7 @@ public class SetFlywheelToLimelightShot extends CommandBase {
     this.vision = vision;
     addRequirements(mShooter);
     filter = new MedianFilter(10);
-    lastKnownTy = 0.0;
+    lastKnownTy = 5.0;
   }
 
   // Called when the command is initially scheduled.
