@@ -9,7 +9,9 @@ import java.util.List;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -79,6 +81,7 @@ public class RobotContainer {
   private final UpperConveyor upperCon;
   private final Vision vision;
   private final ColorSensor colorSensor;
+  private final Compressor compressor;
 
   // controller declare
   public static XboxController driverJoyStick;
@@ -102,12 +105,14 @@ public class RobotContainer {
     upperCon = new UpperConveyor();
     vision = new Vision();
     colorSensor = new ColorSensor();
+    compressor = new Compressor(PneumaticsModuleType.REVPH);
 
     // Create autonomous chooser
     autoChooser = new SendableChooser<>();
     autoChooser.addOption("Three Ball Auto", threeBallAuto());
     autoChooser.addOption("Two Ball Auto", twoBallAuto());
     autoChooser.addOption("Two Ball + Poop", new PoopTwoAuto(driveTrain, intake, lowerCon, upperCon, shooter, vision, colorSensor));
+    autoChooser.addOption("One Ball", oneBallAuto());
     autoChooser.setDefaultOption("Five Ball Auto", new FiveBallAuto(driveTrain, intake, lowerCon, upperCon, shooter, vision, colorSensor));
     SmartDashboard.putData(autoChooser);
 
@@ -191,10 +196,26 @@ public class RobotContainer {
   private Command moveToNextBarCommand() {
     JoystickButton operatorBackButton = new JoystickButton(operatorJoyStick, XboxController.Button.kBack.value);
     return new SequentialCommandGroup(
+        new InstantCommand(compressor::disable),
         new ParallelCommandGroup(new ClimberUp(climber), new InstantCommand(climber::climberTilt)),
         new InstantCommand(climber::climberStraight),
         new CheckButton(operatorBackButton),
         new ClimberDown(climber));
+  }
+
+  public Command oneBallAuto() {
+    return new SequentialCommandGroup(
+      new WaitCommand(2).deadlineWith(
+        new Index(lowerCon, upperCon, colorSensor),
+        new DriveWithLimelight(driveTrain, vision),
+        new SetFlywheelToLimelightShot(shooter, vision)),
+      new WaitCommand(2).deadlineWith(
+        new DriveWithLimelight(driveTrain, vision),
+        new SetFlywheelToLimelightShot(shooter, vision),
+        new ShootBall(upperCon, lowerCon, colorSensor)),
+      new WaitCommand(7),
+      new DriveByDistance(2, driveTrain)
+    );
   }
 
   public Command twoBallAuto() {
